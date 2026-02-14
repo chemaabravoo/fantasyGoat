@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Fantasy GOAT</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -19,25 +19,73 @@
     --green: #2ECC71;
     --red: #E74C3C;
   }
+
   * { margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent; }
-  body { font-family:'Montserrat',sans-serif;background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow:hidden; }
-  .phone { width:390px;height:844px;background:var(--black);border-radius:44px;overflow:hidden;position:relative;box-shadow:0 0 0 2px #222,0 0 60px rgba(239,184,16,0.08),0 40px 80px rgba(0,0,0,0.9); }
+
+  html { height:100%; }
+
+  body {
+    font-family:'Montserrat',sans-serif;
+    background:#0a0a0a;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    overflow:hidden;
+    height:100%;
+  }
+
+  /* Desktop: phone mockup */
+  .phone {
+    width:390px;
+    height:844px;
+    background:var(--black);
+    border-radius:44px;
+    overflow:hidden;
+    position:relative;
+    box-shadow:0 0 0 2px #222,0 0 60px rgba(239,184,16,0.08),0 40px 80px rgba(0,0,0,0.9);
+    flex-shrink:0;
+  }
+
+  /* Mobile: full screen app, no mockup */
+  @media (max-width:500px) {
+    body { display:block; overflow:hidden; align-items:unset; justify-content:unset; }
+    .phone { width:100vw; height:100svh; border-radius:0; box-shadow:none; }
+    .status-bar { display:none; }
+    .screen { top:0 !important; }
+  }
+
+  /* STATUS BAR */
   .status-bar { height:44px;background:var(--black);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100;flex-shrink:0; }
   .status-bar .time { font-size:15px;font-weight:700;color:var(--white); }
   .status-bar .icons { display:flex;gap:6px;align-items:center; }
   .status-bar .icons span { color:var(--white);font-size:13px; }
 
   /* SCREENS */
-  .screen { position:absolute;top:44px;left:0;right:0;bottom:0;background:var(--black);overflow-y:auto;overflow-x:hidden;opacity:0;pointer-events:none;transform:translateX(30px);transition:all 0.35s cubic-bezier(0.4,0,0.2,1);scrollbar-width:none;display:flex;flex-direction:column; }
+  .screen {
+    position:absolute;top:44px;left:0;right:0;bottom:0;
+    background:var(--black);
+    overflow-y:auto;
+    overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-y:contain;
+    touch-action:pan-y;
+    opacity:0;pointer-events:none;transform:translateX(30px);
+    transition:opacity 0.35s cubic-bezier(0.4,0,0.2,1), transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    scrollbar-width:none;
+    display:flex;flex-direction:column;
+  }
   .screen::-webkit-scrollbar { display:none; }
   .screen.active { opacity:1;pointer-events:all;transform:translateX(0); }
+  .screen.prev { opacity:0;transform:translateX(-30px);pointer-events:none; }
   .screen.prev { opacity:0;transform:translateX(-30px); }
 
-  /* TYPOGRAPHY */
-  .logo-text { font-family:'Bebas Neue',cursive;font-size:38px;letter-spacing:4px;color:var(--white);line-height:1; }
-  .logo-text span { color:var(--gold); }
-  .logo-wrap { display:flex;flex-direction:column;align-items:center;gap:2px; }
-  .logo-tagline { font-size:9px;letter-spacing:6px;color:var(--gray);text-transform:uppercase; }
+  /* LOGO IMAGE */
+  .logo-img { width:220px;height:auto;object-fit:contain;filter:drop-shadow(0 0 20px rgba(239,184,16,0.4)); }
+  .logo-tagline { font-size:9px;letter-spacing:6px;color:var(--gray);text-transform:uppercase;margin-top:6px; }
+
+  /* NAV ICON */
+  .nav-icon-img { width:32px;height:32px;object-fit:contain; }
 
   /* BUTTONS */
   .btn-gold { width:100%;padding:16px;background:var(--gold);color:var(--black);border:none;border-radius:14px;font-family:'Montserrat',sans-serif;font-weight:900;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden; }
@@ -96,15 +144,28 @@
   .liga-sub { font-size:10px;color:var(--gray);letter-spacing:1px;text-transform:uppercase; }
 
   /* BOTTOM NAV */
-  .bottom-nav { background:rgba(8,8,8,0.97);backdrop-filter:blur(20px);border-top:1px solid #1a1a1a;display:flex;align-items:center;justify-content:space-around;padding:10px 8px 24px;flex-shrink:0;margin-top:auto; }
+  .bottom-nav {
+    position:sticky;
+    bottom:0;
+    background:rgba(6,6,6,0.97);backdrop-filter:blur(20px);border-top:1px solid #1a1a1a;
+    display:flex;align-items:center;justify-content:space-around;
+    padding:10px 8px 24px;flex-shrink:0;
+    z-index:50;
+  }
   .nav-item { display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:6px 10px;border-radius:12px;transition:all 0.2s; }
   .nav-item .nav-icon { font-size:20px;color:var(--gray);transition:all 0.2s; }
   .nav-item .nav-label { font-size:9px;letter-spacing:0.5px;color:var(--gray);text-transform:uppercase;font-weight:600;transition:all 0.2s; }
   .nav-item.active .nav-icon { color:var(--gold);filter:drop-shadow(0 0 6px var(--gold-glow)); }
   .nav-item.active .nav-label { color:var(--gold); }
-  .nav-center { width:50px;height:50px;background:var(--gold);border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;box-shadow:0 0 20px var(--gold-glow);transition:all 0.2s;margin-bottom:8px; }
+  .nav-center {
+    width:52px;height:52px;background:var(--gold);border-radius:16px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;box-shadow:0 0 20px var(--gold-glow);transition:all 0.2s;margin-bottom:8px;
+    overflow:hidden;padding:2px;
+  }
   .nav-center:active { transform:scale(0.93); }
-  .nav-center.active { box-shadow:0 0 28px rgba(239,184,16,0.55); }
+  .nav-center.active { box-shadow:0 0 28px rgba(239,184,16,0.6); }
+  .nav-center img { width:44px;height:44px;object-fit:contain; }
 
   /* FORM BODY */
   .form-body { padding:24px;display:flex;flex-direction:column;gap:20px;flex:1; }
@@ -115,34 +176,41 @@
   .toast { position:absolute;top:56px;left:20px;right:20px;background:#1a1a1a;border:1px solid rgba(239,184,16,0.3);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;z-index:999;transform:translateY(-80px);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);opacity:0; }
   .toast.show { transform:translateY(0);opacity:1; }
 
-  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
-
-  /* LOGIN */
-  .login-bg { flex:1;display:flex;flex-direction:column;padding:40px 28px 32px;position:relative;overflow:hidden; }
-  .login-bg::before { content:'🐐';position:absolute;font-size:280px;opacity:0.03;top:-60px;right:-60px;pointer-events:none;filter:grayscale(1); }
-  .login-header { display:flex;flex-direction:column;align-items:center;margin-bottom:48px; }
-  .login-footer { margin-top:auto;display:flex;flex-direction:column;gap:12px; }
+  /* DIVIDER */
   .divider { display:flex;align-items:center;gap:12px; }
   .divider::before,.divider::after { content:'';flex:1;height:1px;background:#222; }
   .divider span { color:var(--gray);font-size:11px;letter-spacing:1px;text-transform:uppercase; }
+
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+  /* Padding for screens with bottom-nav so last content is not hidden */
+  #s-home .forum-feed { padding-bottom:20px; }
+  #s-goat .goat-panel { padding-bottom:20px; }
+  #s-ranking .ranking-list { padding-bottom:16px; }
+  #s-stats > div:last-of-type { padding-bottom:8px; }
+  #s-quinteto .court-wrap { padding-bottom:6px; }
+  .login-bg { flex:1;display:flex;flex-direction:column;padding:32px 28px 32px;position:relative;overflow:hidden;min-height:580px; }
+  .login-header { display:flex;flex-direction:column;align-items:center;margin-bottom:40px; }
+  .login-footer { margin-top:auto;display:flex;flex-direction:column;gap:12px; }
   .forgot-link { text-align:right;font-size:11px;color:var(--gold);font-weight:600;cursor:pointer; }
   .social-btn { display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:var(--card);border:1px solid #222;border-radius:12px;color:var(--white);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s; }
+  .social-btn:hover { border-color:#444; }
 
-  /* DASHBOARD */
+  /* ====== DASHBOARD ====== */
   .dash-header { display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid #111;flex-shrink:0; }
   .settings-btn { width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--card);border-radius:50%;font-size:18px;cursor:pointer;color:var(--gold);transition:all 0.2s;border:1px solid rgba(239,184,16,0.2); }
   .league-card { display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--card);border:1px solid rgba(239,184,16,0.15);border-radius:16px;margin-bottom:10px;cursor:pointer;transition:all 0.25s; }
   .league-card:hover { background:var(--card2);border-color:rgba(239,184,16,0.3);transform:translateX(2px); }
   .league-dot { width:3px;height:3px;background:#444;border-radius:50%; }
 
-  /* SETTINGS */
+  /* ====== SETTINGS ====== */
   .avatar { width:70px;height:70px;background:linear-gradient(135deg,var(--gold) 0%,#b8860b 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;border:2px solid rgba(239,184,16,0.3); }
   .settings-row { display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--card);border:1px solid #1e1e1e;border-radius:12px;cursor:pointer;transition:all 0.2s; }
   .settings-row:hover { border-color:#333; }
   .btn-danger { width:100%;padding:14px;background:rgba(231,76,60,0.08);color:var(--red);border:1px solid rgba(231,76,60,0.2);border-radius:12px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s; }
   .btn-logout { width:100%;padding:14px;background:rgba(255,255,255,0.04);color:var(--white);border:1px solid #222;border-radius:12px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s; }
 
-  /* INVITE */
+  /* ====== INVITE ====== */
   .invite-option { display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid #1e1e1e;border-radius:14px;cursor:pointer;transition:all 0.2s; }
   .invite-option:hover { border-color:rgba(239,184,16,0.3); }
   .invite-icon { width:42px;height:42px;border-radius:12px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:1px solid rgba(239,184,16,0.2); }
@@ -150,9 +218,9 @@
   .id-val { font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:4px;color:var(--gold); }
   .copy-btn { padding:8px 14px;background:var(--gold-dim);border:1px solid rgba(239,184,16,0.3);border-radius:8px;color:var(--gold);font-size:11px;font-weight:700;cursor:pointer; }
 
-  /* FORO / HOME */
-  .forum-feed { flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px; }
-  .forum-post { background:var(--card);border:1px solid #1e1e1e;border-radius:16px;overflow:hidden;cursor:default;transition:all 0.2s; }
+  /* ====== FORO / HOME ====== */
+  .forum-feed { padding:14px 16px;display:flex;flex-direction:column;gap:12px;flex-shrink:0; }
+  .forum-post { background:var(--card);border:1px solid #1e1e1e;border-radius:16px;overflow:hidden; }
   .post-header { display:flex;align-items:center;gap:10px;padding:12px 14px 8px; }
   .post-avatar { width:34px;height:34px;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;border:1.5px solid #2a2a2a; }
   .post-user { font-size:13px;font-weight:700;color:var(--white); }
@@ -172,17 +240,17 @@
   .vbtn-no { background:rgba(231,76,60,0.08);color:var(--red);border-color:rgba(231,76,60,0.2); }
   .vbtn-no:hover { background:rgba(231,76,60,0.15); }
 
-  /* GOAT TAB */
+  /* ====== GOAT TAB ====== */
   .goat-top { padding:14px 20px 0;flex-shrink:0; }
-  .goat-title { font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:4px;color:var(--white);margin-bottom:12px; }
-  .goat-tabs { display:flex;background:var(--card);border-radius:13px;padding:4px;gap:4px;margin-bottom:0; }
+  .goat-title { font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:4px;color:var(--white);margin-bottom:12px;display:flex;align-items:center;gap:10px; }
+  .goat-title img { width:28px;height:28px;object-fit:contain; }
+  .goat-tabs { display:flex;background:var(--card);border-radius:13px;padding:4px;gap:4px; }
   .goat-tab { flex:1;padding:11px;text-align:center;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--gray);border-radius:9px;cursor:pointer;transition:all 0.2s; }
   .goat-tab.active { background:var(--gold);color:var(--black); }
-  .goat-panel { flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:10px; }
+  .goat-panel { padding:14px 18px;display:flex;flex-direction:column;gap:10px;flex-shrink:0; }
   .create-bar { display:flex;gap:8px;margin-bottom:2px; }
   .create-btn { flex:1;padding:12px 10px;background:var(--card);border:1px solid rgba(239,184,16,0.2);border-radius:12px;color:var(--gold);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;letter-spacing:0.5px;cursor:pointer;transition:all 0.2s;text-align:center;text-transform:uppercase; }
   .create-btn:hover { background:var(--gold-dim); }
-
   .reto-card2 { background:var(--card);border:1px solid #1e1e1e;border-radius:14px;overflow:hidden;transition:all 0.2s; }
   .reto-card2:hover { border-color:#2a2a2a; }
   .reto-card2-top { padding:14px 16px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px; }
@@ -196,7 +264,7 @@
   .completar-btn2 { padding:8px 16px;background:var(--gold);color:var(--black);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s; }
   .completar-btn2:active { transform:scale(0.95); }
 
-  /* PRED */
+  /* ====== PREDICCIONES ====== */
   .pred-card { background:var(--card);border:1px solid #1e1e1e;border-radius:14px;padding:14px; }
   .pred-match { font-size:13px;font-weight:800;color:var(--white);margin-bottom:3px; }
   .pred-q { font-size:11px;color:var(--gray);margin-bottom:10px; }
@@ -205,7 +273,7 @@
   .pred-opt.sel { background:var(--gold);color:var(--black);border-color:var(--gold); }
   .pred-pts { font-size:10px;color:var(--gold);font-weight:700;text-align:right;margin-top:8px; }
 
-  /* COMPLETAR */
+  /* ====== COMPLETAR ====== */
   .completar-body { flex:1;padding:18px 20px;display:flex;flex-direction:column;gap:14px; }
   .reto-hero { background:var(--card);border:1px solid rgba(239,184,16,0.2);border-radius:20px;padding:20px;text-align:center; }
   .reto-hero-name { font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:3px;color:var(--white);margin-bottom:4px; }
@@ -216,13 +284,10 @@
   .pts-lbl { font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1px; }
   .upload-opt { display:flex;align-items:center;gap:12px;padding:13px 15px;background:var(--card);border:1px solid #1e1e1e;border-radius:12px;cursor:pointer;transition:all 0.2s; }
   .upload-opt:hover { border-color:rgba(239,184,16,0.3); }
-  .upload-opt .ico { font-size:20px; }
-  .upload-opt .utitle { font-size:13px;font-weight:600;color:var(--white); }
-  .upload-opt .usub { font-size:11px;color:var(--gray); }
   .pend-bar { display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(239,184,16,0.06);border:1px solid rgba(239,184,16,0.15);border-radius:12px; }
   .pend-dot { width:8px;height:8px;background:var(--gold);border-radius:50%;animation:pulse 1.5s infinite;flex-shrink:0; }
 
-  /* RANKING */
+  /* ====== RANKING ====== */
   .ranking-top3 { padding:14px 20px 8px;display:flex;justify-content:center;align-items:flex-end;gap:10px;flex-shrink:0; }
   .podium-item { display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer; }
   .pod-avatar { border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #333;position:relative; }
@@ -235,14 +300,14 @@
   .pod-bar.p2 { height:34px;background:linear-gradient(to top,#444,#888);width:52px; }
   .pod-bar.p3 { height:22px;background:linear-gradient(to top,#5a3010,#a0522d);width:52px; }
   .pod-num { font-family:'Bebas Neue',cursive;font-size:15px;color:rgba(0,0,0,0.4); }
-  .ranking-list { padding:0 18px 8px;display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto; }
+  .ranking-list { padding:0 18px 8px;display:flex;flex-direction:column;gap:6px;flex-shrink:0; }
   .rank-item { display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border:1px solid #1e1e1e;border-radius:12px;cursor:pointer;transition:all 0.2s; }
   .rank-item:hover { background:var(--card2); }
   .rank-num { font-family:'Bebas Neue',cursive;font-size:16px;width:20px;text-align:center;color:var(--gray); }
   .rank-av { width:34px;height:34px;border-radius:50%;background:#1e1e1e;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0; }
   .rank-pts { font-family:'Bebas Neue',cursive;font-size:18px; }
 
-  /* STATS */
+  /* ====== STATS ====== */
   .stats-hero { padding:18px 24px;display:flex;flex-direction:column;align-items:center;gap:8px;border-bottom:1px solid #111;flex-shrink:0; }
   .stats-av { width:72px;height:72px;background:linear-gradient(135deg,#444,#222);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;border:2px solid #333; }
   .stats-lv { display:flex;align-items:center;padding:4px 14px;background:var(--gold-dim);border:1px solid rgba(239,184,16,0.2);border-radius:20px; }
@@ -257,7 +322,7 @@
   .stat-hl .val { font-size:13px;font-weight:700;color:var(--white); }
   .stat-hl .sub { font-size:11px;color:var(--gold);margin-top:2px; }
 
-  /* QUINTETO */
+  /* ====== QUINTETO ====== */
   .court-wrap { flex:1;padding:10px 16px 6px;display:flex;flex-direction:column;gap:8px;min-height:0; }
   .court { flex:1;background:linear-gradient(180deg,#051405,#0a1f0a 50%,#051405);border:1px solid rgba(255,255,255,0.06);border-radius:18px;position:relative;overflow:hidden;min-height:250px; }
   .court::before { content:'';position:absolute;inset:8px;border:1px solid rgba(255,255,255,0.05);border-radius:12px; }
@@ -267,7 +332,7 @@
   .player-row { display:flex;justify-content:center;gap:22px; }
   .pslot { display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:all 0.2s; }
   .pslot:hover { transform:scale(1.06); }
-  .pcircle { width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid;position:relative; }
+  .pcircle { width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid; }
   .pcircle.tit { background:rgba(239,184,16,0.1);border-color:var(--gold);box-shadow:0 0 12px rgba(239,184,16,0.22); }
   .pcircle.emp { background:rgba(255,255,255,0.02);border-color:#272727;border-style:dashed; }
   .pinitials { font-family:'Bebas Neue',cursive;font-size:15px;color:var(--white);letter-spacing:0.5px; }
@@ -283,7 +348,7 @@
   .bcircle:hover { border-color:rgba(239,184,16,0.4); }
   .bname { font-size:8px;color:var(--gray);font-weight:600;max-width:42px;text-align:center;line-height:1.2; }
 
-  /* USER PICKER */
+  /* ====== USER PICKER ====== */
   .picker-overlay { position:absolute;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(8px);z-index:200;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;opacity:0;pointer-events:none;transition:opacity 0.3s; }
   .picker-overlay.show { opacity:1;pointer-events:all; }
   .picker-box { background:var(--card2);border:1px solid rgba(239,184,16,0.22);border-radius:24px;padding:20px;transform:translateY(30px);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1); }
@@ -291,7 +356,7 @@
   .picker-title { font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;color:var(--white);margin-bottom:2px; }
   .picker-sub { font-size:11px;color:var(--gray);margin-bottom:8px; }
   .picker-slot { font-size:11px;color:var(--gold);font-weight:700;margin-bottom:12px; }
-  .user-list { display:flex;flex-direction:column;gap:7px;margin-bottom:14px;max-height:210px;overflow-y:auto; }
+  .user-list { display:flex;flex-direction:column;gap:7px;margin-bottom:14px;max-height:220px;overflow-y:auto;-webkit-overflow-scrolling:touch; }
   .user-list::-webkit-scrollbar { display:none; }
   .upick { display:flex;align-items:center;gap:12px;padding:10px 13px;background:rgba(255,255,255,0.03);border:1px solid #1e1e1e;border-radius:12px;cursor:pointer;transition:all 0.2s; }
   .upick:hover,.upick.sel { border-color:var(--gold);background:var(--gold-dim); }
@@ -309,23 +374,29 @@
     <div class="icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div>
   </div>
   <div class="toast" id="toast">
-    <span id="toast-icon">✅</span>
-    <span id="toast-text" style="font-size:12px;font-weight:700;color:var(--white)">Hecho</span>
+    <span id="t-icon">✅</span>
+    <span id="t-text" style="font-size:12px;font-weight:700;color:var(--white)">Hecho</span>
   </div>
 
-  <!-- ===== LOGIN ===== -->
+  <!-- ════════════════════════════════════════════════════
+       SCREEN: LOGIN
+  ════════════════════════════════════════════════════ -->
   <div class="screen active" id="s-login">
     <div class="login-bg">
       <div class="login-header">
-        <div class="logo-wrap">
-          <span style="font-size:32px;filter:drop-shadow(0 0 10px var(--gold))">🐐</span>
-          <div class="logo-text">FANTASY <span>GOAT</span></div>
-          <div class="logo-tagline">La Liga de los Elegidos</div>
-        </div>
+        <div style="font-family:'Bebas Neue',cursive;font-size:42px;letter-spacing:5px;color:var(--white);line-height:1">FANTASY <span style="color:var(--gold)">GOAT</span></div>
+        <div class="logo-tagline">La Liga de los Elegidos</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px">
-        <div class="input-wrap"><label class="input-label">Email</label><input class="input-field" type="email" placeholder="tu@email.com"></div>
-        <div class="input-wrap"><label class="input-label">Contraseña</label><input class="input-field" type="password" placeholder="••••••••"><div class="forgot-link">¿Olvidaste tu contraseña?</div></div>
+        <div class="input-wrap">
+          <label class="input-label">Email</label>
+          <input class="input-field" type="email" placeholder="tu@email.com">
+        </div>
+        <div class="input-wrap">
+          <label class="input-label">Contraseña</label>
+          <input class="input-field" type="password" placeholder="••••••••">
+          <div class="forgot-link">¿Olvidaste tu contraseña?</div>
+        </div>
         <button class="btn-gold" onclick="go('s-dashboard')">Iniciar sesión</button>
         <button class="btn-white" onclick="go('s-dashboard')">Crear cuenta</button>
       </div>
@@ -337,13 +408,15 @@
     </div>
   </div>
 
-  <!-- ===== DASHBOARD ===== -->
+  <!-- ════════════════════════════════════════════════════
+       SCREEN: DASHBOARD
+  ════════════════════════════════════════════════════ -->
   <div class="screen" id="s-dashboard">
     <div class="dash-header">
       <div style="width:38px"></div>
-      <div class="logo-wrap" style="flex-direction:row;gap:8px;align-items:center">
-        <span style="font-size:20px">🐐</span>
-        <div class="logo-text" style="font-size:22px;letter-spacing:2px">FANTASY <span>GOAT</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:22px">🐐</span>
+        <div style="font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:2px;color:var(--white)">FANTASY <span style="color:var(--gold)">GOAT</span></div>
       </div>
       <div class="settings-btn" onclick="go('s-settings')">⚙️</div>
     </div>
@@ -352,7 +425,10 @@
       <button class="btn-gold-outline" onclick="toast('🔍 Introduce el ID o contraseña de la liga')">🔍 Unirse a una Liga</button>
     </div>
     <div style="padding:0 20px 24px">
-      <div class="section-header"><span class="section-title">Mis Ligas</span><span style="font-size:11px;color:var(--gold);font-weight:700;cursor:pointer">Ver todas</span></div>
+      <div class="section-header">
+        <span class="section-title">Mis Ligas</span>
+        <span style="font-size:11px;color:var(--gold);font-weight:700;cursor:pointer">Ver todas</span>
+      </div>
       <div class="league-card" onclick="go('s-home')">
         <div><div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px">Los Intocables</div><div style="display:flex;gap:8px;align-items:center"><span class="badge badge-private">Privada</span><span class="league-dot"></span><span style="font-size:11px;color:var(--gray)">Semanal</span></div></div>
         <div style="text-align:right"><div style="font-size:11px;color:var(--gray);margin-bottom:4px"><strong style="color:var(--gold)">8</strong> jugadores</div><span style="color:#444;font-size:14px">›</span></div>
@@ -368,20 +444,31 @@
     </div>
   </div>
 
-  <!-- ===== SETTINGS ===== -->
+  <!-- ════════════════════════════════════════════════════
+       SCREEN: SETTINGS
+  ════════════════════════════════════════════════════ -->
   <div class="screen" id="s-settings">
     <div class="screen-header">
       <div class="back-btn" onclick="go('s-dashboard')">‹</div>
       <div class="screen-header-title">Ajustes</div>
     </div>
-    <div style="display:flex;align-items:center;gap:14px;padding:18px 20px 18px;border-bottom:1px solid #111;flex-shrink:0">
-      <div style="position:relative"><div class="avatar">😎</div><div style="position:absolute;bottom:0;right:0;width:22px;height:22px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer">✏️</div></div>
-      <div><div style="font-size:18px;font-weight:800;color:var(--white)">Carlos Ruiz</div><div style="font-size:12px;color:var(--gray);margin-top:2px">carlos@email.com</div></div>
+    <div style="display:flex;align-items:center;gap:14px;padding:18px 20px;border-bottom:1px solid #111;flex-shrink:0">
+      <div style="position:relative">
+        <div class="avatar">😎</div>
+        <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer">✏️</div>
+      </div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:var(--white)">Carlos Ruiz</div>
+        <div style="font-size:12px;color:var(--gray);margin-top:2px">carlos@email.com</div>
+      </div>
     </div>
     <div style="padding:18px 20px;display:flex;flex-direction:column;gap:10px;flex:1">
       <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);font-weight:700">Preferencias</div>
       <div class="settings-row"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">🌍</span><span style="font-size:14px;color:var(--white);font-weight:500">Idioma</span></div><span style="font-size:12px;color:var(--gold);font-weight:700">ES ›</span></div>
-      <div class="toggle-wrap"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">🔔</span><span style="font-size:14px;color:var(--white);font-weight:500">Notificaciones</span></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="toggle-wrap">
+        <div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">🔔</span><span style="font-size:14px;color:var(--white);font-weight:500">Notificaciones</span></div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
       <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);font-weight:700;margin-top:4px">Soporte</div>
       <div class="settings-row" onclick="toast('📝 Formulario de feedback')"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">💬</span><span style="font-size:14px;color:var(--white);font-weight:500">¿Tienes algún comentario?</span></div><span style="color:#444;font-size:16px">›</span></div>
       <div class="settings-row" onclick="toast('ℹ️ Versión 1.0.0 – Fantasy GOAT')"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">ℹ️</span><span style="font-size:14px;color:var(--white);font-weight:500">Sobre Fantasy GOAT</span></div><span style="color:#444;font-size:16px">›</span></div>
@@ -391,7 +478,9 @@
     </div>
   </div>
 
-  <!-- ===== CREAR LIGA ===== -->
+  <!-- ════════════════════════════════════════════════════
+       SCREEN: CREAR LIGA
+  ════════════════════════════════════════════════════ -->
   <div class="screen" id="s-crear-liga">
     <div class="screen-header">
       <div class="back-btn" onclick="go('s-dashboard')">‹</div>
@@ -407,7 +496,7 @@
       </div>
       <div class="conditional-field show" id="f-pass"><label class="input-label">Contraseña</label><input class="input-field" type="password" placeholder="Mínimo 6 caracteres..."></div>
       <div class="conditional-field" id="f-id"><label class="input-label">ID de liga (5–20 caracteres)</label><input class="input-field" type="text" placeholder="GOAT2024..."></div>
-      <div class="input-wrap"><label class="input-label">Periodicidad</label>
+      <div class="input-wrap"><label class="input-label">Periodicidad en la puntuación del quinteto</label>
         <div class="pill-group" id="period-group">
           <div class="pill active" onclick="setPeriod(this)">📅 Semanal</div>
           <div class="pill" onclick="setPeriod(this)">🗓️ Mensual</div>
@@ -417,7 +506,9 @@
     </div>
   </div>
 
-  <!-- ===== INVITE ===== -->
+  <!-- ════════════════════════════════════════════════════
+       SCREEN: INVITE
+  ════════════════════════════════════════════════════ -->
   <div class="screen" id="s-invite">
     <div class="screen-header">
       <div class="back-btn" onclick="go('s-crear-liga')">‹</div>
@@ -429,7 +520,10 @@
         <div style="font-family:'Bebas Neue',cursive;font-size:26px;letter-spacing:3px;color:var(--white);margin-bottom:4px">¡Liga Creada!</div>
         <div style="font-size:12px;color:var(--gray)">Invita a tus amigos y empieza a competir</div>
       </div>
-      <div class="id-display"><div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:3px">ID de Liga</div><div class="id-val">GOAT‑7X4K2</div></div><div class="copy-btn" onclick="toast('📋 ID copiado')">COPIAR</div></div>
+      <div class="id-display">
+        <div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:3px">ID de Liga</div><div class="id-val">GOAT‑7X4K2</div></div>
+        <div class="copy-btn" onclick="toast('📋 ID copiado')">COPIAR</div>
+      </div>
       <div class="invite-option" onclick="toast('📱 Abriendo WhatsApp...')"><div class="invite-icon">📱</div><div><div style="font-size:14px;font-weight:700;color:var(--white)">Compartir por WhatsApp</div><div style="font-size:11px;color:var(--gray);margin-top:2px">Envía el enlace directo</div></div></div>
       <div class="invite-option" onclick="toast('🔗 Enlace copiado')"><div class="invite-icon">🔗</div><div><div style="font-size:14px;font-weight:700;color:var(--white)">Copiar enlace</div><div style="font-size:11px;color:var(--gray);margin-top:2px">fantasygot.app/liga/GOAT-7X4K2</div></div></div>
       <div class="invite-option" onclick="toast('📋 ID copiado')"><div class="invite-icon">🔑</div><div><div style="font-size:14px;font-weight:700;color:var(--white)">Copiar ID</div><div style="font-size:11px;color:var(--gray);margin-top:2px">GOAT‑7X4K2</div></div></div>
@@ -437,7 +531,9 @@
     </div>
   </div>
 
-  <!-- ===== HOME / FORO ===== -->
+  <!-- ════════════════════════════════════════════════════
+       SCREEN: HOME / FORO
+  ════════════════════════════════════════════════════ -->
   <div class="screen" id="s-home">
     <div class="liga-header">
       <div>
@@ -450,7 +546,6 @@
       <span class="badge badge-private">Privada</span>
     </div>
     <div class="forum-feed">
-      <!-- post 1 -->
       <div class="forum-post">
         <div class="post-header">
           <div class="post-avatar" style="border-color:var(--gold)">😈</div>
@@ -458,13 +553,12 @@
           <div class="post-time">2h</div>
         </div>
         <div class="post-media" style="background:linear-gradient(135deg,#1a0a00,#0a0300)"><span>🎉</span><span class="media-tag">📷 FOTO</span></div>
-        <div class="post-footer"><div class="post-desc">Viernes, sábado y domingo. Tres noches como el GOAT 🐐</div><div class="post-actions"><span class="post-btn fire">🔥 14</span><span class="post-btn">💬 3</span></div></div>
+        <div class="post-footer"><div class="post-desc">Viernes, sábado y domingo. Tres noches como el GOAT</div><div class="post-actions"><span class="post-btn fire">🔥 14</span><span class="post-btn">💬 3</span></div></div>
         <div class="validate-bar">
           <div class="vbtn vbtn-ok" onclick="toast('✅ Has validado el reto de CarlosGOAT')">✓ Validar</div>
           <div class="vbtn vbtn-no" onclick="toast('❌ Reto rechazado')">✗ Rechazar</div>
         </div>
       </div>
-      <!-- post 2 -->
       <div class="forum-post">
         <div class="post-header">
           <div class="post-avatar">🦁</div>
@@ -472,13 +566,12 @@
           <div class="post-time">5h</div>
         </div>
         <div class="post-media" style="background:linear-gradient(135deg,#001008,#000a04)"><span>💪</span><span class="media-tag">▶ VÍDEO</span></div>
-        <div class="post-footer"><div class="post-desc">100 de una tacada. Sin pausas. ¿Alguien se atreve?</div><div class="post-actions"><span class="post-btn">🔥 8</span><span class="post-btn">💬 5</span></div></div>
+        <div class="post-footer"><div class="post-desc">100 de una tacada, sin pausas. ¿Alguien se atreve?</div><div class="post-actions"><span class="post-btn">🔥 8</span><span class="post-btn">💬 5</span></div></div>
         <div class="validate-bar">
           <div class="vbtn vbtn-ok" onclick="toast('✅ Has validado el reto de LeonardoK')">✓ Validar</div>
           <div class="vbtn vbtn-no" onclick="toast('❌ Reto rechazado')">✗ Rechazar</div>
         </div>
       </div>
-      <!-- post 3 validado -->
       <div class="forum-post">
         <div class="post-header">
           <div class="post-avatar" style="border-color:var(--green)">🧔</div>
@@ -499,7 +592,9 @@
     </div>
   </div>
 
-  <!-- ===== GOAT: RETOS + PREDICCIONES ===== -->
+  <!-- ════════════════════════════════════════════════════
+       SCREEN: GOAT — RETOS + PREDICCIONES
+  ════════════════════════════════════════════════════ -->
   <div class="screen" id="s-goat">
     <div class="liga-header">
       <div>
@@ -511,13 +606,15 @@
       <span class="badge badge-private">Privada</span>
     </div>
     <div class="goat-top">
-      <div class="goat-title">🐐 RETOS</div>
+      <div class="goat-title">
+        🐐 RETOS
+      </div>
       <div class="goat-tabs">
         <div class="goat-tab active" id="gtab-r" onclick="switchTab('r')">Retos</div>
         <div class="goat-tab" id="gtab-p" onclick="switchTab('p')">Predicciones</div>
       </div>
     </div>
-    <!-- panel retos -->
+    <!-- Panel Retos -->
     <div class="goat-panel" id="gpanel-r">
       <div class="create-bar">
         <div class="create-btn" onclick="go('s-crear-reto')">+ Crear Reto</div>
@@ -530,7 +627,7 @@
       <div class="reto-card2"><div class="reto-card2-top"><div><div class="reto-title2">Aprender a cocinar un plato gourmet</div><div class="reto-creator">por @MikelFC · 0 completados</div></div><div class="reto-pts2">200<span class="reto-pts2-lbl">pts</span></div></div><div class="reto-card2-bottom"><div class="reto-who">Nadie lo ha completado aún</div><button class="completar-btn2" onclick="go('s-completar')">Completar</button></div></div>
       <div class="reto-card2"><div class="reto-card2-top"><div><div class="reto-title2">Leer un libro en una semana</div><div class="reto-creator">por @EagleRise · 3 completados</div></div><div class="reto-pts2">150<span class="reto-pts2-lbl">pts</span></div></div><div class="reto-card2-bottom"><div class="reto-who">Completaron: <strong>LauraElite +2</strong></div><button class="completar-btn2" onclick="go('s-completar')">Completar</button></div></div>
     </div>
-    <!-- panel predicciones -->
+    <!-- Panel Predicciones -->
     <div class="goat-panel" id="gpanel-p" style="display:none">
       <div class="create-bar"><div class="create-btn" style="flex:1" onclick="toast('📝 Crear nueva predicción')">+ Crear Predicción</div></div>
       <div class="section-header"><span class="section-title">Predicciones activas</span><span class="badge badge-review">Semana 7</span></div>
@@ -548,7 +645,9 @@
     </div>
   </div>
 
-  <!-- ===== CREAR RETO ===== -->
+  <!-- ════════════════════════════════════════════════════
+       SCREEN: CREAR RETO
+  ════════════════════════════════════════════════════ -->
   <div class="screen" id="s-crear-reto">
     <div class="screen-header">
       <div class="back-btn" onclick="go('s-goat')">‹</div>
@@ -557,12 +656,14 @@
     <div class="form-body">
       <div class="input-wrap"><label class="input-label">Título del reto</label><input class="input-field" type="text" placeholder="Ej: Hacer una ruta de senderismo..."></div>
       <div class="input-wrap"><label class="input-label">Puntos</label><input class="input-field" type="number" placeholder="100"></div>
-      <div class="input-wrap"><label class="input-label">Descripción (opcional)</label><input class="input-field" type="text" placeholder="Añade detalles..."></div>
+      <div class="input-wrap"><label class="input-label">Descripción (opcional)</label><input class="input-field" type="text" placeholder="Añade detalles del reto..."></div>
       <button class="btn-gold" onclick="toast('✅ Reto publicado en la liga');go('s-goat')">Publicar Reto</button>
     </div>
   </div>
 
-  <!-- ===== COMPLETAR RETO ===== -->
+  <!-- ════════════════════════════════════════════════════
+       SCREEN: COMPLETAR RETO
+  ════════════════════════════════════════════════════ -->
   <div class="screen" id="s-completar">
     <div class="screen-header">
       <div class="back-btn" onclick="go('s-goat')">‹</div>
@@ -575,16 +676,18 @@
         <div class="pts-badge"><span class="pts-num">500</span><span class="pts-lbl">puntos</span></div>
       </div>
       <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);font-weight:700">Sube tu prueba</div>
-      <div class="upload-opt" onclick="toast('📷 Abriendo cámara...')"><span class="ico">📷</span><div><div class="utitle">Subir imagen</div><div class="usub">Foto de tu logro</div></div></div>
-      <div class="upload-opt" onclick="toast('🎥 Selecciona un vídeo')"><span class="ico">🎥</span><div><div class="utitle">Subir vídeo</div><div class="usub">Máximo 60 segundos</div></div></div>
-      <div class="upload-opt" onclick="toast('✍️ Escribe tu justificación')"><span class="ico">✍️</span><div><div class="utitle">Justificación escrita</div><div class="usub">Explica tu hazaña</div></div></div>
+      <div class="upload-opt" onclick="toast('📷 Abriendo cámara...')"><span style="font-size:20px">📷</span><div><div style="font-size:13px;font-weight:600;color:var(--white)">Subir imagen</div><div style="font-size:11px;color:var(--gray)">Foto de tu logro</div></div></div>
+      <div class="upload-opt" onclick="toast('🎥 Selecciona un vídeo')"><span style="font-size:20px">🎥</span><div><div style="font-size:13px;font-weight:600;color:var(--white)">Subir vídeo</div><div style="font-size:11px;color:var(--gray)">Máximo 60 segundos</div></div></div>
+      <div class="upload-opt" onclick="toast('✍️ Escribe tu justificación')"><span style="font-size:20px">✍️</span><div><div style="font-size:13px;font-weight:600;color:var(--white)">Justificación escrita</div><div style="font-size:11px;color:var(--gray)">Explica tu hazaña</div></div></div>
       <button class="btn-gold" onclick="toast('📤 Enviado al foro y al árbitro');go('s-home')">Completar Reto</button>
       <button class="btn-white" style="padding:12px;font-size:12px" onclick="toast('📝 Enviado sin prueba');go('s-home')">Completar sin prueba</button>
       <div class="pend-bar"><div class="pend-dot"></div><span style="font-size:12px;color:var(--gold);font-weight:600">Pendiente de aprobación del árbitro</span></div>
     </div>
   </div>
 
-  <!-- ===== RANKING ===== -->
+  <!-- ════════════════════════════════════════════════════
+       SCREEN: RANKING
+  ════════════════════════════════════════════════════ -->
   <div class="screen" id="s-ranking">
     <div class="liga-header">
       <div>
@@ -597,7 +700,9 @@
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid #111;flex-shrink:0">
       <div style="font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:3px;color:var(--white)">RANKING</div>
-      <select style="background:var(--card);border:1px solid #222;border-radius:8px;padding:7px 12px;color:var(--white);font-size:11px;font-weight:700;cursor:pointer"><option>Febrero 2026</option><option>Enero 2026</option><option>Diciembre 2025</option></select>
+      <select style="background:var(--card);border:1px solid #222;border-radius:8px;padding:7px 12px;color:var(--white);font-size:11px;font-weight:700;cursor:pointer;outline:none">
+        <option>Febrero 2026</option><option>Enero 2026</option><option>Diciembre 2025</option>
+      </select>
     </div>
     <div class="ranking-top3">
       <div class="podium-item" onclick="go('s-stats')">
@@ -638,7 +743,9 @@
     </div>
   </div>
 
-  <!-- ===== STATS ===== -->
+  <!-- ════════════════════════════════════════════════════
+       SCREEN: STATS / PERFIL
+  ════════════════════════════════════════════════════ -->
   <div class="screen" id="s-stats">
     <div class="liga-header">
       <div style="display:flex;align-items:center;gap:8px">
@@ -669,7 +776,9 @@
     </div>
   </div>
 
-  <!-- ===== QUINTETO (usuarios reales de la liga) ===== -->
+  <!-- ════════════════════════════════════════════════════
+       SCREEN: QUINTETO
+  ════════════════════════════════════════════════════ -->
   <div class="screen" id="s-quinteto">
     <div class="liga-header">
       <div>
@@ -709,14 +818,14 @@
       </div>
     </div>
 
-    <!-- PICKER OVERLAY -->
+    <!-- USER PICKER POPUP -->
     <div class="picker-overlay" id="picker" onclick="closePicker()">
       <div class="picker-box" onclick="event.stopPropagation()">
         <div class="picker-title">Seleccionar miembro</div>
         <div class="picker-sub">Jugadores de Los Intocables</div>
         <div class="picker-slot" id="picker-slot">Posición: Titular 5</div>
-        <div class="user-list" id="user-list">
-          <div class="upick" onclick="selUser(this,'CarlosGOAT','4.750')"><div class="upick-av" style="background:linear-gradient(135deg,#EFB810,#b8860b)"><span style="font-family:'Bebas Neue',cursive;font-size:12px">CG</span></div><div class="upick-name">CarlosGOAT</div><div class="upick-pts">4.750</div></div>
+        <div class="user-list">
+          <div class="upick" onclick="selUser(this,'CarlosGOAT','4.750')"><div class="upick-av" style="background:linear-gradient(135deg,#EFB810,#b8860b)"><span style="font-family:'Bebas Neue',cursive;font-size:12px;color:#000">CG</span></div><div class="upick-name">CarlosGOAT</div><div class="upick-pts">4.750</div></div>
           <div class="upick" onclick="selUser(this,'MikelFC','3.240')"><div class="upick-av" style="background:#242424"><span style="font-family:'Bebas Neue',cursive;font-size:12px;color:#fff">MK</span></div><div class="upick-name">MikelFC</div><div class="upick-pts">3.240</div></div>
           <div class="upick" onclick="selUser(this,'LauraElite','2.890')"><div class="upick-av" style="background:#1e1e1e"><span style="font-family:'Bebas Neue',cursive;font-size:12px;color:#fff">LE</span></div><div class="upick-name">LauraElite</div><div class="upick-pts">2.890</div></div>
           <div class="upick" onclick="selUser(this,'PedroMás','2.100')"><div class="upick-av" style="background:#191919"><span style="font-family:'Bebas Neue',cursive;font-size:12px;color:#fff">PM</span></div><div class="upick-name">PedroMás</div><div class="upick-pts">2.100</div></div>
@@ -741,9 +850,10 @@
     </div>
   </div>
 
-</div>
+</div><!-- /.phone -->
 
 <script>
+
   let cur = 's-login', prev = null, tt = null, pickedUser = null;
 
   function go(id) {
@@ -768,16 +878,17 @@
 
   function toast(msg) {
     const t = document.getElementById('toast');
-    document.getElementById('toast-text').textContent = msg;
+    document.getElementById('t-text').textContent = msg;
     t.classList.add('show');
     if (tt) clearTimeout(tt);
     tt = setTimeout(() => t.classList.remove('show'), 2500);
   }
 
   function setTipo(t) {
-    document.querySelectorAll('#tipo-group .pill').forEach((p,i) => p.classList.toggle('active',(t==='privada'&&i===0)||(t==='publica'&&i===1)));
+    document.querySelectorAll('#tipo-group .pill').forEach((p,i) =>
+      p.classList.toggle('active',(t==='privada'&&i===0)||(t==='publica'&&i===1)));
     document.getElementById('f-pass').classList.toggle('show', t==='privada');
-    document.getElementById('f-id').classList.toggle('show', t==='publica');
+    document.getElementById('f-id').classList.toggle('show',   t==='publica');
   }
 
   function setPeriod(el) {
@@ -821,7 +932,7 @@
     closePicker();
   }
 
-  // Hint badge
+  /* hint */
   setTimeout(() => {
     const h = document.createElement('div');
     h.style.cssText = 'position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:rgba(239,184,16,0.93);color:#000;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;padding:8px 18px;border-radius:20px;pointer-events:none;z-index:9999;white-space:nowrap;';
