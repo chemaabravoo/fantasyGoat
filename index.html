@@ -736,6 +736,7 @@ var RANK={global:[],feb:[],ene:[],dic:[],nov:[]};
 
 function go(id){
   if(id===CUR)return;
+  if(id!=='s-login') sessionStorage.setItem('fg_screen',id);
   var c=document.getElementById(CUR),n=document.getElementById(id);
   if(!n)return;
   c.classList.remove('active');c.classList.add('prev');
@@ -773,13 +774,24 @@ function openLeagueSheet(name,idx){
 }
 function closeSheet(){document.getElementById('league-sheet').classList.remove('show');}
 function resetSheet(){
+  var id = currentLeague.id || '';
+  var shareBtn = id
+    ? '<div class="sheet-btn" onclick="compartirSheetLiga()">Compartir liga</div>'
+    : '<div class="sheet-btn" onclick="toast(\'Sin ID disponible\');closeSheet()">Compartir liga</div>';
   document.getElementById('sheet-box').innerHTML=
     '<div class="sheet-handle"></div>'+
     '<div class="sheet-title" id="sheet-league-name">'+currentLeague.name+'</div>'+
-    '<div class="sheet-btn" onclick="toast(\'Enlace copiado\');closeSheet()">Compartir liga</div>'+
-    '<div class="sheet-btn" onclick="toast(\'Ajustes...\');closeSheet()">Ajustes de la liga</div>'+
+    shareBtn+
+    '<div class="sheet-btn" onclick="toast(\'Próximamente\');closeSheet()">Ajustes de la liga</div>'+
     '<div class="sheet-btn danger" onclick="showLeaveConfirm()">Salirse de la liga</div>'+
     '<div class="sheet-btn danger" onclick="showDeleteConfirm()">Eliminar la liga</div>';
+}
+function compartirSheetLiga(){
+  var id = currentLeague.id;
+  if(!id){ toast("Sin ID"); return; }
+  var url = getLigaUrl(id);
+  navigator.clipboard.writeText(url).then(function(){ toast("Enlace copiado"); }).catch(function(){ toast("Enlace: "+url); });
+  closeSheet();
 }
 function showLeaveConfirm(){
   document.getElementById('sheet-box').innerHTML=
@@ -858,6 +870,17 @@ function rejectPost(el){el.closest('.vbar').innerHTML='<div style="padding:4px 1
 
 function renderTikTok(){
   var tw=document.getElementById('tiktok-wrap');tw.innerHTML='';
+  // Empty state
+  if(!subs.length){
+    tw.innerHTML=
+      '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--black)">'+
+        '<div style="font-size:40px">📭</div>'+
+        '<div style="font-size:14px;font-weight:700;color:var(--white)">Sin actividad todavía</div>'+
+        '<div style="font-size:11px;color:var(--gray);text-align:center;padding:0 32px;line-height:1.5">Los retos completados por los miembros aparecerán aquí</div>'+
+        '<button onclick="setView(\'list\')" style="margin-top:8px;padding:12px 28px;background:var(--gold);color:#000;border:none;border-radius:12px;font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:1px;cursor:pointer">Volver al foro</button>'+
+      '</div>';
+    return;
+  }
   subs.forEach(function(s,i){
     var slide=document.createElement('div');slide.className='tk-slide';slide.style.transform='translateY('+(i===0?0:100)+'%)';
     slide.innerHTML='<div class="tk-bg"><span>'+s.emoji+'</span></div><div class="tk-grad"></div>'+
@@ -1251,6 +1274,7 @@ renderLigas();
   };
 
   window.fbSignOut = function() {
+    sessionStorage.removeItem('fg_screen');
     signOut(auth).then(function(){ go('s-login'); });
   };
 
@@ -1265,7 +1289,14 @@ renderLigas();
         if(inp) inp.value=window._pendingJoinId;
         go('s-join');
       } else {
-        go('s-dashboard');
+        // Restore last screen if available
+        var saved = sessionStorage.getItem('fg_screen');
+        var safeScreens = ['s-dashboard','s-home','s-ranking','s-goat','s-quinteto','s-stats','s-settings'];
+        if(saved && safeScreens.indexOf(saved) !== -1) {
+          go(saved);
+        } else {
+          go('s-dashboard');
+        }
       }
     });
   });
