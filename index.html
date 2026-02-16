@@ -360,9 +360,9 @@ textarea.inp{resize:vertical;min-height:80px}
 <div class="screen full-scroll" id="s-join">
   <div class="shdr"><div class="back" onclick="go('s-dashboard')">‹</div><div class="stitle">Unirse a Liga</div></div>
   <div style="padding:24px;display:flex;flex-direction:column;gap:16px;flex:1">
-    <div class="iw"><label class="il">ID de Liga</label><input class="inp" type="text" placeholder="GOAT-7X4K2"></div>
-    <div class="iw"><label class="il">Contraseña (si es privada)</label><input class="inp" type="password" placeholder="••••••••"></div>
-    <button class="bg" onclick="toast('Liga encontrada');go('s-dashboard')">Buscar y Unirse</button>
+    <div class="iw"><label class="il">ID de Liga</label><input class="inp" id="join-id" type="text" placeholder="GOAT-7X4K2"></div>
+    <div class="iw"><label class="il">Contraseña (si es privada)</label><input class="inp" id="join-pass" type="password" placeholder="••••••••"></div>
+    <button class="bg" onclick="unirseALiga()">Buscar y Unirse</button>
     <button class="bw" onclick="go('s-dashboard')">Cancelar</button>
   </div>
 </div>
@@ -398,14 +398,14 @@ textarea.inp{resize:vertical;min-height:80px}
 <div class="screen full-scroll" id="s-crear-liga">
   <div class="shdr"><div class="back" onclick="go('s-dashboard')">‹</div><div class="stitle">Crear Liga</div></div>
   <div style="padding:24px;display:flex;flex-direction:column;gap:18px;flex:1">
-    <div class="iw"><label class="il">Nombre de la liga</label><input class="inp" type="text" placeholder="Los Invencibles..."></div>
+    <div class="iw"><label class="il">Nombre de la liga</label><input class="inp" id="liga-nombre" type="text" placeholder="Los Invencibles..."></div>
     <div class="iw"><label class="il">Tipo</label>
-      <div class="pill-grp"><div class="pill active" onclick="setTipo('priv',this)">Privada</div><div class="pill" onclick="setTipo('pub',this)">Pública</div></div>
+      <div class="pill-grp"><div class="pill active" id="tipo-priv" onclick="setTipo('priv',this)">Privada</div><div class="pill" id="tipo-pub" onclick="setTipo('pub',this)">Pública</div></div>
     </div>
-    <div class="cond show" id="f-pass"><label class="il">Contraseña</label><input class="inp" type="password" placeholder="Mínimo 6 caracteres..."></div>
-    <div class="cond" id="f-id"><label class="il">ID de liga (opcional)</label><input class="inp" type="text" placeholder="GOAT2024..."></div>
+    <div class="cond show" id="f-pass"><label class="il">Contraseña</label><input class="inp" id="liga-pass" type="password" placeholder="Mínimo 6 caracteres..."></div>
+    <div class="cond" id="f-id"><label class="il">ID de liga (opcional)</label><input class="inp" id="liga-custom-id" type="text" placeholder="GOAT2024..."></div>
     <div class="iw"><label class="il">Periodicidad</label>
-      <div class="pill-grp"><div class="pill active" onclick="setPeriod(this)">Semanal</div><div class="pill" onclick="setPeriod(this)">Mensual</div></div>
+      <div class="pill-grp"><div class="pill active" id="period-sem" onclick="setPeriod(this)">Semanal</div><div class="pill" id="period-men" onclick="setPeriod(this)">Mensual</div></div>
     </div>
     <div class="iw">
       <div style="display:flex;align-items:center;gap:4px"><label class="il">Tamaño del quinteto</label><span class="info-inline" onclick="openModal('m-qinfo')">i</span></div>
@@ -427,7 +427,7 @@ textarea.inp{resize:vertical;min-height:80px}
         <input class="inp" type="number" id="bench-pts" value="4" min="0" max="999">
       </div>
     </div>
-    <button class="bg" onclick="go('s-invite')">Crear Liga</button>
+    <button class="bg" onclick="crearLiga()">Crear Liga</button>
   </div>
 </div>
 
@@ -436,9 +436,9 @@ textarea.inp{resize:vertical;min-height:80px}
   <div class="shdr"><div class="back" onclick="go('s-crear-liga')">‹</div><div class="stitle">Invitar Amigos</div></div>
   <div style="padding:20px;display:flex;flex-direction:column;gap:14px;flex:1">
     <div style="text-align:center;padding:10px 0"><div style="font-size:56px;margin-bottom:10px">🎉</div><div style="font-family:'Bebas Neue',cursive;font-size:26px;letter-spacing:3px;color:var(--white);margin-bottom:4px">¡Liga Creada!</div><div style="font-size:12px;color:var(--gray)">Invita a tus amigos y empieza a competir</div></div>
-    <div class="id-box"><div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:3px">ID de Liga</div><div class="id-val">GOAT‑7X4K2</div></div><div class="copy-btn" onclick="toast('ID copiado')">Copiar</div></div>
-    <div class="iopt" onclick="toast('Abriendo WhatsApp...')"><div class="iico">📱</div><div><div style="font-size:14px;font-weight:700;color:var(--white)">Compartir por WhatsApp</div><div style="font-size:11px;color:var(--gray);margin-top:2px">Envía el enlace directo</div></div></div>
-    <div class="iopt" onclick="toast('Enlace copiado')"><div class="iico">🔗</div><div><div style="font-size:14px;font-weight:700;color:var(--white)">Copiar enlace</div><div style="font-size:11px;color:var(--gray);margin-top:2px">fantasygoat.app/liga/GOAT-7X4K2</div></div></div>
+    <div class="id-box"><div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:3px">ID de Liga</div><div class="id-val" id="invite-id-display">—</div></div><div class="copy-btn" onclick="copiarId()">Copiar</div></div>
+    <div class="iopt" onclick="compartirWhatsApp()"><div class="iico">📱</div><div><div style="font-size:14px;font-weight:700;color:var(--white)">Compartir por WhatsApp</div><div style="font-size:11px;color:var(--gray);margin-top:2px">Envía el enlace directo</div></div></div>
+    <div class="iopt" onclick="copiarEnlace()"><div class="iico">🔗</div><div><div style="font-size:14px;font-weight:700;color:var(--white)">Copiar enlace</div><div id="invite-url-display" style="font-size:11px;color:var(--gray);margin-top:2px">—</div></div></div>
     <button class="bg" onclick="go('s-home')">Continuar</button>
   </div>
 </div>
@@ -796,28 +796,6 @@ function showDeleteConfirm(){
       '<button class="bdanger" style="padding:12px;font-size:12px" onclick="doDelete()">Sí, eliminar</button>'+
     '</div>';
 }
-function doLeave(){
-  closeSheet();
-  var card=document.getElementById('lc-'+currentLeague.idx);
-  if(card){
-    card.style.transition='all .4s';card.style.opacity='0';card.style.transform='translateX(-30px)';
-    card.style.maxHeight=card.offsetHeight+'px';
-    setTimeout(function(){card.style.maxHeight='0';card.style.margin='0';card.style.padding='0';card.style.border='0';},350);
-    setTimeout(function(){card.remove();},800);
-  }
-  setTimeout(function(){toast('"'+currentLeague.name+'" abandonada');},200);
-}
-function doDelete(){
-  closeSheet();
-  var card=document.getElementById('lc-'+currentLeague.idx);
-  if(card){
-    card.style.transition='all .4s';card.style.opacity='0';card.style.transform='translateX(-30px)';
-    card.style.maxHeight=card.offsetHeight+'px';
-    setTimeout(function(){card.style.maxHeight='0';card.style.margin='0';card.style.padding='0';card.style.border='0';},350);
-    setTimeout(function(){card.remove();},800);
-  }
-  setTimeout(function(){toast('"'+currentLeague.name+'" eliminada');},200);
-}
 
 function setTipo(t,el){
   document.getElementById('f-pass').classList.toggle('show',t==='priv');
@@ -1091,15 +1069,51 @@ function sendFeedback(){
   closeModal('m-feedback');
 }
 
+// ── Helpers (used by Firestore functions) ──
+var ligaActual = null;
+
+function genId() {
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var id = 'GOAT-';
+  for(var i=0;i<5;i++) id += chars[Math.floor(Math.random()*chars.length)];
+  return id;
+}
+function getLigaUrl(id) {
+  return window.location.href.split('?')[0] + '?liga=' + id;
+}
+function copiarId() {
+  var id = document.getElementById('invite-id-display').textContent;
+  navigator.clipboard.writeText(id).then(function(){ toast('ID copiado: ' + id); }).catch(function(){ toast('ID: ' + id); });
+}
+function copiarEnlace() {
+  var url = getLigaUrl(document.getElementById('invite-id-display').textContent);
+  navigator.clipboard.writeText(url).then(function(){ toast('Enlace copiado'); }).catch(function(){ toast('No se pudo copiar'); });
+}
+function compartirWhatsApp() {
+  var id  = document.getElementById('invite-id-display').textContent;
+  var url = getLigaUrl(id);
+  var txt = encodeURIComponent('¡Únete a mi liga Fantasy GOAT!\nID: ' + id + '\n' + url);
+  window.open('https://wa.me/?text=' + txt, '_blank');
+}
+// Detect invite link from URL
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var ligaId = params.get('liga');
+  if(ligaId) window._pendingJoinId = ligaId.toUpperCase();
+})();
+
 renderFeed();
 renderRanking();
+renderLigas();
 </script>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { initializeApp }   from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
            GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile }
     from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove }
+    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB0-pJ12NXSh4LsdH8AHuK8mg_glWAVrmY",
@@ -1111,78 +1125,215 @@ renderRanking();
     measurementId: "G-KY7MHRWWZN"
   };
 
-  const app = initializeApp(firebaseConfig);
+  const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db   = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
-  // --- Sign in with email/password ---
+  // ── Error messages ───────────────────────────────────────
+  function authErr(e) {
+    return e.code==='auth/invalid-credential' ? 'Email o contraseña incorrectos'
+         : e.code==='auth/user-not-found'     ? 'Usuario no encontrado'
+         : e.code==='auth/wrong-password'     ? 'Contraseña incorrecta'
+         : e.code==='auth/email-already-in-use'? 'Este email ya está registrado'
+         : e.code==='auth/invalid-email'      ? 'Email no válido'
+         : e.message;
+  }
+
+  function updateUI(user) {
+    var name = user.displayName || user.email.split('@')[0];
+    ['prof-name','settings-name'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.textContent=name;
+    });
+    ['prof-email','settings-email'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.textContent=user.email;
+    });
+  }
+
+  // ── Auth ─────────────────────────────────────────────────
   window.fbSignIn = function() {
-    var email = document.getElementById('inp-email').value.trim();
-    var pass  = document.getElementById('inp-pass').value;
-    if(!email || !pass){ toast('Rellena email y contraseña'); return; }
-    signInWithEmailAndPassword(auth, email, pass)
-      .then(function(){ go('s-dashboard'); })
-      .catch(function(e){
-        var msg = e.code === 'auth/invalid-credential' ? 'Email o contraseña incorrectos'
-                : e.code === 'auth/user-not-found'     ? 'Usuario no encontrado'
-                : e.code === 'auth/wrong-password'     ? 'Contraseña incorrecta'
-                : e.message;
-        toast(msg);
-      });
+    var email=document.getElementById('inp-email').value.trim();
+    var pass =document.getElementById('inp-pass').value;
+    if(!email||!pass){ toast('Rellena email y contraseña'); return; }
+    signInWithEmailAndPassword(auth,email,pass).catch(function(e){ toast(authErr(e)); });
   };
 
-  // --- Create account with email/password ---
   window.fbSignUp = function() {
-    var email = document.getElementById('inp-email').value.trim();
-    var pass  = document.getElementById('inp-pass').value;
-    if(!email || !pass){ toast('Rellena email y contraseña'); return; }
-    if(pass.length < 6){ toast('La contraseña debe tener al menos 6 caracteres'); return; }
-    createUserWithEmailAndPassword(auth, email, pass)
-      .then(function(cred){
-        var name = email.split('@')[0];
-        return updateProfile(cred.user, { displayName: name });
-      })
-      .then(function(){ go('s-dashboard'); })
-      .catch(function(e){
-        var msg = e.code === 'auth/email-already-in-use' ? 'Este email ya está registrado'
-                : e.code === 'auth/invalid-email'        ? 'Email no válido'
-                : e.message;
-        toast(msg);
-      });
+    var email=document.getElementById('inp-email').value.trim();
+    var pass =document.getElementById('inp-pass').value;
+    if(!email||!pass){ toast('Rellena email y contraseña'); return; }
+    if(pass.length<6){ toast('Contraseña mínimo 6 caracteres'); return; }
+    createUserWithEmailAndPassword(auth,email,pass)
+      .then(function(cred){ return updateProfile(cred.user,{displayName:email.split('@')[0]}); })
+      .catch(function(e){ toast(authErr(e)); });
   };
 
-  // --- Google sign in ---
   window.fbGoogle = function() {
-    signInWithPopup(auth, provider)
-      .then(function(){ go('s-dashboard'); })
-      .catch(function(e){
-        if(e.code !== 'auth/popup-closed-by-user') toast('Error Google: ' + e.message);
-      });
+    signInWithPopup(auth,provider)
+      .catch(function(e){ if(e.code!=='auth/popup-closed-by-user') toast('Error: '+e.message); });
   };
 
-  // --- Sign out ---
   window.fbSignOut = function() {
     signOut(auth).then(function(){ go('s-login'); });
   };
 
-  // --- Auto-detect session ---
+  // ── Session ───────────────────────────────────────────────
   onAuthStateChanged(auth, function(user) {
-    if(user) {
-      // Update profile UI
-      var name = user.displayName || user.email.split('@')[0];
-      var el = document.getElementById('prof-name');
-      if(el) el.textContent = name;
-      var el2 = document.getElementById('prof-email');
-      if(el2) el2.textContent = user.email;
-      var el3 = document.getElementById('settings-name');
-      if(el3) el3.textContent = name;
-      var el4 = document.getElementById('settings-email');
-      if(el4) el4.textContent = user.email;
-      go('s-dashboard');
-    } else {
-      go('s-login');
-    }
+    if(!user){ go('s-login'); return; }
+    updateUI(user);
+    window._currentUser = user;
+    cargarMisLigas(user.uid).then(function(){
+      if(window._pendingJoinId) {
+        var inp=document.getElementById('join-id');
+        if(inp) inp.value=window._pendingJoinId;
+        go('s-join');
+      } else {
+        go('s-dashboard');
+      }
+    });
   });
+
+  // ── Firestore helpers ────────────────────────────────────
+  async function cargarMisLigas(uid) {
+    var snap = await getDoc(doc(db,'usuarios',uid));
+    if(!snap.exists()){ renderLigasFS([]); return; }
+    var ids = snap.data().ligas || [];
+    if(!ids.length){ renderLigasFS([]); return; }
+    var ligas = [];
+    for(var i=0;i<ids.length;i++){
+      var s = await getDoc(doc(db,'ligas',ids[i]));
+      if(s.exists()&&!s.data().eliminada) ligas.push(Object.assign({id:ids[i]},s.data()));
+    }
+    renderLigasFS(ligas);
+  }
+
+  function renderLigasFS(ligas) {
+    window._ligasFS = ligas;
+    var cont = document.getElementById('leagues-list');
+    if(!ligas.length){
+      cont.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">\u{1F3C6}</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Aún no estás en ninguna liga</div><div style="font-size:11px;line-height:1.5">Crea una liga o únete con un ID</div></div>';
+      return;
+    }
+    cont.innerHTML='';
+    ligas.forEach(function(l,i){
+      var bc=l.tipo==='priv'?'b-priv':'b-pub';
+      var bt=l.tipo==='priv'?'Privada':'Pública';
+      var m=(l.miembros||[]).length;
+      var div=document.createElement('div');
+      div.className='lcard'; div.id='lc-fs-'+i;
+      div.innerHTML=
+        '<div class="lcard-body" onclick="abrirLigaFS('+i+')">'+
+          '<div>'+
+            '<div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px">'+l.nombre+'</div>'+
+            '<div style="display:flex;gap:8px;align-items:center">'+
+              '<span class="badge '+bc+'">'+bt+'</span>'+
+              '<span style="width:3px;height:3px;background:#444;border-radius:50%;display:inline-block"></span>'+
+              '<span style="font-size:11px;color:var(--gray)">'+l.period+'</span>'+
+            '</div>'+
+          '</div>'+
+          '<div style="text-align:right"><div style="font-size:11px;color:var(--gray);margin-bottom:4px"><strong style="color:var(--gold)">'+m+'</strong> jugadores</div><span style="color:#444;font-size:14px">›</span></div>'+
+        '</div>'+
+        '<div class="lcard-dots" onclick="openLeagueSheetFS('+i+')">···</div>';
+      cont.appendChild(div);
+    });
+  }
+
+  window.abrirLigaFS = function(idx) {
+    var l=(window._ligasFS||[])[idx]; if(!l) return;
+    ligaActual=l;
+    var lname=document.querySelector('#s-home .lname'); if(lname) lname.textContent=l.nombre;
+    var lsub=document.querySelector('#s-home .lsub'); if(lsub) lsub.textContent=(l.miembros||[]).length+' jugadores · '+l.period;
+    go('s-home');
+  };
+
+  window.openLeagueSheetFS = function(idx) {
+    var l=(window._ligasFS||[])[idx]; if(!l) return;
+    currentLeague={name:l.nombre,idx:idx,id:l.id,creador:l.creador};
+    document.getElementById('sheet-league-name').textContent=l.nombre;
+    resetSheet();
+    document.getElementById('league-sheet').classList.add('show');
+  };
+
+  // ── Crear liga → Firestore ───────────────────────────────
+  window.crearLiga = async function() {
+    var nombre=document.getElementById('liga-nombre').value.trim();
+    if(!nombre){ toast('Ponle un nombre a la liga'); return; }
+    var tipo=document.getElementById('tipo-priv').classList.contains('active')?'priv':'pub';
+    var pass=tipo==='priv'?document.getElementById('liga-pass').value:'';
+    if(tipo==='priv'&&pass.length<6){ toast('La contraseña debe tener al menos 6 caracteres'); return; }
+    var period=document.getElementById('period-sem').classList.contains('active')?'Semanal':'Mensual';
+    var customId=document.getElementById('liga-custom-id')&&document.getElementById('liga-custom-id').value.trim();
+    var id=customId?customId.toUpperCase():genId();
+    var user=window._currentUser;
+    if(!user){ toast('Debes iniciar sesión'); return; }
+
+    // Check ID not taken
+    var existing=await getDoc(doc(db,'ligas',id));
+    if(existing.exists()){ toast('Ese ID ya existe, prueba otro'); return; }
+
+    var liga={
+      id:id, nombre:nombre, tipo:tipo, pass:pass||'', period:period,
+      qSize:qSize,
+      starterPts:parseInt(document.getElementById('starter-pts').value)||10,
+      benchPts:parseInt(document.getElementById('bench-pts').value)||4,
+      creada:Date.now(), miembros:[user.uid], creador:user.uid
+    };
+
+    await setDoc(doc(db,'ligas',id),{
+      nombre:liga.nombre, tipo:liga.tipo, pass:liga.pass, period:liga.period,
+      qSize:liga.qSize, starterPts:liga.starterPts, benchPts:liga.benchPts,
+      creada:liga.creada, miembros:liga.miembros, creador:liga.creador
+    });
+    await setDoc(doc(db,'usuarios',user.uid),{ligas:arrayUnion(id)},{merge:true});
+
+    document.getElementById('invite-id-display').textContent=id;
+    document.getElementById('invite-url-display').textContent=getLigaUrl(id);
+    await cargarMisLigas(user.uid);
+    go('s-invite');
+  };
+
+  // ── Unirse a liga → Firestore ────────────────────────────
+  window.unirseALiga = async function() {
+    var id=document.getElementById('join-id').value.trim().toUpperCase();
+    var pass=document.getElementById('join-pass').value;
+    if(!id){ toast('Introduce el ID de la liga'); return; }
+    var user=window._currentUser;
+    if(!user){ toast('Debes iniciar sesión'); return; }
+    toast('Buscando...');
+    var snap=await getDoc(doc(db,'ligas',id));
+    if(!snap.exists()){ toast('No existe una liga con ese ID'); return; }
+    var data=snap.data();
+    if(data.eliminada){ toast('Esta liga ya no existe'); return; }
+    if(data.tipo==='priv'&&data.pass&&data.pass!==pass){ toast('Contraseña incorrecta'); return; }
+    if((data.miembros||[]).includes(user.uid)){ toast('Ya estás en esa liga'); await cargarMisLigas(user.uid); go('s-dashboard'); return; }
+    await updateDoc(doc(db,'ligas',id),{miembros:arrayUnion(user.uid)});
+    await setDoc(doc(db,'usuarios',user.uid),{ligas:arrayUnion(id)},{merge:true});
+    await cargarMisLigas(user.uid);
+    toast('¡Bienvenido a '+data.nombre+'!');
+    go('s-dashboard');
+  };
+
+  // ── Abandonar / Eliminar → Firestore ────────────────────
+  window.doLeave = function() {
+    closeSheet();
+    var user=window._currentUser; if(!user) return;
+    updateDoc(doc(db,'ligas',currentLeague.id),{miembros:arrayRemove(user.uid)}).then(function(){
+      return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
+    }).then(function(){ cargarMisLigas(user.uid); toast('"'+currentLeague.name+'" abandonada'); });
+  };
+
+  window.doDelete = function() {
+    closeSheet();
+    var user=window._currentUser; if(!user) return;
+    getDoc(doc(db,'ligas',currentLeague.id)).then(function(s){
+      if(!s.exists()) return;
+      if(s.data().creador!==user.uid){ toast('Solo el creador puede eliminar'); return; }
+      return updateDoc(doc(db,'ligas',currentLeague.id),{eliminada:true}).then(function(){
+        return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
+      }).then(function(){ cargarMisLigas(user.uid); toast('"'+currentLeague.name+'" eliminada'); });
+    });
+  };
+
 </script>
 
 </div>
