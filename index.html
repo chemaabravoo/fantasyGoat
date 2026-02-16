@@ -15,11 +15,12 @@ body{font-family:'Montserrat',sans-serif;background:#0a0a0a;display:flex;justify
 .sb{height:44px;background:var(--black);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100;flex-shrink:0}
 .sb .time{font-size:15px;font-weight:700;color:var(--white)}
 .sb .icons{display:flex;gap:6px;align-items:center;color:var(--white);font-size:13px}
-.screen{position:absolute;top:44px;left:0;right:0;bottom:0;background:var(--black);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y;opacity:0;pointer-events:none;transform:translateX(30px);transition:opacity .32s cubic-bezier(.4,0,.2,1),transform .32s cubic-bezier(.4,0,.2,1);scrollbar-width:none;display:flex;flex-direction:column}
-.screen::-webkit-scrollbar{display:none}
+.screen{position:absolute;top:44px;left:0;right:0;bottom:0;background:var(--black);overflow:hidden;opacity:0;pointer-events:none;transform:translateX(30px);transition:opacity .32s cubic-bezier(.4,0,.2,1),transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.screen-scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;scrollbar-width:none}
+.screen-scroll::-webkit-scrollbar{display:none}
 .screen.active{opacity:1;pointer-events:all;transform:translateX(0)}
 .screen.prev{opacity:0;transform:translateX(-30px);pointer-events:none}
-.bnav{position:sticky;bottom:0;background:rgba(6,6,6,.97);backdrop-filter:blur(20px);border-top:1px solid #1a1a1a;display:flex;align-items:center;justify-content:space-around;padding:10px 8px 24px;flex-shrink:0;z-index:50}
+.bnav{background:rgba(6,6,6,.97);backdrop-filter:blur(20px);border-top:1px solid #1a1a1a;display:flex;align-items:center;justify-content:space-around;padding:10px 8px 24px;flex-shrink:0;z-index:50}
 .ni{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:6px 10px;border-radius:12px;transition:all .2s}
 .ni .icon{font-size:20px;color:var(--gray);transition:all .2s}
 .ni .lbl{font-size:9px;letter-spacing:.5px;color:var(--gray);text-transform:uppercase;font-weight:600;transition:all .2s}
@@ -125,8 +126,8 @@ textarea.inp{resize:vertical;min-height:80px}
 .vbtn2{flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:700;text-align:center;cursor:pointer;border:1px solid;letter-spacing:.5px;text-transform:uppercase;transition:all .2s}
 .vok{background:rgba(46,204,113,.1);color:var(--green);border-color:rgba(46,204,113,.25)}
 .vno{background:rgba(231,76,60,.08);color:var(--red);border-color:rgba(231,76,60,.2)}
-#tiktok-wrap{display:none;position:absolute;inset:0;overflow:hidden;touch-action:none;background:var(--black);z-index:10}
-#tiktok-wrap.show{display:block}
+#tiktok-wrap{display:none;position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;touch-action:none;background:var(--black);z-index:10;pointer-events:none}
+#tiktok-wrap.show{display:block;pointer-events:all}
 .tk-slide{position:absolute;width:100%;height:100%;background:var(--black);will-change:transform;transition:transform .35s cubic-bezier(.4,0,.2,1)}
 .tk-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:90px;background:#050505;overflow:hidden}
 .tk-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.35) 45%,transparent 70%)}
@@ -315,14 +316,14 @@ textarea.inp{resize:vertical;min-height:80px}
       <div id="t-tagline" style="font-size:9px;letter-spacing:6px;color:var(--gray);text-transform:uppercase;margin-top:6px">La Liga de los Elegidos</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px">
-      <div class="iw"><label class="il">Email</label><input class="inp" type="email" placeholder="tu@email.com"></div>
-      <div class="iw"><label class="il">Contraseña</label><input class="inp" type="password" placeholder="••••••••"><div style="text-align:right;font-size:11px;color:var(--gold);font-weight:600;cursor:pointer;margin-top:4px">¿Olvidaste tu contraseña?</div></div>
-      <button class="bg" onclick="go('s-dashboard')">Iniciar sesión</button>
-      <button class="bw" onclick="go('s-dashboard')">Crear cuenta</button>
+      <div class="iw"><label class="il">Email</label><input class="inp" id="inp-email" type="email" placeholder="tu@email.com"></div>
+      <div class="iw"><label class="il">Contraseña</label><input class="inp" id="inp-pass" type="password" placeholder="••••••••"><div style="text-align:right;font-size:11px;color:var(--gold);font-weight:600;cursor:pointer;margin-top:4px">¿Olvidaste tu contraseña?</div></div>
+      <button class="bg" onclick="fbSignIn()">Iniciar sesión</button>
+      <button class="bw" onclick="fbSignUp()">Crear cuenta</button>
     </div>
     <div style="margin-top:auto;display:flex;flex-direction:column;gap:12px">
       <div class="divider"><span>o continúa con</span></div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:var(--card);border:1px solid #222;border-radius:12px;color:var(--white);font-size:13px;font-weight:600;cursor:pointer"><b>G</b> Iniciar sesión con Google</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:var(--card);border:1px solid #222;border-radius:12px;color:var(--white);font-size:13px;font-weight:600;cursor:pointer" onclick="fbGoogle()"><b>G</b> Iniciar sesión con Google</div>
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:var(--card);border:1px solid #222;border-radius:12px;color:var(--white);font-size:13px;font-weight:600;cursor:pointer">Iniciar sesión con Apple</div>
     </div>
   </div>
@@ -344,26 +345,12 @@ textarea.inp{resize:vertical;min-height:80px}
   </div>
   <div style="padding:0 20px 24px">
     <div class="secrow"><span class="sectitle">Mis Ligas</span><span style="font-size:11px;color:var(--gold);font-weight:700;cursor:pointer">Ver todas</span></div>
-    <div class="lcard" id="lc-0">
-      <div class="lcard-body" onclick="go('s-home')">
-        <div><div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px">Los Intocables</div><div style="display:flex;gap:8px;align-items:center"><span class="badge b-priv">Privada</span><span style="width:3px;height:3px;background:#444;border-radius:50%;display:inline-block"></span><span style="font-size:11px;color:var(--gray)">Semanal</span></div></div>
-        <div style="text-align:right"><div style="font-size:11px;color:var(--gray);margin-bottom:4px"><strong style="color:var(--gold)">8</strong> jugadores</div><span style="color:#444;font-size:14px">›</span></div>
+    <div id="leagues-list">
+      <div style="text-align:center;padding:40px 20px;color:var(--gray)">
+        <div style="font-size:36px;margin-bottom:12px">🏆</div>
+        <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Aún no estás en ninguna liga</div>
+        <div style="font-size:11px;line-height:1.5">Crea una liga o únete con un ID</div>
       </div>
-      <div class="lcard-dots" onclick="openLeagueSheet('Los Intocables',0)">···</div>
-    </div>
-    <div class="lcard" id="lc-1">
-      <div class="lcard-body" onclick="go('s-home')">
-        <div><div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px">GOAT Season IV</div><div style="display:flex;gap:8px;align-items:center"><span class="badge b-pub">Pública</span><span style="width:3px;height:3px;background:#444;border-radius:50%;display:inline-block"></span><span style="font-size:11px;color:var(--gray)">Mensual</span></div></div>
-        <div style="text-align:right"><div style="font-size:11px;color:var(--gray);margin-bottom:4px"><strong style="color:var(--gold)">24</strong> jugadores</div><span style="color:#444;font-size:14px">›</span></div>
-      </div>
-      <div class="lcard-dots" onclick="openLeagueSheet('GOAT Season IV',1)">···</div>
-    </div>
-    <div class="lcard" id="lc-2">
-      <div class="lcard-body" onclick="go('s-home')">
-        <div><div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px">Élite Santander</div><div style="display:flex;gap:8px;align-items:center"><span class="badge b-priv">Privada</span><span style="width:3px;height:3px;background:#444;border-radius:50%;display:inline-block"></span><span style="font-size:11px;color:var(--gray)">Semanal</span></div></div>
-        <div style="text-align:right"><div style="font-size:11px;color:var(--gray);margin-bottom:4px"><strong style="color:var(--gold)">5</strong> jugadores</div><span style="color:#444;font-size:14px">›</span></div>
-      </div>
-      <div class="lcard-dots" onclick="openLeagueSheet('Élite Santander',2)">···</div>
     </div>
   </div>
 </div>
@@ -384,7 +371,7 @@ textarea.inp{resize:vertical;min-height:80px}
   <div class="shdr"><div class="back" onclick="goBack()">‹</div><div class="stitle">Ajustes</div></div>
   <div style="display:flex;align-items:center;gap:14px;padding:18px 20px;border-bottom:1px solid #111;flex-shrink:0">
     <div style="position:relative"><div style="width:70px;height:70px;background:linear-gradient(135deg,var(--gold),#b8860b);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;border:2px solid rgba(239,184,16,.3)">😎</div><div style="position:absolute;bottom:0;right:0;width:22px;height:22px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer">✏️</div></div>
-    <div><div style="font-size:18px;font-weight:800;color:var(--white)">Carlos Ruiz</div><div style="font-size:12px;color:var(--gray);margin-top:2px">carlos@email.com</div></div>
+    <div><div id="settings-name" style="font-size:18px;font-weight:800;color:var(--white)">—</div><div id="settings-email" style="font-size:12px;color:var(--gray);margin-top:2px">—</div></div>
   </div>
   <div style="padding:18px 20px;display:flex;flex-direction:column;gap:10px;flex:1">
     <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);font-weight:700">Preferencias</div>
@@ -401,7 +388,7 @@ textarea.inp{resize:vertical;min-height:80px}
     <div class="srow" onclick="openModal('m-feedback')"><span style="font-size:14px;color:var(--white);font-weight:600">¿Tienes algún comentario?</span><span style="color:#444;font-size:16px">›</span></div>
     <div class="srow" onclick="openModal('m-about')"><span style="font-size:14px;color:var(--white);font-weight:600">Sobre Fantasy GOAT</span><span style="color:#444;font-size:16px">›</span></div>
     <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);font-weight:700;margin-top:4px">Cuenta</div>
-    <button class="blogout" onclick="go('s-login')">Cerrar sesión</button>
+    <button class="blogout" onclick="fbSignOut()">Cerrar sesión</button>
     <button class="bdanger" onclick="toast('Acción irreversible')">Eliminar cuenta</button>
   </div>
 </div>
@@ -462,7 +449,9 @@ textarea.inp{resize:vertical;min-height:80px}
     <button class="vbtn active" id="vb-list" onclick="setView('list')">Lista</button>
     <button class="vbtn" id="vb-feed" onclick="setView('feed')">Feed</button>
   </div>
-  <div id="list-view"><div class="forum-feed" id="forum-feed"></div></div>
+  <div class="screen-scroll" id="home-scroll">
+    <div id="list-view"><div class="forum-feed" id="forum-feed"></div></div>
+  </div>
   <div id="tiktok-wrap"></div>
   <div class="bnav">
     <div class="ni active" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div>
@@ -540,9 +529,11 @@ textarea.inp{resize:vertical;min-height:80px}
       <option value="nov">Noviembre 2025</option>
     </select>
   </div>
-  <div id="rank-top3" class="rank-top3"></div>
-  <div id="rank-global-label" style="display:none;padding:4px 20px 4px;flex-shrink:0"><span class="global-pill">Acumulado total · todos los meses</span></div>
-  <div id="rank-list" class="rank-list"></div>
+  <div class="screen-scroll">
+    <div id="rank-top3" class="rank-top3"></div>
+    <div id="rank-global-label" style="display:none;padding:4px 20px 4px;flex-shrink:0"><span class="global-pill">Acumulado total · todos los meses</span></div>
+    <div id="rank-list" class="rank-list"></div>
+  </div>
   <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni active" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
 </div>
 
@@ -551,23 +542,26 @@ textarea.inp{resize:vertical;min-height:80px}
   <div class="lhdr"><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="goBack()">‹</div><div class="lname">Perfil</div></div><div class="gear" onclick="go('s-settings')">⚙️</div></div>
   <div class="stats-hero">
     <div class="stats-av">😈</div>
-    <div style="font-size:20px;font-weight:800;color:var(--white);margin-top:4px">CarlosGOAT</div>
-    <div style="font-size:12px;color:var(--gray);margin-top:2px">carlos@email.com</div>
+    <div id="prof-name" style="font-size:20px;font-weight:800;color:var(--white);margin-top:4px">—</div>
+    <div id="prof-email" style="font-size:12px;color:var(--gray);margin-top:2px">—</div>
     <button class="trophy-btn" onclick="openModal('m-trophy')">Solicitar Trofeo</button>
   </div>
+  <div class="screen-scroll">
   <div class="sg">
-    <div class="sbox"><div class="sv gold">4.750</div><div class="slbl">Puntos totales</div></div>
-    <div class="sbox"><div class="sv">23</div><div class="slbl">Retos completados</div></div>
-    <div class="sbox"><div class="sv">7</div><div class="slbl">Ligas activas</div></div>
-    <div class="sbox"><div class="sv" style="color:var(--green)">94%</div><div class="slbl">Tasa aprobación</div></div>
+    <div class="sbox"><div class="sv gold" id="prof-pts">0</div><div class="slbl">Puntos totales</div></div>
+    <div class="sbox"><div class="sv" id="prof-retos">0</div><div class="slbl">Retos completados</div></div>
+    <div class="sbox"><div class="sv" id="prof-ligas">0</div><div class="slbl">Ligas activas</div></div>
+    <div class="sbox"><div class="sv" id="prof-aprov" style="color:var(--green)">—</div><div class="slbl">Tasa aprobación</div></div>
   </div>
-  <div class="shl"><div class="lbl">Racha actual</div><div class="val">8 semanas consecutivas en TOP 3</div></div>
-  <div style="padding:0 18px;margin-bottom:8px"><div style="font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gray);font-weight:700">Tu historial por reto</div></div>
-  <div class="rsc"><div class="rsc-hdr"><div class="rsc-title">Salir de fiesta 3 noches seguidas</div><div class="rsc-pts">500</div></div><div class="rsc-row"><div class="rsc-lbl">Veces completado</div><div class="rsc-val">4</div><div class="rsc-bar-wrap"><div class="rsc-bar" style="width:80%"></div></div></div><div class="rsc-row"><div class="rsc-lbl">Pts acumulados</div><div class="rsc-val">2.000</div></div><div class="rsc-row"><div class="rsc-lbl">Última vez</div><div class="rsc-val" style="font-size:11px;font-family:'Montserrat',sans-serif;color:var(--gl)">Hace 3 días</div></div></div>
-  <div class="rsc"><div class="rsc-hdr"><div class="rsc-title">Acabar un maratón completo</div><div class="rsc-pts">750</div></div><div class="rsc-row"><div class="rsc-lbl">Veces completado</div><div class="rsc-val">48</div><div class="rsc-bar-wrap"><div class="rsc-bar" style="width:100%"></div></div></div><div class="rsc-row"><div class="rsc-lbl">Pts acumulados</div><div class="rsc-val">36.000</div></div><div class="rsc-row"><div class="rsc-lbl">Mejor marca</div><div class="rsc-val" style="font-size:11px;font-family:'Montserrat',sans-serif;color:var(--green)">3h 42min</div></div></div>
-  <div class="rsc"><div class="rsc-hdr"><div class="rsc-title">100 flexiones de una vez</div><div class="rsc-pts">300</div></div><div class="rsc-row"><div class="rsc-lbl">Veces completado</div><div class="rsc-val">7</div><div class="rsc-bar-wrap"><div class="rsc-bar" style="width:35%"></div></div></div><div class="rsc-row"><div class="rsc-lbl">Pts acumulados</div><div class="rsc-val">2.100</div></div></div>
-  <div class="rsc" style="margin-bottom:0"><div class="rsc-hdr"><div class="rsc-title">Leer un libro en una semana</div><div class="rsc-pts">150</div></div><div class="rsc-row"><div class="rsc-lbl">Veces completado</div><div class="rsc-val">3</div><div class="rsc-bar-wrap"><div class="rsc-bar" style="width:15%"></div></div></div><div class="rsc-row"><div class="rsc-lbl">Pts acumulados</div><div class="rsc-val">450</div></div></div>
+  <div id="prof-historial">
+    <div style="text-align:center;padding:32px 20px;color:var(--gray)">
+      <div style="font-size:32px;margin-bottom:10px">📋</div>
+      <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin historial todavía</div>
+      <div style="font-size:11px;line-height:1.5">Completa retos para ver tus estadísticas aquí</div>
+    </div>
+  </div>
   <div style="padding:14px 18px 8px"><button class="bgo" onclick="nav('s-quinteto',3)">Ver Quinteto</button></div>
+  </div>
   <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div><div class="ni active" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
 </div>
 
@@ -718,7 +712,7 @@ textarea.inp{resize:vertical;min-height:80px}
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 var CUR='s-login',PREV=null,TT=null;
 var pickedUser=null,currentView='list',tkIdx=0,tkStartY=0;
 var selectedTrophy=1;
@@ -730,52 +724,9 @@ var dragSrc=null,pickerCtx={type:'tit',idx:0};
 var titulares=[0,1,2,3,null],banquillo=[4,5,null,null];
 var LANG='es';
 
-var PLAYERS=[
-  {name:'CarlosGOAT',pts:'4.750',emoji:'😈',bg:'linear-gradient(135deg,#EFB810,#b8860b)',col:'#000',init:'CG'},
-  {name:'MikelFC',pts:'3.240',emoji:'😊',bg:'#242424',col:'#fff',init:'MK'},
-  {name:'LauraElite',pts:'2.890',emoji:'👩',bg:'#1e1e1e',col:'#fff',init:'LE'},
-  {name:'PedroMás',pts:'2.100',emoji:'🧔',bg:'#191919',col:'#fff',init:'PM'},
-  {name:'LeonardoK',pts:'1.850',emoji:'🦁',bg:'#141414',col:'#fff',init:'LK'},
-  {name:'WolfPackX',pts:'1.640',emoji:'🐺',bg:'#111',col:'#fff',init:'WP'},
-  {name:'EagleRise',pts:'1.200',emoji:'🦅',bg:'#0e0e0e',col:'#fff',init:'ER'},
-  {name:'FoxTricky',pts:'980',emoji:'🦊',bg:'#0a0a0a',col:'#fff',init:'FT'}
-];
-
-var subs=[
-  {user:'CarlosGOAT',emoji:'😈',reto:'Salir de fiesta 3 noches seguidas',pts:500,status:'pending',desc:'Viernes, sábado y domingo. Tres noches épicas.',mediaType:'FOTO',time:'2h'},
-  {user:'LeonardoK',emoji:'🦁',reto:'Hacer 100 flexiones de una vez',pts:300,status:'pending',desc:'100 de una tacada sin parar.',mediaType:'VIDEO',time:'5h'},
-  {user:'PedroMás',emoji:'🧔',reto:'Acabar un maratón completo',pts:750,status:'approved',desc:'42km completados. Medalla en mano.',mediaType:'FOTO',time:'Ayer'},
-  {user:'WolfPackX',emoji:'🐺',reto:'Cocinar plato gourmet',pts:200,status:'approved',desc:'Risotto de trufa negra.',mediaType:'FOTO',time:'Ayer'},
-  {user:'EagleRise',emoji:'🦅',reto:'Leer un libro en una semana',pts:150,status:'rejected',desc:'312 páginas en 6 días.',mediaType:'TEXTO',time:'Hace 2d'}
-];
-
-var RANK={
-  global:[
-    {name:'LauraElite',emoji:'👩',pts:12400,retos:47},{name:'CarlosGOAT',emoji:'😈',pts:11100,retos:43},
-    {name:'JuanGOAT',emoji:'🙃',pts:9850,retos:38},{name:'MikelFC',emoji:'😊',pts:8720,retos:34},
-    {name:'PedroMás',emoji:'🧔',pts:7600,retos:30},{name:'LeonardoK',emoji:'🦁',pts:6340,retos:25},
-    {name:'WolfPackX',emoji:'🐺',pts:5210,retos:21},{name:'EagleRise',emoji:'🦅',pts:4080,retos:16}
-  ],
-  feb:[
-    {name:'CarlosGOAT',emoji:'😈',pts:4750,retos:18},{name:'MikelFC',emoji:'😊',pts:3240,retos:13},
-    {name:'LauraElite',emoji:'👩',pts:2890,retos:11},{name:'PedroMás',emoji:'🧔',pts:2100,retos:8},
-    {name:'LeonardoK',emoji:'🦁',pts:1850,retos:7},{name:'WolfPackX',emoji:'🐺',pts:1640,retos:6},
-    {name:'EagleRise',emoji:'🦅',pts:1200,retos:5},{name:'FoxTricky',emoji:'🦊',pts:980,retos:4}
-  ],
-  ene:[
-    {name:'LauraElite',emoji:'👩',pts:4120,retos:16},{name:'CarlosGOAT',emoji:'😈',pts:3890,retos:15},
-    {name:'JuanGOAT',emoji:'🙃',pts:3200,retos:12},{name:'PedroMás',emoji:'🧔',pts:2760,retos:11},
-    {name:'WolfPackX',emoji:'🐺',pts:2100,retos:8},{name:'MikelFC',emoji:'😊',pts:1980,retos:7}
-  ],
-  dic:[
-    {name:'MikelFC',emoji:'😊',pts:3900,retos:15},{name:'PedroMás',emoji:'🧔',pts:3640,retos:14},
-    {name:'LauraElite',emoji:'👩',pts:3200,retos:12},{name:'CarlosGOAT',emoji:'😈',pts:2980,retos:11}
-  ],
-  nov:[
-    {name:'JuanGOAT',emoji:'🙃',pts:4400,retos:17},{name:'LauraElite',emoji:'👩',pts:4090,retos:16},
-    {name:'CarlosGOAT',emoji:'😈',pts:3480,retos:13},{name:'WolfPackX',emoji:'🐺',pts:2970,retos:11}
-  ]
-};
+var PLAYERS=[];
+var subs=[];
+var RANK={global:[],feb:[],ene:[],dic:[],nov:[]};
 
 function go(id){
   if(id===CUR)return;
@@ -903,6 +854,10 @@ function setView(v){
 }
 function renderFeed(){
   var ff=document.getElementById('forum-feed');ff.innerHTML='';
+  if(!subs.length){
+    ff.innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">📭</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin actividad todavía</div><div style="font-size:11px;line-height:1.5">Los retos completados por los miembros aparecerán aquí</div></div>';
+    return;
+  }
   subs.forEach(function(s){
     var badge=s.status==='pending'?'<span class="badge b-rev">Pendiente</span>':s.status==='approved'?'<span class="badge b-ok">Aprobado</span>':'<span class="badge b-no">Rechazado</span>';
     var vbar=s.status==='pending'?'<div class="vbar"><div class="vbtn2 vok" onclick="approvePost(this)">Aprobar</div><div class="vbtn2 vno" onclick="rejectPost(this)">Rechazar</div></div>':'';
@@ -927,8 +882,6 @@ function renderTikTok(){
       '<div class="tk-back" onclick="setView(\'list\')">‹</div>'+
       '<div class="tk-side">'+
         '<div class="tk-sb"><div class="tk-ico">👍</div><div class="tk-tl">Me gusta</div></div>'+
-        '<div class="tk-sb"><div class="tk-ico">💬</div><div class="tk-tl">Comentar</div></div>'+
-        '<div class="tk-sb"><div class="tk-ico">📤</div><div class="tk-tl">Compartir</div></div>'+
       '</div>';
     tw.appendChild(slide);
   });
@@ -989,9 +942,13 @@ function renderRanking(){
   var sel=document.getElementById('rank-filter').value;
   var isG=sel==='global';
   document.getElementById('rank-global-label').style.display=isG?'block':'none';
-  var data=RANK[sel]||RANK.feb;
+  var data=RANK[sel]||[];
   var top3=document.getElementById('rank-top3');var list=document.getElementById('rank-list');
   top3.innerHTML='';list.innerHTML='';
+  if(!data.length){
+    list.innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">🏆</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin datos todavía</div><div style="font-size:11px;line-height:1.5">El ranking se llenará cuando los miembros completen retos</div></div>';
+    return;
+  }
   if(data.length>=2){
     var order=data.length>=3?[data[1],data[0],data[2]]:[data[1],data[0]];
     var classes=['p2','p1','p3'],bars=['pb2','pb1','pb3'],nums=['2','1','3'];
@@ -1079,6 +1036,18 @@ document.addEventListener('click',function(){var p=document.getElementById('info
 function openPicker(type,idx){
   pickerCtx={type:type,idx:idx};
   document.getElementById('pick-slot').textContent=(type==='tit'?'Titular ':'Suplente ')+(idx+1);
+  var ul=document.querySelector('.ulist');
+  ul.innerHTML='';
+  if(!PLAYERS.length){
+    ul.innerHTML='<div style="text-align:center;padding:24px;color:var(--gray);font-size:12px">No hay miembros en la liga todavía</div>';
+  } else {
+    PLAYERS.forEach(function(p){
+      var row=document.createElement('div');row.className='upick';
+      row.innerHTML='<div class="u-av" style="background:'+p.bg+';color:'+p.col+'">'+p.init+'</div><div class="upick-name">'+p.name+'</div><div class="upick-pts">'+p.pts+'</div>';
+      row.onclick=function(){selUser(row,p.name,p.pts,p.emoji);};
+      ul.appendChild(row);
+    });
+  }
   document.querySelectorAll('.upick').forEach(function(u){u.classList.remove('sel');});
   pickedUser=null;
   document.getElementById('picker').classList.add('show');
@@ -1124,6 +1093,97 @@ function sendFeedback(){
 renderFeed();
 renderRanking();
 </script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+           GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile }
+    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0-pJ12NXSh4LsdH8AHuK8mg_glWAVrmY",
+    authDomain: "fantasy-goat-5d70d.firebaseapp.com",
+    projectId: "fantasy-goat-5d70d",
+    storageBucket: "fantasy-goat-5d70d.firebasestorage.app",
+    messagingSenderId: "191273517968",
+    appId: "1:191273517968:web:0a6b63ca46e31ff54b6915",
+    measurementId: "G-KY7MHRWWZN"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  // --- Sign in with email/password ---
+  window.fbSignIn = function() {
+    var email = document.getElementById('inp-email').value.trim();
+    var pass  = document.getElementById('inp-pass').value;
+    if(!email || !pass){ toast('Rellena email y contraseña'); return; }
+    signInWithEmailAndPassword(auth, email, pass)
+      .then(function(){ go('s-dashboard'); })
+      .catch(function(e){
+        var msg = e.code === 'auth/invalid-credential' ? 'Email o contraseña incorrectos'
+                : e.code === 'auth/user-not-found'     ? 'Usuario no encontrado'
+                : e.code === 'auth/wrong-password'     ? 'Contraseña incorrecta'
+                : e.message;
+        toast(msg);
+      });
+  };
+
+  // --- Create account with email/password ---
+  window.fbSignUp = function() {
+    var email = document.getElementById('inp-email').value.trim();
+    var pass  = document.getElementById('inp-pass').value;
+    if(!email || !pass){ toast('Rellena email y contraseña'); return; }
+    if(pass.length < 6){ toast('La contraseña debe tener al menos 6 caracteres'); return; }
+    createUserWithEmailAndPassword(auth, email, pass)
+      .then(function(cred){
+        var name = email.split('@')[0];
+        return updateProfile(cred.user, { displayName: name });
+      })
+      .then(function(){ go('s-dashboard'); })
+      .catch(function(e){
+        var msg = e.code === 'auth/email-already-in-use' ? 'Este email ya está registrado'
+                : e.code === 'auth/invalid-email'        ? 'Email no válido'
+                : e.message;
+        toast(msg);
+      });
+  };
+
+  // --- Google sign in ---
+  window.fbGoogle = function() {
+    signInWithPopup(auth, provider)
+      .then(function(){ go('s-dashboard'); })
+      .catch(function(e){
+        if(e.code !== 'auth/popup-closed-by-user') toast('Error Google: ' + e.message);
+      });
+  };
+
+  // --- Sign out ---
+  window.fbSignOut = function() {
+    signOut(auth).then(function(){ go('s-login'); });
+  };
+
+  // --- Auto-detect session ---
+  onAuthStateChanged(auth, function(user) {
+    if(user) {
+      // Update profile UI
+      var name = user.displayName || user.email.split('@')[0];
+      var el = document.getElementById('prof-name');
+      if(el) el.textContent = name;
+      var el2 = document.getElementById('prof-email');
+      if(el2) el2.textContent = user.email;
+      var el3 = document.getElementById('settings-name');
+      if(el3) el3.textContent = name;
+      var el4 = document.getElementById('settings-email');
+      if(el4) el4.textContent = user.email;
+      go('s-dashboard');
+    } else {
+      go('s-login');
+    }
+  });
+</script>
+
 </div>
 </body>
 </html>
