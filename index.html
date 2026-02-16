@@ -465,25 +465,30 @@ textarea.inp{resize:vertical;min-height:80px}
 
 <!-- GOAT / RETOS -->
 <div class="screen" id="s-goat">
-  <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname">Los Intocables</div></div></div><span class="badge b-priv">Privada</span></div>
-  <div class="gtop">
+  <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname" id="goat-liga-name">—</div></div></div><span class="badge b-priv" id="goat-liga-badge">—</span></div>
+  <div class="gtop" style="flex-shrink:0">
     <div class="gtitle">RETOS</div>
     <div class="gtabs"><div class="gtab active" id="gtab-r" onclick="switchTab('r')">Retos</div><div class="gtab" id="gtab-p" onclick="switchTab('p')">Predicciones</div></div>
   </div>
-  <div class="gpanel" id="gpanel-r">
-    <div class="cbar"><div class="cbtn" onclick="go('s-crear-reto')">+ Crear Reto</div><div class="cbtn" onclick="toast('Próximamente')">+ Predicción</div></div>
-    <div class="secrow"><span class="sectitle">Retos de la liga</span><span class="badge b-rev">3 pendientes</span></div>
-    <div class="rc"><div class="rc-top"><div><div class="rc-title">Salir de fiesta 3 noches seguidas</div><div class="rc-creator">@JuanGOAT · 4 completados</div></div><div class="rc-pts">500<span>pts</span></div></div><div class="rc-bot"><div class="rc-who">Completaron: <strong>CarlosGOAT, MikelFC</strong></div><button class="cbtn2" onclick="openComp('Salir de fiesta 3 noches seguidas','JuanGOAT',500)">Completar</button></div></div>
-    <div class="rc"><div class="rc-top"><div><div class="rc-title">Hacer 100 flexiones de una vez</div><div class="rc-creator">@CarlosGOAT · 1 completado</div></div><div class="rc-pts">300<span>pts</span></div></div><div class="rc-bot"><div class="rc-who">Completaron: <strong>LeonardoK</strong></div><button class="cbtn2" onclick="openComp('Hacer 100 flexiones de una vez','CarlosGOAT',300)">Completar</button></div></div>
-    <div class="rc"><div class="rc-top"><div><div class="rc-title">Acabar un maratón completo</div><div class="rc-creator">@LauraElite · 2 completados</div></div><div class="rc-pts">750<span>pts</span></div></div><div class="rc-bot"><div class="rc-who">Completaron: <strong>PedroMás, WolfPackX</strong></div><button class="cbtn2" onclick="openComp('Acabar un maratón completo','LauraElite',750)">Completar</button></div></div>
-    <div class="rc"><div class="rc-top"><div><div class="rc-title">No bajar de 8.000 pasos al día</div><div class="rc-creator">@WolfPackX · 0 completados</div></div><div class="rc-pts neg">-100<span>penalización</span></div></div><div class="rc-bot"><div class="rc-who">Penalización si no cumples</div><button class="cbtn2" onclick="openComp('No bajar de 8.000 pasos al día','WolfPackX',-100)">Registrar</button></div></div>
-    <div class="rc"><div class="rc-top"><div><div class="rc-title">Leer un libro en una semana</div><div class="rc-creator">@EagleRise · 3 completados</div></div><div class="rc-pts">150<span>pts</span></div></div><div class="rc-bot"><div class="rc-who">Completaron: <strong>LauraElite +2</strong></div><button class="cbtn2" onclick="openComp('Leer un libro en una semana','EagleRise',150)">Completar</button></div></div>
-  </div>
-  <div class="gpanel" id="gpanel-p" style="display:none">
-    <div class="cbar"><div class="cbtn" style="flex:1" onclick="toast('Próximamente')">+ Predicción</div></div>
-    <div class="pred-card"><div class="pred-match">¿Quién ganará el próximo poker de amigos?</div><div class="pred-q">@JuanGOAT · +200 pts</div><div class="pred-opts"><div class="pred-opt sel" onclick="selPred(this)">CarlosGOAT</div><div class="pred-opt" onclick="selPred(this)">MikelFC</div><div class="pred-opt" onclick="selPred(this)">PedroMás</div></div></div>
-    <div class="pred-card"><div class="pred-match">¿Alguien acaba el maratón en menos de 4h?</div><div class="pred-q">@LauraElite · +300 pts</div><div class="pred-opts"><div class="pred-opt" onclick="selPred(this)">Sí</div><div class="pred-opt" onclick="selPred(this)">No</div></div></div>
-    <button class="bg" onclick="toast('Guardado')">Guardar</button>
+  <div class="screen-scroll">
+    <div class="gpanel" id="gpanel-r">
+      <div class="cbar"><div class="cbtn" onclick="go('s-crear-reto')">+ Crear Reto</div><div class="cbtn" onclick="toast('Próximamente')">+ Predicción</div></div>
+      <div class="secrow"><span class="sectitle">Retos de la liga</span><span class="badge b-rev" id="retos-pending-badge" style="display:none">0 pendientes</span></div>
+      <div id="retos-list">
+        <div style="text-align:center;padding:40px 20px;color:var(--gray)">
+          <div style="font-size:36px;margin-bottom:12px">🎯</div>
+          <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin retos todavía</div>
+          <div style="font-size:11px;line-height:1.5">Crea el primer reto de la liga</div>
+        </div>
+      </div>
+    </div>
+    <div class="gpanel" id="gpanel-p" style="display:none">
+      <div class="cbar"><div class="cbtn" style="flex:1" onclick="toast('Próximamente')">+ Predicción</div></div>
+      <div style="text-align:center;padding:40px 20px;color:var(--gray)">
+        <div style="font-size:36px;margin-bottom:12px">🔮</div>
+        <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Predicciones próximamente</div>
+      </div>
+    </div>
   </div>
   <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc active" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
 </div>
@@ -492,10 +497,10 @@ textarea.inp{resize:vertical;min-height:80px}
 <div class="screen full-scroll" id="s-crear-reto">
   <div class="shdr"><div class="back" onclick="go('s-goat')">‹</div><div class="stitle">Crear Reto</div></div>
   <div style="padding:24px;display:flex;flex-direction:column;gap:20px;flex:1">
-    <div class="iw"><label class="il">Título del reto</label><input class="inp" type="text" placeholder="Ej: Hacer una ruta de senderismo..."></div>
-    <div class="iw"><label class="il">Puntos (positivos o negativos)</label><input class="inp" type="number" placeholder="Ej: 300 o -100"><div style="font-size:10px;color:var(--gray);margin-top:4px">Usa puntos negativos para penalizaciones</div></div>
-    <div class="iw"><label class="il">Descripción (opcional)</label><input class="inp" type="text" placeholder="Añade detalles..."></div>
-    <button class="bg" onclick="toast('Reto publicado');go('s-goat')">Publicar Reto</button>
+    <div class="iw"><label class="il">Título del reto</label><input class="inp" id="reto-titulo" type="text" placeholder="Ej: Hacer una ruta de senderismo..."></div>
+    <div class="iw"><label class="il">Puntos (positivos o negativos)</label><input class="inp" id="reto-pts" type="number" placeholder="Ej: 300 o -100"><div style="font-size:10px;color:var(--gray);margin-top:4px">Usa puntos negativos para penalizaciones</div></div>
+    <div class="iw"><label class="il">Descripción (opcional)</label><input class="inp" id="reto-desc" type="text" placeholder="Añade detalles..."></div>
+    <button class="bg" onclick="publicarReto()">Publicar Reto</button>
   </div>
 </div>
 
@@ -1102,6 +1107,77 @@ function compartirWhatsApp() {
   if(ligaId) window._pendingJoinId = ligaId.toUpperCase();
 })();
 
+// ══ RETOS (Firestore) ══════════════════════════════════════
+// Estructura: /ligas/{ligaId}/retos/{retoId}
+//   { titulo, pts, desc, creador, creadorNombre, creada }
+
+function publicarReto() {
+  var titulo = document.getElementById('reto-titulo').value.trim();
+  var pts    = parseInt(document.getElementById('reto-pts').value);
+  var desc   = document.getElementById('reto-desc').value.trim();
+  if(!titulo)             { toast('Escribe el título del reto'); return; }
+  if(isNaN(pts))          { toast('Indica los puntos'); return; }
+  if(!ligaActual)         { toast('Selecciona una liga primero'); return; }
+  var user = window._currentUser;
+  if(!user)               { toast('Debes iniciar sesión'); return; }
+  // Call Firestore from module scope via window bridge
+  window._fsPublicarReto && window._fsPublicarReto({
+    titulo: titulo, pts: pts, desc: desc || '',
+    creador: user.uid,
+    creadorNombre: user.displayName || user.email.split('@')[0],
+    creada: Date.now()
+  });
+}
+
+function renderRetos(retos) {
+  var cont = document.getElementById('retos-list');
+  var badge = document.getElementById('retos-pending-badge');
+  if(!cont) return;
+  if(!retos || !retos.length) {
+    cont.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">🎯</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin retos todavía</div><div style="font-size:11px;line-height:1.5">Crea el primer reto de la liga</div></div>';
+    if(badge) badge.style.display='none';
+    return;
+  }
+  if(badge){ badge.style.display='inline-flex'; badge.textContent=retos.length+' reto'+(retos.length!==1?'s':''); }
+  cont.innerHTML = '';
+  retos.forEach(function(r) {
+    var neg = r.pts < 0;
+    var div = document.createElement('div'); div.className='rc';
+    var safeT = r.titulo.replace(/"/g,'&quot;');
+    var safeC = r.creadorNombre.replace(/"/g,'&quot;');
+    div.innerHTML =
+      '<div class="rc-top">'+
+        '<div>'+
+          '<div class="rc-title">'+r.titulo+'</div>'+
+          '<div class="rc-creator">@'+r.creadorNombre+(r.desc?' · '+r.desc:'')+'</div>'+
+        '</div>'+
+        '<div class="rc-pts'+(neg?' neg':'')+'">'+r.pts+'<span>'+(neg?'penalización':'pts')+'</span></div>'+
+      '</div>'+
+      '<div class="rc-bot">'+
+        '<div class="rc-who" style="font-size:11px;color:var(--gray)">Creado por @'+r.creadorNombre+'</div>'+
+        '<button class="cbtn2" data-titulo="'+safeT+'" data-creator="'+safeC+'" data-pts="'+r.pts+'" onclick="openCompFromBtn(this)">Completar</button>'+
+      '</div>';
+    cont.appendChild(div);
+  });
+}
+
+// ══ FIX: abrirLigaFS también actualiza goat/ranking headers ══
+function syncLigaUI(l) {
+  if(!l) return;
+  // Home
+  var lname = document.querySelector('#s-home .lname'); if(lname) lname.textContent = l.nombre;
+  var lsub  = document.querySelector('#s-home .lsub');  if(lsub)  lsub.textContent  = (l.miembros||[]).length+' jugadores · '+l.period;
+  // Goat/Retos
+  var gname  = document.getElementById('goat-liga-name');  if(gname)  gname.textContent  = l.nombre;
+  var gbadge = document.getElementById('goat-liga-badge'); if(gbadge){ gbadge.textContent = l.tipo==='priv'?'Privada':'Pública'; gbadge.className='badge '+(l.tipo==='priv'?'b-priv':'b-pub'); }
+  // Ranking header
+  var rname = document.querySelector('#s-ranking .lname'); if(rname) rname.textContent = l.nombre;
+}
+
+function openCompFromBtn(btn) {
+  openComp(btn.dataset.titulo, btn.dataset.creator, parseInt(btn.dataset.pts));
+}
+
 renderFeed();
 renderRanking();
 renderLigas();
@@ -1112,7 +1188,8 @@ renderLigas();
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
            GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile }
     from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove }
+  import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove,
+           collection, addDoc, getDocs, query, orderBy }
     from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -1241,9 +1318,47 @@ renderLigas();
   window.abrirLigaFS = function(idx) {
     var l=(window._ligasFS||[])[idx]; if(!l) return;
     ligaActual=l;
-    var lname=document.querySelector('#s-home .lname'); if(lname) lname.textContent=l.nombre;
-    var lsub=document.querySelector('#s-home .lsub'); if(lsub) lsub.textContent=(l.miembros||[]).length+' jugadores · '+l.period;
+    syncLigaUI(l);
+    cargarRetos(l.id);
     go('s-home');
+  };
+
+  // ── Retos ────────────────────────────────────────────────
+  async function cargarRetos(ligaId) {
+    if(!ligaId) return;
+    try {
+      var q = query(collection(db,'ligas',ligaId,'retos'), orderBy('creada','desc'));
+      var snap = await getDocs(q);
+      var retos = [];
+      snap.forEach(function(d){ retos.push(Object.assign({id:d.id},d.data())); });
+      renderRetos(retos);
+    } catch(e) {
+      console.warn('cargarRetos error:', e);
+      renderRetos([]);
+    }
+  }
+
+  window._fsPublicarReto = async function(reto) {
+    if(!ligaActual){ toast('Selecciona una liga primero'); return; }
+    try {
+      await addDoc(collection(db,'ligas',ligaActual.id,'retos'), reto);
+      // Clear inputs
+      document.getElementById('reto-titulo').value='';
+      document.getElementById('reto-pts').value='';
+      document.getElementById('reto-desc').value='';
+      toast('Reto publicado');
+      await cargarRetos(ligaActual.id);
+      go('s-goat');
+    } catch(e) {
+      toast('Error al publicar: '+e.message);
+    }
+  };
+
+  // Also load retos when navigating to goat screen
+  var _origGo = window.go;
+  window.go = function(id) {
+    _origGo(id);
+    if(id==='s-goat' && ligaActual) cargarRetos(ligaActual.id);
   };
 
   window.openLeagueSheetFS = function(idx) {
