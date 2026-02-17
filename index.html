@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Fantasy GOAT</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -11,54 +11,62 @@
 html,body{height:100%}
 body{font-family:'Montserrat',sans-serif;background:#0a0a0a;display:flex;justify-content:center;align-items:center;overflow:hidden}
 .phone{width:390px;height:844px;background:var(--black);border-radius:44px;overflow:hidden;position:relative;box-shadow:0 0 0 2px #222,0 0 60px rgba(239,184,16,.08),0 40px 80px rgba(0,0,0,.9);flex-shrink:0}
-@media(max-width:500px){body{display:block}.phone{width:100vw;height:100svh;border-radius:0;box-shadow:none}.sb{display:none}.screen{top:0!important}}
-.sb{height:44px;background:var(--black);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100;flex-shrink:0}
-.sb .time{font-size:15px;font-weight:700;color:var(--white)}
-.sb .icons{display:flex;gap:6px;align-items:center;color:var(--white);font-size:13px}
-.screen{position:absolute;top:44px;left:0;right:0;bottom:0;background:var(--black);overflow:hidden;opacity:0;pointer-events:none;transform:translateX(30px);transition:opacity .32s cubic-bezier(.4,0,.2,1),transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
-.screen-scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;scrollbar-width:none}
-.screen-scroll::-webkit-scrollbar{display:none}
-.screen.full-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
+@media(max-width:500px){body{display:block;align-items:unset;justify-content:unset}.phone{width:100vw;height:100svh;border-radius:0;box-shadow:none}.status-bar{display:none}.screen{top:0!important}}
+.status-bar{height:44px;background:var(--black);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100;flex-shrink:0}
+.status-bar .time{font-size:15px;font-weight:700;color:var(--white)}
+.status-bar .icons{display:flex;gap:6px;align-items:center;color:var(--white);font-size:13px}
+.screen{position:absolute;top:44px;left:0;right:0;bottom:0;background:var(--black);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y;opacity:0;pointer-events:none;transform:translateX(30px);transition:opacity .32s cubic-bezier(.4,0,.2,1),transform .32s cubic-bezier(.4,0,.2,1);scrollbar-width:none;display:flex;flex-direction:column}
+.screen::-webkit-scrollbar{display:none}
 .screen.active{opacity:1;pointer-events:all;transform:translateX(0)}
 .screen.prev{opacity:0;transform:translateX(-30px);pointer-events:none}
-.bnav{background:rgba(6,6,6,.97);backdrop-filter:blur(20px);border-top:1px solid #1a1a1a;display:flex;align-items:center;justify-content:space-around;padding:10px 8px 24px;flex-shrink:0;z-index:50}
+/* NAV */
+.bnav{position:sticky;bottom:0;background:rgba(6,6,6,.97);backdrop-filter:blur(20px);border-top:1px solid #1a1a1a;display:flex;align-items:center;justify-content:space-around;padding:10px 8px 24px;flex-shrink:0;z-index:50}
 .ni{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:6px 10px;border-radius:12px;transition:all .2s}
 .ni .icon{font-size:20px;color:var(--gray);transition:all .2s}
 .ni .lbl{font-size:9px;letter-spacing:.5px;color:var(--gray);text-transform:uppercase;font-weight:600;transition:all .2s}
-.ni.active .icon,.ni.active .lbl{color:var(--gold)}
-.ni.active .icon{filter:drop-shadow(0 0 6px var(--gglow))}
+.ni.active .icon{color:var(--gold);filter:drop-shadow(0 0 6px var(--gglow))}
+.ni.active .lbl{color:var(--gold)}
 .nc{width:52px;height:52px;background:var(--gold);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;box-shadow:0 0 20px var(--gglow);transition:all .2s;margin-bottom:8px}
 .nc:active{transform:scale(.93)}
 .nc.active{box-shadow:0 0 28px rgba(239,184,16,.6)}
+/* HEADERS */
 .lhdr{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid #111;flex-shrink:0}
 .lname{font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;color:var(--white)}
 .lsub{font-size:10px;color:var(--gray);letter-spacing:1px;text-transform:uppercase}
 .shdr{display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #111;flex-shrink:0}
 .stitle{font-family:'Bebas Neue',cursive;font-size:26px;letter-spacing:2px;color:var(--white)}
 .back{width:36px;height:36px;background:var(--card);border:1px solid #222;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--white);transition:all .2s;flex-shrink:0}
+.back:hover{border-color:var(--gold);color:var(--gold)}
 .bsm{width:30px;height:30px;font-size:14px}
 .gear{width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--card);border-radius:50%;font-size:18px;cursor:pointer;color:var(--gold);border:1px solid rgba(239,184,16,.2);flex-shrink:0}
+/* BADGES */
 .badge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.b-pend{background:rgba(120,120,120,.18);color:var(--gl)}
 .b-ok{background:rgba(46,204,113,.15);color:var(--green)}
 .b-no{background:rgba(231,76,60,.12);color:var(--red)}
 .b-rev{background:rgba(239,184,16,.15);color:var(--gold)}
 .b-priv{background:rgba(239,184,16,.1);color:var(--gold)}
 .b-pub{background:rgba(255,255,255,.08);color:var(--gl)}
+/* INPUTS */
 .iw{display:flex;flex-direction:column;gap:6px}
 .il{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);font-weight:600}
 .inp{background:var(--card);border:1px solid #222;border-radius:12px;padding:14px 16px;color:var(--white);font-family:'Montserrat',sans-serif;font-size:14px;outline:none;transition:border-color .2s;width:100%}
 .inp:focus{border-color:var(--gold)}
 .inp::placeholder{color:#444}
 textarea.inp{resize:vertical;min-height:80px}
+/* BUTTONS */
 .bg{width:100%;padding:16px;background:var(--gold);color:var(--black);border:none;border-radius:14px;font-family:'Montserrat',sans-serif;font-weight:900;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
-.bg::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent 60%)}
+.bg::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15) 0%,transparent 60%)}
 .bg:active{transform:scale(.97)}
 .bg:hover{box-shadow:0 0 24px var(--gglow)}
 .bw{width:100%;padding:16px;background:transparent;color:var(--white);border:1.5px solid var(--white);border-radius:14px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.bw:hover{border-color:var(--gold);color:var(--gold)}
 .bgo{width:100%;padding:16px;background:transparent;color:var(--gold);border:1.5px solid var(--gold);border-radius:14px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.bgo:hover{background:var(--gdim)}
 .bsm2{padding:10px 20px;font-size:12px;width:auto}
 .bdanger{width:100%;padding:14px;background:rgba(231,76,60,.08);color:var(--red);border:1px solid rgba(231,76,60,.2);border-radius:12px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
 .blogout{width:100%;padding:14px;background:rgba(255,255,255,.04);color:var(--white);border:1px solid #222;border-radius:12px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+/* MISC */
 .pill-grp{display:flex;background:var(--card);border-radius:12px;padding:4px;gap:4px}
 .pill{flex:1;padding:10px;text-align:center;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--gray);border-radius:10px;cursor:pointer;transition:all .2s}
 .pill.active{background:var(--gold);color:var(--black)}
@@ -74,7 +82,10 @@ textarea.inp{resize:vertical;min-height:80px}
 .cond.show{display:flex}
 .srow{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--card);border:1px solid #1e1e1e;border-radius:12px;cursor:pointer;transition:all .2s}
 .srow:hover{border-color:#333}
-.toast{position:absolute;top:56px;left:20px;right:20px;background:#1a1a1a;border:1px solid rgba(239,184,16,.3);border-radius:12px;padding:12px 16px;z-index:999;transform:translateY(-80px);transition:transform .3s cubic-bezier(.4,0,.2,1);opacity:0}
+.lcard{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--card);border:1px solid rgba(239,184,16,.15);border-radius:16px;margin-bottom:10px;cursor:pointer;transition:all .25s}
+.lcard:hover{background:var(--card2);border-color:rgba(239,184,16,.3);transform:translateX(2px)}
+.ldot{width:3px;height:3px;background:#444;border-radius:50%}
+.toast{position:absolute;top:56px;left:20px;right:20px;background:#1a1a1a;border:1px solid rgba(239,184,16,.3);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;z-index:999;transform:translateY(-80px);transition:transform .3s cubic-bezier(.4,0,.2,1);opacity:0}
 .toast.show{transform:translateY(0);opacity:1}
 .secrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .sectitle{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gray);font-weight:700}
@@ -83,64 +94,60 @@ textarea.inp{resize:vertical;min-height:80px}
 .copy-btn{padding:8px 14px;background:var(--gdim);border:1px solid rgba(239,184,16,.3);border-radius:8px;color:var(--gold);font-size:11px;font-weight:700;cursor:pointer}
 .iopt{display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid #1e1e1e;border-radius:14px;cursor:pointer;transition:all .2s}
 .iopt:hover{border-color:rgba(239,184,16,.3)}
-.iico{width:42px;height:42px;border-radius:12px;background:var(--gdim);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid rgba(239,184,16,.2)}
+.iico{width:42px;height:42px;border-radius:12px;background:var(--gdim);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:1px solid rgba(239,184,16,.2)}
+/* ── MODAL OVERLAY ── */
 .modal-ov{position:absolute;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);z-index:300;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;opacity:0;pointer-events:none;transition:opacity .3s}
 .modal-ov.show{opacity:1;pointer-events:all}
-.modal-box{background:#141414;border:1px solid #2a2a2a;border-radius:24px;overflow:hidden;transform:translateY(30px);transition:transform .3s cubic-bezier(.4,0,.2,1);max-height:86vh;display:flex;flex-direction:column}
+.modal-box{background:#141414;border:1px solid #2a2a2a;border-radius:24px;overflow:hidden;transform:translateY(30px);transition:transform .3s cubic-bezier(.4,0,.2,1);max-height:85vh;display:flex;flex-direction:column}
 .modal-ov.show .modal-box{transform:translateY(0)}
 .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #1e1e1e;flex-shrink:0}
 .modal-title{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:2px;color:var(--white)}
 .modal-close{width:30px;height:30px;background:#222;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--gl);flex-shrink:0}
 .modal-body{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;padding:16px 20px}
 .modal-body::-webkit-scrollbar{display:none}
-.sheet-ov{position:absolute;inset:0;background:rgba(0,0,0,.7);z-index:250;opacity:0;pointer-events:none;transition:opacity .25s}
-.sheet-ov.show{opacity:1;pointer-events:all}
-.sheet-box{position:absolute;bottom:0;left:0;right:0;background:#161616;border-radius:20px 20px 0 0;padding:14px 20px 36px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
-.sheet-ov.show .sheet-box{transform:translateY(0)}
-.sheet-handle{width:36px;height:4px;background:#333;border-radius:2px;margin:0 auto 14px}
-.sheet-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);font-weight:700;margin-bottom:12px}
-.sheet-btn{padding:15px 0;border-bottom:1px solid #1e1e1e;cursor:pointer;font-size:14px;font-weight:700;color:var(--white);display:block}
-.sheet-btn:last-child{border-bottom:none}
-.sheet-btn.danger{color:var(--red)}
-.lcard{display:flex;align-items:stretch;background:var(--card);border:1px solid rgba(239,184,16,.15);border-radius:16px;margin-bottom:10px;overflow:hidden;transition:all .2s}
-.lcard-body{flex:1;display:flex;align-items:center;justify-content:space-between;padding:14px 0 14px 16px;cursor:pointer}
-.lcard-dots{width:44px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;letter-spacing:1px;color:var(--gray);cursor:pointer;border-left:1px solid #1e1e1e;transition:color .2s}
-.lcard-dots:hover{color:var(--gold)}
-.view-sel{display:flex;gap:6px;padding:10px 20px 0;flex-shrink:0}
-.vbtn{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid #282828;color:var(--gray);background:transparent;letter-spacing:.5px;transition:all .2s}
+/* ── HOME VIEW SELECTOR ── */
+.view-sel{display:flex;align-items:center;gap:6px;padding:10px 20px 0;flex-shrink:0}
+.vbtn{display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;border:1px solid #282828;color:var(--gray);background:transparent;letter-spacing:.5px}
 .vbtn.active{background:var(--gold);color:var(--black);border-color:var(--gold)}
+/* LIST */
 .forum-feed{padding:12px 16px 16px;display:flex;flex-direction:column;gap:12px;flex-shrink:0}
 .fp{background:var(--card);border:1px solid #1e1e1e;border-radius:16px;overflow:hidden}
 .fp-hdr{display:flex;align-items:center;gap:10px;padding:12px 14px 8px}
-.av{width:34px;height:34px;border-radius:50%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;border:1.5px solid #2a2a2a}
+.av{width:34px;height:34px;border-radius:50%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;border:1.5px solid #2a2a2a;overflow:hidden}
 .fp-user{font-size:13px;font-weight:700;color:var(--white)}
 .fp-reto{font-size:10px;color:var(--gold);font-weight:600}
 .fp-time{font-size:10px;color:var(--gray);margin-left:auto;white-space:nowrap}
 .fp-media{width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden;background:#050505}
+.fp-media video,.fp-media img.rm{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .media-tag{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.75);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;color:var(--white);letter-spacing:1px;z-index:2}
 .fp-foot{padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
 .fp-desc{font-size:12px;color:var(--gl);flex:1;line-height:1.4}
-.fp-btns{display:flex;gap:8px;align-items:center;flex-shrink:0;margin-left:8px}
-.fp-btn{font-size:11px;color:var(--gray);cursor:pointer;font-weight:600;padding:4px 10px;border-radius:8px;border:1px solid #222;background:transparent;transition:all .2s;white-space:nowrap}
-.fp-btn:hover{color:var(--white);border-color:#333}
+.fp-btns{display:flex;gap:12px;align-items:center}
+.fp-btn{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--gray);cursor:pointer;font-weight:600}
+.fp-btn.fire{color:var(--gold)}
 .vbar{margin:0 14px 12px;display:flex;gap:8px}
-.vbtn2{flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:700;text-align:center;cursor:pointer;border:1px solid;letter-spacing:.5px;text-transform:uppercase;transition:all .2s}
+.vbtn2{flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:700;text-align:center;cursor:pointer;transition:all .2s;border:1px solid;letter-spacing:.5px;text-transform:uppercase}
 .vok{background:rgba(46,204,113,.1);color:var(--green);border-color:rgba(46,204,113,.25)}
+.vok:hover{background:rgba(46,204,113,.2)}
 .vno{background:rgba(231,76,60,.08);color:var(--red);border-color:rgba(231,76,60,.2)}
-#tiktok-wrap{display:none;position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;touch-action:none;background:var(--black);z-index:10;pointer-events:none}
-#tiktok-wrap.show{display:block;pointer-events:all}
+.vno:hover{background:rgba(231,76,60,.15)}
+/* TIKTOK */
+#tiktok-wrap{display:none;position:absolute;inset:0;overflow:hidden;touch-action:none;background:var(--black);z-index:10}
+#tiktok-wrap.show{display:block}
 .tk-slide{position:absolute;width:100%;height:100%;background:var(--black);will-change:transform;transition:transform .35s cubic-bezier(.4,0,.2,1)}
 .tk-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:90px;background:#050505;overflow:hidden}
+.tk-bg video,.tk-bg img.tk-rm{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .tk-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.35) 45%,transparent 70%)}
-.tk-info{position:absolute;bottom:30px;left:0;right:56px;padding:0 20px}
+.tk-info{position:absolute;bottom:30px;left:0;right:64px;padding:0 20px}
 .tk-reto{font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:2px;color:var(--white);line-height:1.1;margin-bottom:5px}
 .tk-user{font-size:13px;color:rgba(255,255,255,.75);margin-bottom:10px;font-weight:600}
 .tk-side{position:absolute;right:14px;bottom:38px;display:flex;flex-direction:column;align-items:center;gap:18px}
 .tk-sb{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
-.tk-ico{width:40px;height:40px;background:rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--white)}
-.tk-tl{font-size:9px;color:rgba(255,255,255,.7);font-weight:700}
+.tk-sb .ico{font-size:26px;filter:drop-shadow(0 1px 4px rgba(0,0,0,.6))}
+.tk-sb .tl{font-size:9px;color:rgba(255,255,255,.7);font-weight:700}
 .tk-ctr{position:absolute;top:14px;right:16px;background:rgba(0,0,0,.45);padding:4px 10px;border-radius:10px;font-size:11px;color:rgba(255,255,255,.5);font-weight:700}
-.tk-back{position:absolute;top:14px;left:14px;width:32px;height:32px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--white);z-index:20}
+.tk-back-btn{position:absolute;top:14px;left:14px;width:32px;height:32px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--white);z-index:20}
+/* GOAT */
 .gtop{padding:14px 20px 0;flex-shrink:0}
 .gtitle{font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:4px;color:var(--white);margin-bottom:12px}
 .gtabs{display:flex;background:var(--card);border-radius:13px;padding:4px;gap:4px}
@@ -149,6 +156,7 @@ textarea.inp{resize:vertical;min-height:80px}
 .gpanel{padding:14px 18px;display:flex;flex-direction:column;gap:10px;flex-shrink:0}
 .cbar{display:flex;gap:8px;margin-bottom:2px}
 .cbtn{flex:1;padding:12px 10px;background:var(--card);border:1px solid rgba(239,184,16,.2);border-radius:12px;color:var(--gold);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;letter-spacing:.5px;cursor:pointer;transition:all .2s;text-align:center;text-transform:uppercase}
+.cbtn:hover{background:var(--gdim)}
 .rc{background:var(--card);border:1px solid #1e1e1e;border-radius:14px;overflow:hidden}
 .rc-top{padding:14px 16px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .rc-title{font-size:14px;font-weight:800;color:var(--white);margin-bottom:4px}
@@ -159,24 +167,27 @@ textarea.inp{resize:vertical;min-height:80px}
 .rc-bot{padding:10px 16px 12px;border-top:1px solid #1a1a1a;display:flex;align-items:center;justify-content:space-between}
 .rc-who{font-size:10px;color:var(--gray)}
 .rc-who strong{color:var(--gl)}
-.cbtn2{padding:8px 16px;background:var(--gold);color:var(--black);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+.cbtn2{padding:8px 16px;background:var(--gold);color:var(--black);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.cbtn2:active{transform:scale(.95)}
 .pred-card{background:var(--card);border:1px solid #1e1e1e;border-radius:14px;padding:14px}
 .pred-match{font-size:13px;font-weight:800;color:var(--white);margin-bottom:3px}
 .pred-q{font-size:11px;color:var(--gray);margin-bottom:10px}
 .pred-opts{display:flex;gap:6px}
 .pred-opt{flex:1;padding:9px;border-radius:8px;font-size:11px;font-weight:700;text-align:center;cursor:pointer;transition:all .2s;border:1px solid #2a2a2a;color:var(--gray);background:transparent}
 .pred-opt.sel{background:var(--gold);color:var(--black);border-color:var(--gold)}
+/* COMPLETAR */
 .comp-body{padding:18px 20px;display:flex;flex-direction:column;gap:14px;flex:1}
 .reto-hero{background:var(--card);border:1px solid rgba(239,184,16,.2);border-radius:20px;padding:20px;text-align:center}
 .rh-name{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:3px;color:var(--white);margin-bottom:4px;line-height:1.1}
 .rh-creator{font-size:11px;color:var(--gray);margin-bottom:12px}
+.rh-creator span{color:var(--gold);font-weight:700}
 .pts-badge{display:inline-flex;align-items:center;gap:6px;background:var(--gdim);border:1px solid rgba(239,184,16,.3);border-radius:20px;padding:7px 14px}
 .pts-badge.neg-badge{background:rgba(231,76,60,.08);border-color:rgba(231,76,60,.3)}
 .pts-n{font-family:'Bebas Neue',cursive;font-size:26px;color:var(--gold)}
 .pts-n.neg{color:var(--red)}
 .pts-l{font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1px}
 .upload-area{background:var(--card);border:2px dashed #2a2a2a;border-radius:14px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
-.upload-area:hover{border-color:rgba(239,184,16,.4)}
+.upload-area:hover,.upload-area.has-file{border-color:rgba(239,184,16,.4);background:rgba(239,184,16,.03)}
 .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .upload-ico{font-size:32px;margin-bottom:8px;display:block}
 .upload-title{font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px}
@@ -187,9 +198,10 @@ textarea.inp{resize:vertical;min-height:80px}
 .pend-bar{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(239,184,16,.06);border:1px solid rgba(239,184,16,.15);border-radius:12px}
 .pend-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;animation:pulse 1.5s infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* RANKING */
 .rank-top3{padding:14px 20px 8px;display:flex;justify-content:center;align-items:flex-end;gap:10px;flex-shrink:0}
 .pod-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
-.pod-av{border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #333;position:relative}
+.pod-av{border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #333;position:relative;overflow:hidden}
 .pod-av.p1{width:62px;height:62px;background:linear-gradient(135deg,#EFB810,#b8860b);border-color:var(--gold);box-shadow:0 0 20px rgba(239,184,16,.4);font-size:22px}
 .pod-av.p2{width:50px;height:50px;background:linear-gradient(135deg,#888,#555);font-size:18px}
 .pod-av.p3{width:50px;height:50px;background:linear-gradient(135deg,#a0522d,#6b3c1f);font-size:18px}
@@ -200,14 +212,17 @@ textarea.inp{resize:vertical;min-height:80px}
 .pb3{height:22px;background:linear-gradient(to top,#5a3010,#a0522d);width:52px}
 .pod-n{font-family:'Bebas Neue',cursive;font-size:15px;color:rgba(0,0,0,.4)}
 .rank-list{padding:0 18px 8px;display:flex;flex-direction:column;gap:6px;flex-shrink:0}
-.rrow{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border:1px solid #1e1e1e;border-radius:12px;cursor:pointer}
+.rrow{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border:1px solid #1e1e1e;border-radius:12px;cursor:pointer;transition:all .2s}
+.rrow:hover{background:var(--card2)}
 .rn{font-family:'Bebas Neue',cursive;font-size:16px;width:20px;text-align:center;color:var(--gray)}
 .r-av{width:34px;height:34px;border-radius:50%;background:#1e1e1e;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
 .r-pts{font-family:'Bebas Neue',cursive;font-size:18px}
-.global-pill{display:inline-flex;padding:4px 10px;background:rgba(239,184,16,.1);border:1px solid rgba(239,184,16,.25);border-radius:8px;font-size:9px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase}
+.global-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(239,184,16,.1);border:1px solid rgba(239,184,16,.25);border-radius:8px;font-size:9px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase}
+/* STATS */
 .stats-hero{padding:16px 24px;display:flex;flex-direction:column;align-items:center;gap:8px;border-bottom:1px solid #111;flex-shrink:0}
 .stats-av{width:72px;height:72px;background:linear-gradient(135deg,#444,#222);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;border:2px solid #333}
 .trophy-btn{display:flex;align-items:center;gap:8px;padding:10px 20px;background:linear-gradient(135deg,rgba(239,184,16,.18),rgba(239,184,16,.08));border:1px solid rgba(239,184,16,.35);border-radius:12px;color:var(--gold);font-size:12px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:all .2s;margin-top:4px}
+.trophy-btn:hover{background:linear-gradient(135deg,rgba(239,184,16,.28),rgba(239,184,16,.14))}
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 18px;flex-shrink:0}
 .sbox{background:var(--card);border:1px solid #1e1e1e;border-radius:13px;padding:14px;text-align:center}
 .sv{font-family:'Bebas Neue',cursive;font-size:30px;color:var(--white);line-height:1;margin-bottom:3px}
@@ -216,16 +231,20 @@ textarea.inp{resize:vertical;min-height:80px}
 .shl{margin:0 18px 10px;background:var(--card);border:1px solid rgba(239,184,16,.12);border-radius:13px;padding:13px}
 .shl .lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:5px}
 .shl .val{font-size:13px;font-weight:700;color:var(--white)}
-.rsc{margin:0 18px 8px;background:var(--card);border:1px solid #1e1e1e;border-radius:14px;padding:14px 16px}
+.shl .sub{font-size:11px;color:var(--gold);margin-top:2px}
+/* RETO STATS CARD */
+.reto-stat-card{margin:0 18px 8px;background:var(--card);border:1px solid #1e1e1e;border-radius:14px;padding:14px 16px}
 .rsc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .rsc-title{font-size:13px;font-weight:800;color:var(--white);flex:1}
 .rsc-pts{font-family:'Bebas Neue',cursive;font-size:20px;color:var(--gold)}
+.rsc-pts.neg{color:var(--red)}
 .rsc-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #1a1a1a}
 .rsc-row:last-child{border-bottom:none;padding-bottom:0}
-.rsc-lbl{font-size:10px;color:var(--gray);flex:1}
+.rsc-label{font-size:10px;color:var(--gray);flex:1}
 .rsc-val{font-family:'Bebas Neue',cursive;font-size:16px;color:var(--white)}
 .rsc-bar-wrap{width:80px;height:4px;background:#1e1e1e;border-radius:2px;overflow:hidden}
-.rsc-bar{height:100%;background:var(--gold);border-radius:2px}
+.rsc-bar{height:100%;background:var(--gold);border-radius:2px;transition:width .5s}
+/* QUINTETO */
 .cwrap{flex:1;padding:10px 16px 6px;display:flex;flex-direction:column;gap:8px;min-height:0}
 .court{flex:1;background:linear-gradient(180deg,#041404,#081c08 50%,#041404);border:1px solid rgba(255,255,255,.06);border-radius:18px;position:relative;overflow:hidden;min-height:250px}
 .court::before{content:'';position:absolute;inset:8px;border:1px solid rgba(255,255,255,.05);border-radius:12px}
@@ -233,7 +252,8 @@ textarea.inp{resize:vertical;min-height:80px}
 .crt-line{position:absolute;left:8px;right:8px;top:50%;height:1px;background:rgba(255,255,255,.04)}
 .pgrid{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-around;padding:16px 10px;gap:6px}
 .prow{display:flex;justify-content:center;gap:22px}
-.info-btn{position:absolute;top:12px;right:12px;width:26px;height:26px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:rgba(255,255,255,.6);z-index:10;user-select:none}
+.info-btn{position:absolute;top:12px;right:12px;width:26px;height:26px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:rgba(255,255,255,.6);z-index:10;transition:all .2s;user-select:none}
+.info-btn:hover{border-color:var(--gold);color:var(--gold)}
 .info-popup{display:none;position:absolute;top:44px;right:12px;width:215px;background:#1c1c1c;border:1px solid rgba(239,184,16,.3);border-radius:14px;padding:14px;z-index:20;box-shadow:0 8px 32px rgba(0,0,0,.6)}
 .info-popup.show{display:block}
 .ip-title{font-size:13px;font-weight:800;color:var(--gold);margin-bottom:10px}
@@ -241,10 +261,11 @@ textarea.inp{resize:vertical;min-height:80px}
 .ip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px}
 .ip-text{font-size:11px;color:var(--gl);line-height:1.35}
 .ip-note{font-size:10px;color:var(--gray);margin-top:8px;padding-top:8px;border-top:1px solid #2a2a2a;line-height:1.4}
+/* PLAYER SLOTS */
 .pslot{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:all .2s;user-select:none}
 .pslot:hover{transform:scale(1.06)}
-.pslot.dragging,.bslot.dragging{opacity:.45}
-.pslot.drag-over .pcirc,.bslot.drag-over .bcirc{border-color:var(--gold)!important;box-shadow:0 0 16px rgba(239,184,16,.5)!important}
+.pslot.dragging{opacity:.5;transform:scale(1.1)}
+.pslot.drag-over .pcirc{border-color:var(--gold)!important;box-shadow:0 0 16px rgba(239,184,16,.5)!important}
 .pcirc{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid;position:relative;overflow:hidden;transition:all .2s}
 .pcirc.tit{border-color:rgba(239,184,16,.75);box-shadow:0 0 12px rgba(239,184,16,.25)}
 .pcirc.emp{background:rgba(255,255,255,.02);border-color:#272727;border-style:dashed}
@@ -255,16 +276,22 @@ textarea.inp{resize:vertical;min-height:80px}
 .bench-lbl{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gray);font-weight:700;margin-bottom:9px}
 .bench-row{display:flex;gap:10px}
 .bslot{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;user-select:none}
+.bslot.dragging{opacity:.5}
+.bslot.drag-over .bcirc{border-color:var(--gold)!important;box-shadow:0 0 12px rgba(239,184,16,.4)!important}
 .bcirc{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;transition:all .2s;overflow:hidden}
 .bcirc.filled{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.07)}
 .bcirc.emp2{border-style:dashed;border-color:#262626}
+.bcirc:hover{border-color:rgba(239,184,16,.4)}
 .bname{font-size:8px;color:var(--gray);font-weight:600;max-width:42px;text-align:center;line-height:1.2}
-.drag-hint{font-size:9px;color:var(--gray);text-align:center;padding:4px 0;letter-spacing:.5px}
+/* DRAG hint */
+.drag-hint{font-size:9px;color:var(--gray);text-align:center;padding:6px 0;letter-spacing:1px}
+/* PICKER */
 .pick-ov{position:absolute;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);z-index:200;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;opacity:0;pointer-events:none;transition:opacity .3s}
 .pick-ov.show{opacity:1;pointer-events:all}
 .pick-box{background:var(--card2);border:1px solid rgba(239,184,16,.22);border-radius:24px;padding:20px;transform:translateY(30px);transition:transform .3s cubic-bezier(.4,0,.2,1)}
 .pick-ov.show .pick-box{transform:translateY(0)}
 .pick-title{font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;color:var(--white);margin-bottom:2px}
+.pick-sub{font-size:11px;color:var(--gray);margin-bottom:4px}
 .pick-slot{font-size:11px;color:var(--gold);font-weight:700;margin-bottom:12px}
 .ulist{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;max-height:220px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .ulist::-webkit-scrollbar{display:none}
@@ -275,194 +302,136 @@ textarea.inp{resize:vertical;min-height:80px}
 .upick-pts{font-family:'Bebas Neue',cursive;font-size:18px;color:var(--gold)}
 .pick-acts{display:flex;gap:10px}
 .pick-cancel{flex:1;padding:12px;background:transparent;border:1px solid #333;border-radius:12px;color:var(--gray);font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;cursor:pointer;text-transform:uppercase;letter-spacing:1px}
-.trophy-prev-wrap{width:140px;height:140px;background:linear-gradient(135deg,#1a1200,#0a0800);border:1px solid rgba(239,184,16,.3);border-radius:20px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:70px;position:relative}
-.trophy-name-prev{font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:2px;color:var(--gold);margin-bottom:4px}
-.trophy-season-prev{font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase}
-.t-prod{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid #1e1e1e;border-radius:16px;padding:14px;cursor:pointer;transition:all .2s;position:relative;margin-bottom:10px}
-.t-prod.sel{border-color:var(--gold);background:rgba(239,184,16,.05)}
-.t-prod .chk{position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;background:var(--gold);display:none;align-items:center;justify-content:center;font-size:11px;color:var(--black)}
-.t-prod.sel .chk{display:flex}
-.t-img{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#1a1200,#0a0800);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;border:1px solid rgba(239,184,16,.2)}
-.t-name{font-size:13px;font-weight:800;color:var(--white);margin-bottom:2px}
-.t-desc{font-size:11px;color:var(--gray);line-height:1.3}
-.t-price{font-family:'Bebas Neue',cursive;font-size:20px;color:var(--gold);margin-top:4px}
-.instr-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
-.instr-num{width:28px;height:28px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:16px;color:var(--black);flex-shrink:0;margin-top:2px}
+/* TROPHY STORE */
+.trophy-hero{text-align:center;padding:20px 0 16px}
+.trophy-preview{width:140px;height:140px;background:linear-gradient(135deg,#1a1200,#0a0800);border:1px solid rgba(239,184,16,.3);border-radius:20px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:70px;position:relative}
+.trophy-preview::after{content:'';position:absolute;inset:0;border-radius:20px;background:linear-gradient(135deg,rgba(239,184,16,.08),transparent);pointer-events:none}
+.trophy-name-preview{font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:2px;color:var(--gold);margin-bottom:4px}
+.trophy-season-preview{font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase}
+.trophy-products{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.trophy-prod{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid #1e1e1e;border-radius:16px;padding:14px;cursor:pointer;transition:all .2s;position:relative}
+.trophy-prod:hover{border-color:rgba(239,184,16,.3)}
+.trophy-prod.selected{border-color:var(--gold);background:rgba(239,184,16,.05)}
+.trophy-prod .check{position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;background:var(--gold);display:none;align-items:center;justify-content:center;font-size:11px;color:var(--black)}
+.trophy-prod.selected .check{display:flex}
+.tp-img{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#1a1200,#0a0800);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;border:1px solid rgba(239,184,16,.2)}
+.tp-name{font-size:13px;font-weight:800;color:var(--white);margin-bottom:2px}
+.tp-desc{font-size:11px;color:var(--gray);line-height:1.3}
+.tp-price{font-family:'Bebas Neue',cursive;font-size:20px;color:var(--gold);margin-top:4px}
+/* INSTRUCCIONES */
+.instr-section{margin-bottom:20px}
+.instr-num{width:28px;height:28px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:16px;color:var(--black);flex-shrink:0}
+.instr-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
 .instr-text strong{color:var(--white);font-size:13px;display:block;margin-bottom:3px}
 .instr-text p{font-size:12px;color:var(--gl);line-height:1.45}
-.instr-div{height:1px;background:#1e1e1e;margin:0 0 14px}
-.q-size-grp{display:flex;gap:6px}
-.q-size-btn{flex:1;padding:11px 6px;text-align:center;font-family:'Bebas Neue',cursive;font-size:18px;color:var(--gray);background:var(--card);border:1px solid #222;border-radius:10px;cursor:pointer;transition:all .2s;letter-spacing:1px}
-.q-size-btn.active{background:var(--gold);color:var(--black);border-color:var(--gold)}
-.info-inline{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid rgba(239,184,16,.4);color:var(--gold);font-size:10px;cursor:pointer;flex-shrink:0;margin-left:5px}
-.lang-grp{display:flex;gap:6px}
-.lang-btn{padding:7px 14px;background:var(--card);border:1px solid #222;border-radius:8px;color:var(--gl);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
-.lang-btn.active{background:var(--gold);color:var(--black);border-color:var(--gold)}
-.about-block{background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px}
-.about-block-title{font-size:11px;font-weight:800;color:var(--gold);letter-spacing:1px;margin-bottom:8px}
-.about-block-body{font-size:12px;color:var(--gl);line-height:1.6}
+.instr-divider{height:1px;background:#1e1e1e;margin:16px 0}
 </style>
 </head>
 <body>
 <div class="phone" id="phone">
-<div class="sb"><span class="time">9:41</span><div class="icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div></div>
-<div class="toast" id="toast"><span id="t-msg" style="font-size:12px;font-weight:700;color:var(--white)">—</span></div>
+<div class="status-bar"><span class="time">9:41</span><div class="icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div></div>
+<div class="toast" id="toast"><span id="t-icon">✅</span><span id="t-msg" style="font-size:12px;font-weight:700;color:var(--white)">Hecho</span></div>
 
-<!-- SPLASH -->
-<div class="screen active" id="s-splash" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
-  <span style="font-size:64px;filter:drop-shadow(0 0 20px var(--gglow))">🐐</span>
-  <div style="font-family:'Bebas Neue',cursive;font-size:38px;letter-spacing:5px;color:var(--white)">FANTASY <span style="color:var(--gold)">GOAT</span></div>
-  <div style="width:36px;height:3px;background:var(--gold);border-radius:2px;animation:loadbar 1.2s ease-in-out infinite"></div>
-  <style>@keyframes loadbar{0%,100%{opacity:.3;transform:scaleX(.5)}50%{opacity:1;transform:scaleX(1)}}</style>
-</div>
-
-<!-- LOGIN -->
-<div class="screen full-scroll" id="s-login">
+<!-- ═══ LOGIN ═══ -->
+<div class="screen active" id="s-login">
   <div style="flex:1;display:flex;flex-direction:column;padding:32px 28px;min-height:580px">
     <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:40px">
       <span style="font-size:52px;filter:drop-shadow(0 0 14px var(--gglow));margin-bottom:8px;display:block">🐐</span>
       <div style="font-family:'Bebas Neue',cursive;font-size:42px;letter-spacing:5px;color:var(--white);line-height:1">FANTASY <span style="color:var(--gold)">GOAT</span></div>
-      <div id="t-tagline" style="font-size:9px;letter-spacing:6px;color:var(--gray);text-transform:uppercase;margin-top:6px">La Liga de los Elegidos</div>
+      <div style="font-size:9px;letter-spacing:6px;color:var(--gray);text-transform:uppercase;margin-top:6px">La Liga de los Elegidos</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px">
-      <div class="iw"><label class="il">Email</label><input class="inp" id="inp-email" type="email" placeholder="tu@email.com"></div>
-      <div class="iw"><label class="il">Contraseña</label><input class="inp" id="inp-pass" type="password" placeholder="••••••••"><div style="text-align:right;font-size:11px;color:var(--gold);font-weight:600;cursor:pointer;margin-top:4px">¿Olvidaste tu contraseña?</div></div>
-      <button class="bg" onclick="fbSignIn()">Iniciar sesión</button>
-      <button class="bw" onclick="fbSignUp()">Crear cuenta</button>
+      <div class="iw"><label class="il">Email</label><input class="inp" type="email" placeholder="tu@email.com"></div>
+      <div class="iw"><label class="il">Contraseña</label><input class="inp" type="password" placeholder="••••••••"><div style="text-align:right;font-size:11px;color:var(--gold);font-weight:600;cursor:pointer;margin-top:4px">¿Olvidaste tu contraseña?</div></div>
+      <button class="bg" onclick="go('s-dashboard')">Iniciar sesión</button>
+      <button class="bw" onclick="go('s-dashboard')">Crear cuenta</button>
     </div>
     <div style="margin-top:auto;display:flex;flex-direction:column;gap:12px">
       <div class="divider"><span>o continúa con</span></div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:var(--card);border:1px solid #222;border-radius:12px;color:var(--white);font-size:13px;font-weight:600;cursor:pointer" onclick="fbGoogle()"><b>G</b> Iniciar sesión con Google</div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:var(--card);border:1px solid #222;border-radius:12px;color:var(--white);font-size:13px;font-weight:600;cursor:pointer">Iniciar sesión con Apple</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:var(--card);border:1px solid #222;border-radius:12px;color:var(--white);font-size:13px;font-weight:600;cursor:pointer"><b style="font-size:16px">G</b> Iniciar sesión con Google</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:var(--card);border:1px solid #222;border-radius:12px;color:var(--white);font-size:13px;font-weight:600;cursor:pointer"> Iniciar sesión con Apple</div>
     </div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
+<!-- ═══ DASHBOARD ═══ -->
 <div class="screen" id="s-dashboard">
   <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid #111;flex-shrink:0">
     <div style="width:38px"></div>
     <div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🐐</span><div style="font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:2px;color:var(--white)">FANTASY <span style="color:var(--gold)">GOAT</span></div></div>
     <div class="gear" onclick="go('s-settings')">⚙️</div>
   </div>
-  <div style="padding:10px 20px 0;display:flex;justify-content:flex-end;flex-shrink:0">
-    <button onclick="openModal('m-instr')" style="padding:6px 14px;background:transparent;border:1px solid #2a2a2a;border-radius:20px;color:var(--gl);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px">Instrucciones</button>
+  <!-- instrucciones btn row -->
+  <div style="padding:14px 20px 0;display:flex;justify-content:flex-end;flex-shrink:0">
+    <button onclick="openModal('m-instrucciones')" style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,.05);border:1px solid #2a2a2a;border-radius:20px;color:var(--gl);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:all .2s" onmouseover="this.style.borderColor='rgba(239,184,16,.3)'" onmouseout="this.style.borderColor='#2a2a2a'">❓ Instrucciones</button>
   </div>
-  <div style="padding:10px 20px;display:flex;flex-direction:column;gap:10px">
+  <div style="padding:12px 20px;display:flex;flex-direction:column;gap:10px">
     <button class="bg" onclick="go('s-crear-liga')">+ Crear Liga</button>
-    <button class="bgo" onclick="go('s-join')">Unirse a una Liga</button>
+    <button class="bgo" onclick="toast('🔍 Introduce el ID o contraseña de la liga')">🔍 Unirse a una Liga</button>
   </div>
   <div style="padding:0 20px 24px">
     <div class="secrow"><span class="sectitle">Mis Ligas</span><span style="font-size:11px;color:var(--gold);font-weight:700;cursor:pointer">Ver todas</span></div>
-    <div id="leagues-list">
-      <div style="text-align:center;padding:40px 20px;color:var(--gray)">
-        <div style="font-size:36px;margin-bottom:12px">🏆</div>
-        <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Aún no estás en ninguna liga</div>
-        <div style="font-size:11px;line-height:1.5">Crea una liga o únete con un ID</div>
-      </div>
-    </div>
+    <div class="lcard" onclick="go('s-home')"><div><div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px">Los Intocables</div><div style="display:flex;gap:8px;align-items:center"><span class="badge b-priv">Privada</span><span class="ldot"></span><span style="font-size:11px;color:var(--gray)">Semanal</span></div></div><div style="text-align:right"><div style="font-size:11px;color:var(--gray);margin-bottom:4px"><strong style="color:var(--gold)">8</strong> jugadores</div><span style="color:#444;font-size:14px">›</span></div></div>
+    <div class="lcard" onclick="go('s-home')"><div><div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px">GOAT Season IV</div><div style="display:flex;gap:8px;align-items:center"><span class="badge b-pub">Pública</span><span class="ldot"></span><span style="font-size:11px;color:var(--gray)">Mensual</span></div></div><div style="text-align:right"><div style="font-size:11px;color:var(--gray);margin-bottom:4px"><strong style="color:var(--gold)">24</strong> jugadores</div><span style="color:#444;font-size:14px">›</span></div></div>
+    <div class="lcard" onclick="go('s-home')"><div><div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px">Élite Santander</div><div style="display:flex;gap:8px;align-items:center"><span class="badge b-priv">Privada</span><span class="ldot"></span><span style="font-size:11px;color:var(--gray)">Semanal</span></div></div><div style="text-align:right"><div style="font-size:11px;color:var(--gray);margin-bottom:4px"><strong style="color:var(--gold)">5</strong> jugadores</div><span style="color:#444;font-size:14px">›</span></div></div>
   </div>
 </div>
 
-<!-- JOIN -->
-<div class="screen full-scroll" id="s-join">
-  <div class="shdr"><div class="back" onclick="go('s-dashboard')">‹</div><div class="stitle">Unirse a Liga</div></div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:16px;flex:1">
-    <div class="iw"><label class="il">ID de Liga</label><input class="inp" id="join-id" type="text" placeholder="GOAT-7X4K2"></div>
-    <div class="iw"><label class="il">Contraseña (si es privada)</label><input class="inp" id="join-pass" type="password" placeholder="••••••••"></div>
-    <button class="bg" onclick="unirseALiga()">Buscar y Unirse</button>
-    <button class="bw" onclick="go('s-dashboard')">Cancelar</button>
-  </div>
-</div>
-
-<!-- SETTINGS -->
-<div class="screen full-scroll" id="s-settings">
+<!-- ═══ SETTINGS ═══ -->
+<div class="screen" id="s-settings">
   <div class="shdr"><div class="back" onclick="goBack()">‹</div><div class="stitle">Ajustes</div></div>
   <div style="display:flex;align-items:center;gap:14px;padding:18px 20px;border-bottom:1px solid #111;flex-shrink:0">
     <div style="position:relative"><div style="width:70px;height:70px;background:linear-gradient(135deg,var(--gold),#b8860b);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;border:2px solid rgba(239,184,16,.3)">😎</div><div style="position:absolute;bottom:0;right:0;width:22px;height:22px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer">✏️</div></div>
-    <div><div id="settings-name" style="font-size:18px;font-weight:800;color:var(--white)">—</div><div id="settings-email" style="font-size:12px;color:var(--gray);margin-top:2px">—</div></div>
+    <div><div style="font-size:18px;font-weight:800;color:var(--white)">Carlos Ruiz</div><div style="font-size:12px;color:var(--gray);margin-top:2px">carlos@email.com</div></div>
   </div>
   <div style="padding:18px 20px;display:flex;flex-direction:column;gap:10px;flex:1">
     <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);font-weight:700">Preferencias</div>
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--card);border:1px solid #1e1e1e;border-radius:12px">
-      <span style="font-size:14px;color:var(--white);font-weight:600">Idioma</span>
-      <div class="lang-grp">
-        <button class="lang-btn active" id="lb-es" onclick="setLang('es')">ES</button>
-        <button class="lang-btn" id="lb-en" onclick="setLang('en')">EN</button>
-        <button class="lang-btn" id="lb-fr" onclick="setLang('fr')">FR</button>
-      </div>
-    </div>
-    <div class="togw"><span style="font-size:14px;color:var(--white);font-weight:600">Notificaciones</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="srow"><div style="display:flex;align-items:center;gap:10px"><span>🌍</span><span style="font-size:14px;color:var(--white);font-weight:500">Idioma</span></div><span style="font-size:12px;color:var(--gold);font-weight:700">ES ›</span></div>
+    <div class="togw"><div style="display:flex;align-items:center;gap:10px"><span>🔔</span><span style="font-size:14px;color:var(--white);font-weight:500">Notificaciones</span></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
     <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);font-weight:700;margin-top:4px">Soporte</div>
-    <div class="srow" onclick="openModal('m-feedback')"><span style="font-size:14px;color:var(--white);font-weight:600">¿Tienes algún comentario?</span><span style="color:#444;font-size:16px">›</span></div>
-    <div class="srow" onclick="openModal('m-about')"><span style="font-size:14px;color:var(--white);font-weight:600">Sobre Fantasy GOAT</span><span style="color:#444;font-size:16px">›</span></div>
+    <div class="srow" onclick="toast('📝 Formulario de feedback')"><div style="display:flex;align-items:center;gap:10px"><span>💬</span><span style="font-size:14px;color:var(--white);font-weight:500">¿Tienes algún comentario?</span></div><span style="color:#444;font-size:16px">›</span></div>
+    <div class="srow" onclick="toast('ℹ️ Versión 1.0.0')"><div style="display:flex;align-items:center;gap:10px"><span>ℹ️</span><span style="font-size:14px;color:var(--white);font-weight:500">Sobre Fantasy GOAT</span></div><span style="color:#444;font-size:16px">›</span></div>
     <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);font-weight:700;margin-top:4px">Cuenta</div>
-    <button class="blogout" onclick="fbSignOut()">Cerrar sesión</button>
-    <button class="bdanger" onclick="toast('Acción irreversible')">Eliminar cuenta</button>
+    <button class="blogout" onclick="go('s-login')">Cerrar sesión</button>
+    <button class="bdanger" onclick="toast('⚠️ Esta acción es irreversible')">Eliminar cuenta</button>
   </div>
 </div>
 
-<!-- CREAR LIGA -->
-<div class="screen full-scroll" id="s-crear-liga">
+<!-- ═══ CREAR LIGA ═══ -->
+<div class="screen" id="s-crear-liga">
   <div class="shdr"><div class="back" onclick="go('s-dashboard')">‹</div><div class="stitle">Crear Liga</div></div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:18px;flex:1">
-    <div class="iw"><label class="il">Nombre de la liga</label><input class="inp" id="liga-nombre" type="text" placeholder="Los Invencibles..."></div>
-    <div class="iw"><label class="il">Tipo</label>
-      <div class="pill-grp"><div class="pill active" id="tipo-priv" onclick="setTipo('priv',this)">Privada</div><div class="pill" id="tipo-pub" onclick="setTipo('pub',this)">Pública</div></div>
-    </div>
-    <div class="cond show" id="f-pass"><label class="il">Contraseña</label><input class="inp" id="liga-pass" type="password" placeholder="Mínimo 6 caracteres..."></div>
-    <div class="cond" id="f-id"><label class="il">ID de liga (opcional)</label><input class="inp" id="liga-custom-id" type="text" placeholder="GOAT2024..."></div>
-    <div class="iw"><label class="il">Periodicidad</label>
-      <div class="pill-grp"><div class="pill active" id="period-sem" onclick="setPeriod(this)">Semanal</div><div class="pill" id="period-men" onclick="setPeriod(this)">Mensual</div></div>
-    </div>
-    <div class="iw">
-      <div style="display:flex;align-items:center;gap:4px"><label class="il">Tamaño del quinteto</label><span class="info-inline" onclick="openModal('m-qinfo')">i</span></div>
-      <div class="q-size-grp">
-        <div class="q-size-btn" onclick="setQSize(2,this)">2</div>
-        <div class="q-size-btn" onclick="setQSize(3,this)">3</div>
-        <div class="q-size-btn" onclick="setQSize(4,this)">4</div>
-        <div class="q-size-btn active" onclick="setQSize(5,this)">5</div>
-      </div>
-      <div style="font-size:10px;color:var(--gray);margin-top:2px">Número de titulares en el campo</div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="iw">
-        <div style="display:flex;align-items:center;gap:4px"><label class="il">Pts titular / periodo</label><span class="info-inline" onclick="openModal('m-qinfo')">i</span></div>
-        <input class="inp" type="number" id="starter-pts" value="10" min="0" max="999">
-      </div>
-      <div class="iw">
-        <div style="display:flex;align-items:center;gap:4px"><label class="il">Pts suplente / periodo</label><span class="info-inline" onclick="openModal('m-qinfo')">i</span></div>
-        <input class="inp" type="number" id="bench-pts" value="4" min="0" max="999">
-      </div>
-    </div>
-    <button class="bg" onclick="crearLiga()">Crear Liga</button>
+  <div style="padding:24px;display:flex;flex-direction:column;gap:20px;flex:1">
+    <div class="iw"><label class="il">Nombre de la liga</label><input class="inp" type="text" placeholder="Los Invencibles..."></div>
+    <div class="iw"><label class="il">Tipo</label><div class="pill-grp" id="tipo-grp"><div class="pill active" onclick="setTipo('priv')">🔒 Privada</div><div class="pill" onclick="setTipo('pub')">🌍 Pública</div></div></div>
+    <div class="cond show" id="f-pass"><label class="il">Contraseña</label><input class="inp" type="password" placeholder="Mínimo 6 caracteres..."></div>
+    <div class="cond" id="f-id"><label class="il">ID de liga</label><input class="inp" type="text" placeholder="GOAT2024..."></div>
+    <div class="iw"><label class="il">Periodicidad</label><div class="pill-grp" id="per-grp"><div class="pill active" onclick="setPeriod(this)">📅 Semanal</div><div class="pill" onclick="setPeriod(this)">🗓️ Mensual</div></div></div>
+    <button class="bg" onclick="go('s-invite')">Crear Liga</button>
   </div>
 </div>
 
-<!-- INVITE -->
-<div class="screen full-scroll" id="s-invite">
+<!-- ═══ INVITE ═══ -->
+<div class="screen" id="s-invite">
   <div class="shdr"><div class="back" onclick="go('s-crear-liga')">‹</div><div class="stitle">Invitar Amigos</div></div>
   <div style="padding:20px;display:flex;flex-direction:column;gap:14px;flex:1">
     <div style="text-align:center;padding:10px 0"><div style="font-size:56px;margin-bottom:10px">🎉</div><div style="font-family:'Bebas Neue',cursive;font-size:26px;letter-spacing:3px;color:var(--white);margin-bottom:4px">¡Liga Creada!</div><div style="font-size:12px;color:var(--gray)">Invita a tus amigos y empieza a competir</div></div>
-    <div class="id-box"><div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:3px">ID de Liga</div><div class="id-val" id="invite-id-display">—</div></div><div class="copy-btn" onclick="copiarId()">Copiar</div></div>
-    <div class="iopt" onclick="compartirWhatsApp()"><div class="iico">📱</div><div><div style="font-size:14px;font-weight:700;color:var(--white)">Compartir por WhatsApp</div><div style="font-size:11px;color:var(--gray);margin-top:2px">Envía el enlace directo</div></div></div>
-    <div class="iopt" onclick="copiarEnlace()"><div class="iico">🔗</div><div><div style="font-size:14px;font-weight:700;color:var(--white)">Copiar enlace</div><div id="invite-url-display" style="font-size:11px;color:var(--gray);margin-top:2px">—</div></div></div>
-    <button class="bg" onclick="go('s-home')">Continuar</button>
+    <div class="id-box"><div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:3px">ID de Liga</div><div class="id-val">GOAT‑7X4K2</div></div><div class="copy-btn" onclick="toast('📋 ID copiado')">COPIAR</div></div>
+    <div class="iopt" onclick="toast('📱 Abriendo WhatsApp...')"><div class="iico">📱</div><div><div style="font-size:14px;font-weight:700;color:var(--white)">Compartir por WhatsApp</div><div style="font-size:11px;color:var(--gray);margin-top:2px">Envía el enlace directo</div></div></div>
+    <div class="iopt" onclick="toast('🔗 Enlace copiado')"><div class="iico">🔗</div><div><div style="font-size:14px;font-weight:700;color:var(--white)">Copiar enlace</div><div style="font-size:11px;color:var(--gray);margin-top:2px">fantasygot.app/liga/GOAT-7X4K2</div></div></div>
+    <button class="bg" onclick="go('s-home')">Continuar →</button>
   </div>
 </div>
 
-<!-- HOME -->
+<!-- ═══ HOME ═══ -->
 <div class="screen" id="s-home">
   <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname">Los Intocables</div></div><div class="lsub" style="padding-left:38px">8 jugadores · Semanal</div></div><span class="badge b-priv">Privada</span></div>
   <div class="view-sel">
-    <button class="vbtn active" id="vb-list" onclick="setView('list')">Lista</button>
-    <button class="vbtn" id="vb-feed" onclick="setView('feed')">Feed</button>
+    <button class="vbtn active" id="vb-list" onclick="setView('list')">☰ Lista</button>
+    <button class="vbtn" id="vb-feed" onclick="setView('feed')">▶ Feed</button>
   </div>
-  <div class="screen-scroll" id="home-scroll">
-    <div id="list-view"><div class="forum-feed" id="forum-feed"></div></div>
-  </div>
+  <div id="list-view"><div class="forum-feed" id="forum-feed"></div></div>
   <div id="tiktok-wrap"></div>
-  <div class="bnav">
+  <div class="bnav" id="home-bnav">
     <div class="ni active" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div>
     <div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div>
     <div class="nc" onclick="nav('s-goat',2)">🐐</div>
@@ -471,125 +440,173 @@ textarea.inp{resize:vertical;min-height:80px}
   </div>
 </div>
 
-<!-- GOAT / RETOS -->
+<!-- ═══ GOAT ═══ -->
 <div class="screen" id="s-goat">
-  <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname" id="goat-liga-name">—</div></div></div><span class="badge b-priv" id="goat-liga-badge">—</span></div>
-  <div class="gtop" style="flex-shrink:0">
-    <div class="gtitle">RETOS</div>
-    <div class="gtabs"><div class="gtab active" id="gtab-r" onclick="switchTab('r')">Retos</div><div class="gtab" id="gtab-p" onclick="switchTab('p')">Predicciones</div></div>
+  <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname">Los Intocables</div></div></div><span class="badge b-priv">Privada</span></div>
+  <div class="gtop"><div class="gtitle">🐐 RETOS</div><div class="gtabs"><div class="gtab active" id="gtab-r" onclick="switchTab('r')">Retos</div><div class="gtab" id="gtab-p" onclick="switchTab('p')">Predicciones</div></div></div>
+  <div class="gpanel" id="gpanel-r">
+    <div class="cbar"><div class="cbtn" onclick="go('s-crear-reto')">+ Crear Reto</div><div class="cbtn" onclick="toast('📝 Crear nueva predicción')">+ Predicción</div></div>
+    <div class="secrow"><span class="sectitle">Retos de la liga</span><span class="badge b-rev">3 pendientes</span></div>
+    <div class="rc"><div class="rc-top"><div><div class="rc-title">Salir de fiesta 3 noches seguidas</div><div class="rc-creator">por @JuanGOAT · 4 completados</div></div><div class="rc-pts">500<span>pts</span></div></div><div class="rc-bot"><div class="rc-who">Completaron: <strong>CarlosGOAT, MikelFC</strong></div><button class="cbtn2" onclick="openComp('Salir de fiesta 3 noches seguidas','JuanGOAT',500,false)">Completar</button></div></div>
+    <div class="rc"><div class="rc-top"><div><div class="rc-title">Hacer 100 flexiones de una vez</div><div class="rc-creator">por @CarlosGOAT · 1 completado</div></div><div class="rc-pts">300<span>pts</span></div></div><div class="rc-bot"><div class="rc-who">Completaron: <strong>LeonardoK</strong></div><button class="cbtn2" onclick="openComp('Hacer 100 flexiones de una vez','CarlosGOAT',300,false)">Completar</button></div></div>
+    <div class="rc"><div class="rc-top"><div><div class="rc-title">Acabar un maratón completo</div><div class="rc-creator">por @LauraElite · 2 completados</div></div><div class="rc-pts">750<span>pts</span></div></div><div class="rc-bot"><div class="rc-who">Completaron: <strong>PedroMás, WolfPackX</strong></div><button class="cbtn2" onclick="openComp('Acabar un maratón completo','LauraElite',750,false)">Completar</button></div></div>
+    <div class="rc"><div class="rc-top"><div><div class="rc-title">No bajar de 8.000 pasos al día</div><div class="rc-creator">por @WolfPackX · 0 completados</div></div><div class="rc-pts neg">-100<span>pts penalización</span></div></div><div class="rc-bot"><div class="rc-who">Penalización si no cumples · fin de semana</div><button class="cbtn2" onclick="openComp('No bajar de 8.000 pasos al día','WolfPackX',-100,true)">Registrar</button></div></div>
+    <div class="rc"><div class="rc-top"><div><div class="rc-title">Leer un libro en una semana</div><div class="rc-creator">por @EagleRise · 3 completados</div></div><div class="rc-pts">150<span>pts</span></div></div><div class="rc-bot"><div class="rc-who">Completaron: <strong>LauraElite +2</strong></div><button class="cbtn2" onclick="openComp('Leer un libro en una semana','EagleRise',150,false)">Completar</button></div></div>
   </div>
-  <div class="screen-scroll">
-    <div class="gpanel" id="gpanel-r">
-      <div class="cbar"><div class="cbtn" onclick="go('s-crear-reto')">+ Crear Reto</div><div class="cbtn" onclick="toast('Próximamente')">+ Predicción</div></div>
-      <div class="secrow"><span class="sectitle">Retos de la liga</span><span class="badge b-rev" id="retos-pending-badge" style="display:none">0 pendientes</span></div>
-      <div id="retos-list">
-        <div style="text-align:center;padding:40px 20px;color:var(--gray)">
-          <div style="font-size:36px;margin-bottom:12px">🎯</div>
-          <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin retos todavía</div>
-          <div style="font-size:11px;line-height:1.5">Crea el primer reto de la liga</div>
-        </div>
-      </div>
-    </div>
-    <div class="gpanel" id="gpanel-p" style="display:none">
-      <div class="cbar"><div class="cbtn" style="flex:1" onclick="toast('Próximamente')">+ Predicción</div></div>
-      <div style="text-align:center;padding:40px 20px;color:var(--gray)">
-        <div style="font-size:36px;margin-bottom:12px">🔮</div>
-        <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Predicciones próximamente</div>
-      </div>
-    </div>
+  <div class="gpanel" id="gpanel-p" style="display:none">
+    <div class="cbar"><div class="cbtn" style="flex:1" onclick="toast('📝 Crear nueva predicción')">+ Crear Predicción</div></div>
+    <div class="secrow"><span class="sectitle">Predicciones activas</span><span class="badge b-rev">Semana 7</span></div>
+    <div class="pred-card"><div class="pred-match">¿Quién ganará el próximo poker de amigos?</div><div class="pred-q">por @JuanGOAT · +200 pts si aciertas</div><div class="pred-opts"><div class="pred-opt sel" onclick="selPred(this)">CarlosGOAT</div><div class="pred-opt" onclick="selPred(this)">MikelFC</div><div class="pred-opt" onclick="selPred(this)">PedroMás</div></div><div style="font-size:10px;color:var(--gold);font-weight:700;text-align:right;margin-top:8px">5 de 8 ya han votado</div></div>
+    <div class="pred-card"><div class="pred-match">¿Alguien acaba el maratón en menos de 4h?</div><div class="pred-q">por @LauraElite · +300 pts si aciertas</div><div class="pred-opts"><div class="pred-opt" onclick="selPred(this)">Sí</div><div class="pred-opt" onclick="selPred(this)">No</div></div><div style="font-size:10px;color:var(--gold);font-weight:700;text-align:right;margin-top:8px">3 de 8 ya han votado</div></div>
+    <button class="bg" onclick="toast('✅ Predicciones guardadas')">Guardar predicciones</button>
   </div>
-  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc active" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
+  <div class="bnav">
+    <div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div>
+    <div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div>
+    <div class="nc active" onclick="nav('s-goat',2)">🐐</div>
+    <div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div>
+    <div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div>
+  </div>
 </div>
 
-<!-- CREAR RETO -->
-<div class="screen full-scroll" id="s-crear-reto">
+<!-- ═══ CREAR RETO ═══ -->
+<div class="screen" id="s-crear-reto">
   <div class="shdr"><div class="back" onclick="go('s-goat')">‹</div><div class="stitle">Crear Reto</div></div>
   <div style="padding:24px;display:flex;flex-direction:column;gap:20px;flex:1">
-    <div class="iw"><label class="il">Título del reto</label><input class="inp" id="reto-titulo" type="text" placeholder="Ej: Hacer una ruta de senderismo..."></div>
-    <div class="iw"><label class="il">Puntos (positivos o negativos)</label><input class="inp" id="reto-pts" type="number" placeholder="Ej: 300 o -100"><div style="font-size:10px;color:var(--gray);margin-top:4px">Usa puntos negativos para penalizaciones</div></div>
-    <div class="iw"><label class="il">Descripción (opcional)</label><input class="inp" id="reto-desc" type="text" placeholder="Añade detalles..."></div>
-    <button class="bg" onclick="publicarReto()">Publicar Reto</button>
+    <div class="iw"><label class="il">Título del reto</label><input class="inp" type="text" placeholder="Ej: Hacer una ruta de senderismo..."></div>
+    <div class="iw">
+      <label class="il">Puntos (positivos o negativos)</label>
+      <input class="inp" type="number" id="reto-pts-inp" placeholder="Ej: 300 o -100">
+      <div style="font-size:10px;color:var(--gray);margin-top:4px">Usa puntos <span style="color:var(--red)">negativos</span> para penalizaciones</div>
+    </div>
+    <div class="iw"><label class="il">Descripción (opcional)</label><input class="inp" type="text" placeholder="Añade detalles del reto..."></div>
+    <button class="bg" onclick="toast('✅ Reto publicado en la liga');go('s-goat')">Publicar Reto</button>
   </div>
 </div>
 
-<!-- COMPLETAR -->
-<div class="screen full-scroll" id="s-completar">
+<!-- ═══ COMPLETAR RETO ═══ -->
+<div class="screen" id="s-completar">
   <div class="shdr"><div class="back" onclick="go('s-goat')">‹</div><div class="stitle">Completar Reto</div></div>
   <div class="comp-body">
     <div class="reto-hero">
-      <div class="rh-name" id="comp-name">NOMBRE</div>
-      <div class="rh-creator">Creado por <span id="comp-creator" style="color:var(--gold);font-weight:700"></span></div>
-      <div class="pts-badge" id="comp-pts-badge"><span class="pts-n" id="comp-pts">500</span><span class="pts-l">pts</span></div>
+      <div class="rh-name" id="comp-name">NOMBRE RETO</div>
+      <div class="rh-creator">Creado por <span id="comp-creator">@creador</span></div>
+      <div class="pts-badge" id="comp-pts-badge"><span class="pts-n" id="comp-pts">500</span><span class="pts-l">puntos</span></div>
     </div>
-    <div class="iw"><label class="il">Imagen (opcional)</label><div class="upload-area" id="img-area"><input type="file" accept="image/*" multiple id="img-input" onchange="handleImg(event)"><span class="upload-ico">🖼️</span><div class="upload-title">Toca para subir foto</div><div class="upload-sub">PNG · JPG · HEIC</div></div><div class="up-preview" id="img-prev"><img id="img-el" src="" style="border-radius:10px"><button class="rm-btn" onclick="clearMedia('img')">✕</button></div></div>
-    <div class="iw"><label class="il">Vídeo corto (máx. 30 seg · 20 MB)</label><div class="upload-area" id="vid-area"><input type="file" accept="video/*" id="vid-input" onchange="handleVid(event)"><span class="upload-ico">🎬</span><div class="upload-title">Toca para subir vídeo</div><div class="upload-sub">MP4 · MOV · máx. 30s</div></div><div class="up-preview" id="vid-prev"><video id="vid-el" controls playsinline style="border-radius:10px"></video><button class="rm-btn" onclick="clearMedia('vid')">✕</button></div></div>
-    <div class="iw"><label class="il">Justificación (opcional)</label><textarea class="inp" id="comp-text"></textarea></div>
+    <div class="iw">
+      <label class="il">📷 Imagen (opcional)</label>
+      <div class="upload-area" id="img-area"><input type="file" accept="image/*" multiple id="img-input" onchange="handleImg(event)"><span class="upload-ico">🖼️</span><div class="upload-title">Toca para subir foto</div><div class="upload-sub">PNG · JPG · HEIC</div></div>
+      <div class="up-preview" id="img-prev"><img id="img-el" src="" alt="preview" style="border-radius:10px"><button class="rm-btn" onclick="clearMedia('img')">✕</button></div>
+    </div>
+    <div class="iw">
+      <label class="il">🎥 Vídeo corto (máx. 30 seg · 20 MB)</label>
+      <div class="upload-area" id="vid-area"><input type="file" accept="video/*" id="vid-input" onchange="handleVid(event)"><span class="upload-ico">🎬</span><div class="upload-title">Toca para subir vídeo</div><div class="upload-sub">MP4 · MOV · máx. 30s y 20MB</div></div>
+      <div class="up-preview" id="vid-prev"><video id="vid-el" controls playsinline style="border-radius:10px"></video><button class="rm-btn" onclick="clearMedia('vid')">✕</button></div>
+    </div>
+    <div class="iw"><label class="il">✍️ Justificación (opcional)</label><textarea class="inp" id="comp-text" placeholder="Explica tu hazaña..."></textarea></div>
     <button class="bg" onclick="submitReto()">Completar Reto</button>
-    <button class="bw" style="padding:12px;font-size:12px" onclick="submitRetoSin()">Completar sin prueba</button>
+    <button class="bw" style="padding:12px;font-size:12px" onclick="submitRetoSinPrueba()">Completar sin prueba</button>
     <div class="pend-bar"><div class="pend-dot"></div><span style="font-size:12px;color:var(--gold);font-weight:600">Pendiente de aprobación del árbitro</span></div>
   </div>
 </div>
 
-<!-- RANKING -->
+<!-- ═══ RANKING ═══ -->
 <div class="screen" id="s-ranking">
   <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname">Los Intocables</div></div></div><span class="badge b-priv">Privada</span></div>
   <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid #111;flex-shrink:0">
     <div style="font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:3px;color:var(--white)">RANKING</div>
     <select id="rank-filter" onchange="renderRanking()" style="background:var(--card);border:1px solid #222;border-radius:8px;padding:7px 12px;color:var(--white);font-size:11px;font-weight:700;cursor:pointer;outline:none">
-      <option value="global">GLOBAL</option>
+      <option value="global">🌍 GLOBAL</option>
       <option value="feb" selected>Febrero 2026</option>
       <option value="ene">Enero 2026</option>
       <option value="dic">Diciembre 2025</option>
       <option value="nov">Noviembre 2025</option>
     </select>
   </div>
-  <div class="screen-scroll">
-    <div id="rank-top3" class="rank-top3"></div>
-    <div id="rank-global-label" style="display:none;padding:4px 20px 4px;flex-shrink:0"><span class="global-pill">Acumulado total · todos los meses</span></div>
-    <div id="rank-list" class="rank-list"></div>
+  <div id="rank-top3" class="rank-top3"></div>
+  <div id="rank-global-label" style="display:none;padding:4px 20px 4px;flex-shrink:0"><span class="global-pill">🌍 Acumulado total · todos los meses</span></div>
+  <div id="rank-list" class="rank-list"></div>
+  <div class="bnav">
+    <div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div>
+    <div class="ni active" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div>
+    <div class="nc" onclick="nav('s-goat',2)">🐐</div>
+    <div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div>
+    <div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div>
   </div>
-  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni active" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
 </div>
 
-<!-- PERFIL -->
+<!-- ═══ PERFIL / STATS ═══ -->
 <div class="screen" id="s-stats">
   <div class="lhdr"><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="goBack()">‹</div><div class="lname">Perfil</div></div><div class="gear" onclick="go('s-settings')">⚙️</div></div>
   <div class="stats-hero">
     <div class="stats-av">😈</div>
-    <div id="prof-name" style="font-size:20px;font-weight:800;color:var(--white);margin-top:4px">—</div>
-    <div id="prof-email" style="font-size:12px;color:var(--gray);margin-top:2px">—</div>
-    <button class="trophy-btn" onclick="openModal('m-trophy')">Solicitar Trofeo</button>
+    <div style="font-size:20px;font-weight:800;color:var(--white);margin-top:4px">CarlosGOAT</div>
+    <div style="font-size:12px;color:var(--gray);margin-top:2px">carlos@email.com</div>
+    <!-- trophy btn -->
+    <button class="trophy-btn" onclick="openModal('m-trophy')">🏆 Solicitar Trofeo</button>
   </div>
-  <div class="screen-scroll">
   <div class="sg">
-    <div class="sbox"><div class="sv gold" id="prof-pts">0</div><div class="slbl">Puntos totales</div></div>
-    <div class="sbox"><div class="sv" id="prof-retos">0</div><div class="slbl">Retos completados</div></div>
-    <div class="sbox"><div class="sv" id="prof-ligas">0</div><div class="slbl">Ligas activas</div></div>
-    <div class="sbox"><div class="sv" id="prof-aprov" style="color:var(--green)">—</div><div class="slbl">Tasa aprobación</div></div>
+    <div class="sbox"><div class="sv gold">4.750</div><div class="slbl">Puntos totales</div></div>
+    <div class="sbox"><div class="sv">23</div><div class="slbl">Retos completados</div></div>
+    <div class="sbox"><div class="sv">7</div><div class="slbl">Ligas activas</div></div>
+    <div class="sbox"><div class="sv" style="color:var(--green)">94%</div><div class="slbl">Tasa aprobación</div></div>
   </div>
-  <div id="prof-historial">
-    <div style="text-align:center;padding:32px 20px;color:var(--gray)">
-      <div style="font-size:32px;margin-bottom:10px">📋</div>
-      <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin historial todavía</div>
-      <div style="font-size:11px;line-height:1.5">Completa retos para ver tus estadísticas aquí</div>
-    </div>
+  <div class="shl"><div class="lbl">Racha actual</div><div class="val" style="display:flex;align-items:center;gap:8px"><span>🔥</span><span>8 semanas consecutivas en TOP 3</span></div></div>
+
+  <!-- RETO-BY-RETO STATS -->
+  <div style="padding:0 18px;margin-bottom:6px;flex-shrink:0"><div style="font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gray);font-weight:700;margin-bottom:10px">Tu historial por reto</div></div>
+  <div class="reto-stat-card">
+    <div class="rsc-hdr"><div class="rsc-title">🎉 Salir de fiesta 3 noches seguidas</div><div class="rsc-pts">500</div></div>
+    <div class="rsc-row"><div class="rsc-label">Veces completado</div><div class="rsc-val">4</div><div class="rsc-bar-wrap"><div class="rsc-bar" style="width:80%"></div></div></div>
+    <div class="rsc-row"><div class="rsc-label">Pts acumulados</div><div class="rsc-val">2.000</div></div>
+    <div class="rsc-row"><div class="rsc-label">Última vez</div><div class="rsc-val" style="font-size:11px;font-family:'Montserrat',sans-serif;color:var(--gl)">Hace 3 días</div></div>
   </div>
+  <div class="reto-stat-card">
+    <div class="rsc-hdr"><div class="rsc-title">🏃 Acabar un maratón completo</div><div class="rsc-pts">750</div></div>
+    <div class="rsc-row"><div class="rsc-label">Veces completado</div><div class="rsc-val">48</div><div class="rsc-bar-wrap"><div class="rsc-bar" style="width:100%"></div></div></div>
+    <div class="rsc-row"><div class="rsc-label">Pts acumulados</div><div class="rsc-val">36.000</div></div>
+    <div class="rsc-row"><div class="rsc-label">Mejor marca</div><div class="rsc-val" style="font-size:11px;font-family:'Montserrat',sans-serif;color:var(--green)">3h 42min 🏅</div></div>
+  </div>
+  <div class="reto-stat-card">
+    <div class="rsc-hdr"><div class="rsc-title">💪 100 flexiones de una vez</div><div class="rsc-pts">300</div></div>
+    <div class="rsc-row"><div class="rsc-label">Veces completado</div><div class="rsc-val">7</div><div class="rsc-bar-wrap"><div class="rsc-bar" style="width:35%"></div></div></div>
+    <div class="rsc-row"><div class="rsc-label">Pts acumulados</div><div class="rsc-val">2.100</div></div>
+    <div class="rsc-row"><div class="rsc-label">Última vez</div><div class="rsc-val" style="font-size:11px;font-family:'Montserrat',sans-serif;color:var(--gl)">Hace 2 semanas</div></div>
+  </div>
+  <div class="reto-stat-card">
+    <div class="rsc-hdr"><div class="rsc-title">📚 Leer un libro en una semana</div><div class="rsc-pts">150</div></div>
+    <div class="rsc-row"><div class="rsc-label">Veces completado</div><div class="rsc-val">3</div><div class="rsc-bar-wrap"><div class="rsc-bar" style="width:15%"></div></div></div>
+    <div class="rsc-row"><div class="rsc-label">Pts acumulados</div><div class="rsc-val">450</div></div>
+    <div class="rsc-row"><div class="rsc-label">Libro más rápido</div><div class="rsc-val" style="font-size:10px;font-family:'Montserrat',sans-serif;color:var(--gl)">4 días 📖</div></div>
+  </div>
+  <div class="reto-stat-card" style="margin-bottom:0">
+    <div class="rsc-hdr"><div class="rsc-title">👨‍🍳 Aprender a cocinar plato gourmet</div><div class="rsc-pts">200</div></div>
+    <div class="rsc-row"><div class="rsc-label">Veces completado</div><div class="rsc-val">2</div><div class="rsc-bar-wrap"><div class="rsc-bar" style="width:10%"></div></div></div>
+    <div class="rsc-row"><div class="rsc-label">Pts acumulados</div><div class="rsc-val">400</div></div>
+    <div class="rsc-row"><div class="rsc-label">Plato favorito</div><div class="rsc-val" style="font-size:10px;font-family:'Montserrat',sans-serif;color:var(--gl)">Risotto de trufa 🍄</div></div>
+  </div>
+
   <div style="padding:14px 18px 8px"><button class="bgo" onclick="nav('s-quinteto',3)">Ver Quinteto</button></div>
+  <div class="bnav">
+    <div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div>
+    <div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div>
+    <div class="nc" onclick="nav('s-goat',2)">🐐</div>
+    <div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div>
+    <div class="ni active" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div>
   </div>
-  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div><div class="ni active" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
 </div>
 
-<!-- QUINTETO -->
+<!-- ═══ QUINTETO ═══ -->
 <div class="screen" id="s-quinteto">
-  <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname">Mi Quinteto</div></div><div class="lsub" style="padding-left:38px">Los Intocables · Semana 7</div></div><button class="bg bsm2" onclick="toast('Quinteto guardado')">Guardar</button></div>
+  <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname">Mi Quinteto</div></div><div class="lsub" style="padding-left:38px">Los Intocables · Semana 7</div></div><button class="bg bsm2" onclick="toast('✅ Quinteto guardado')">Guardar</button></div>
   <div class="cwrap">
     <div class="court" id="court-el">
       <div class="crt-line"></div>
-      <div class="info-btn" onclick="toggleInfo(event)">ⓘ</div>
+      <div class="info-btn" id="info-btn" onclick="toggleInfo(event)">ⓘ</div>
       <div class="info-popup" id="info-popup">
         <div class="ip-title">Puntos por alineación</div>
-        <div class="ip-row"><div class="ip-dot" style="background:var(--gold)"></div><div class="ip-text"><strong style="color:var(--white)">Titulares:</strong> <span id="ip-starter-pts">+10</span> pts / periodo</div></div>
-        <div class="ip-row"><div class="ip-dot" style="background:var(--gray)"></div><div class="ip-text"><strong style="color:var(--white)">Banquillo:</strong> <span id="ip-bench-pts">+4</span> pts / periodo</div></div>
+        <div class="ip-row"><div class="ip-dot" style="background:var(--gold)"></div><div class="ip-text"><strong style="color:var(--white)">Titulares:</strong> +10 pts por periodo</div></div>
+        <div class="ip-row"><div class="ip-dot" style="background:var(--gray)"></div><div class="ip-text"><strong style="color:var(--white)">Banquillo:</strong> +4 pts por periodo</div></div>
         <div class="ip-note">Se recalcula cada semana / mes según la periodicidad de la liga</div>
       </div>
       <div class="pgrid" id="court-grid"></div>
@@ -597,10 +614,12 @@ textarea.inp{resize:vertical;min-height:80px}
     <div class="drag-hint">Pulsa para seleccionar · arrastra para intercambiar</div>
     <div class="bench-box"><div class="bench-lbl">Banquillo</div><div class="bench-row" id="bench-row"></div></div>
   </div>
+  <!-- PICKER -->
   <div class="pick-ov" id="picker" onclick="closePicker()">
     <div class="pick-box" onclick="event.stopPropagation()">
       <div class="pick-title">Seleccionar miembro</div>
-      <div class="pick-slot" id="pick-slot"></div>
+      <div class="pick-sub">Jugadores de Los Intocables</div>
+      <div class="pick-slot" id="pick-slot">Titular 5</div>
       <div class="ulist">
         <div class="upick" onclick="selUser(this,'CarlosGOAT','4.750','😈')"><div class="u-av" style="background:linear-gradient(135deg,#EFB810,#b8860b);color:#000">CG</div><div class="upick-name">CarlosGOAT</div><div class="upick-pts">4.750</div></div>
         <div class="upick" onclick="selUser(this,'MikelFC','3.240','😊')"><div class="u-av" style="background:#242424;color:#fff">MK</div><div class="upick-name">MikelFC</div><div class="upick-pts">3.240</div></div>
@@ -611,144 +630,189 @@ textarea.inp{resize:vertical;min-height:80px}
         <div class="upick" onclick="selUser(this,'EagleRise','1.200','🦅')"><div class="u-av" style="background:#0e0e0e;color:#fff">ER</div><div class="upick-name">EagleRise</div><div class="upick-pts">1.200</div></div>
         <div class="upick" onclick="selUser(this,'FoxTricky','980','🦊')"><div class="u-av" style="background:#0a0a0a;color:#fff">FT</div><div class="upick-name">FoxTricky</div><div class="upick-pts">980</div></div>
       </div>
-      <div class="pick-acts"><button class="pick-cancel" onclick="closePicker()">Cancelar</button><button class="bg" style="flex:2" onclick="confirmPick()">Confirmar</button></div>
+      <div class="pick-acts">
+        <button class="pick-cancel" onclick="closePicker()">Cancelar</button>
+        <button class="bg" style="flex:2" onclick="confirmPick()">Confirmar</button>
+      </div>
     </div>
   </div>
-  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni active" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
+  <div class="bnav">
+    <div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div>
+    <div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div>
+    <div class="nc" onclick="nav('s-goat',2)">🐐</div>
+    <div class="ni active" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div>
+    <div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div>
+  </div>
 </div>
 
-<!-- MODAL INSTRUCCIONES -->
-<div class="modal-ov" id="m-instr" onclick="closeModal('m-instr')">
+<!-- ═══════ MODALS ═══════ -->
+
+<!-- INSTRUCCIONES -->
+<div class="modal-ov" id="m-instrucciones" onclick="closeModal('m-instrucciones')">
   <div class="modal-box" onclick="event.stopPropagation()" style="max-height:88vh">
-    <div class="modal-hdr"><div class="modal-title">Cómo jugar</div><div class="modal-close" onclick="closeModal('m-instr')">✕</div></div>
+    <div class="modal-hdr"><div class="modal-title">📖 Cómo jugar</div><div class="modal-close" onclick="closeModal('m-instrucciones')">✕</div></div>
     <div class="modal-body">
-      <p style="font-size:12px;color:var(--gray);margin-bottom:16px;line-height:1.5">Fantasy GOAT es una liga de retos de la vida real entre amigos. Completa retos, sube pruebas, gana puntos.</p>
-      <div class="instr-row"><div class="instr-num">1</div><div class="instr-text"><strong>Crea o únete a una liga</strong><p>Crea tu propia liga privada o pública e invita a tus amigos con el ID o enlace.</p></div></div>
-      <div class="instr-div"></div>
-      <div class="instr-row"><div class="instr-num">2</div><div class="instr-text"><strong>Publica retos</strong><p>Cualquier miembro puede proponer un reto. Puedes poner puntos negativos como penalización.</p></div></div>
-      <div class="instr-div"></div>
-      <div class="instr-row"><div class="instr-num">3</div><div class="instr-text"><strong>Completa y sube prueba</strong><p>Pulsa "Completar" y sube foto, vídeo (máx. 30 seg) o justificación escrita.</p></div></div>
-      <div class="instr-div"></div>
-      <div class="instr-row"><div class="instr-num">4</div><div class="instr-text"><strong>El árbitro valida</strong><p>El admin aprueba o rechaza. Si se aprueba, los puntos se suman al marcador.</p></div></div>
-      <div class="instr-div"></div>
-      <div class="instr-row"><div class="instr-num">5</div><div class="instr-text"><strong>Quinteto</strong><p>Elige tu quinteto de titulares más suplentes. Los titulares suman más puntos por periodo.</p></div></div>
-      <div class="instr-div"></div>
-      <div class="instr-row"><div class="instr-num">6</div><div class="instr-text"><strong>Ranking</strong><p>Consulta el ranking mensual o el GLOBAL acumulado. El que más puntos tenga al final gana.</p></div></div>
-      <button class="bg" style="margin-top:4px" onclick="closeModal('m-instr')">Entendido, a jugar</button>
+      <div style="font-size:12px;color:var(--gray);margin-bottom:16px;line-height:1.5">Fantasy GOAT es una liga de retos de la vida real entre amigos. Completa retos, sube pruebas, gana puntos.</div>
+      <div class="instr-row"><div class="instr-num">1</div><div class="instr-text"><strong>Crea o únete a una liga</strong><p>Crea tu propia liga privada o pública, e invita a tus amigos con el ID o enlace.</p></div></div>
+      <div class="instr-divider"></div>
+      <div class="instr-row"><div class="instr-num">2</div><div class="instr-text"><strong>Publica retos</strong><p>Cualquier miembro puede proponer un reto con su puntuación. También puedes poner puntos <span style="color:var(--red)">negativos</span> como penalización.</p></div></div>
+      <div class="instr-divider"></div>
+      <div class="instr-row"><div class="instr-num">3</div><div class="instr-text"><strong>Completa y sube prueba</strong><p>Pulsa "Completar" en cualquier reto y sube una foto, vídeo (máx. 30 seg) o justificación escrita.</p></div></div>
+      <div class="instr-divider"></div>
+      <div class="instr-row"><div class="instr-num">4</div><div class="instr-text"><strong>El árbitro valida</strong><p>El admin de la liga aprueba o rechaza cada submission. Si se aprueba, los puntos se suman al marcador.</p></div></div>
+      <div class="instr-divider"></div>
+      <div class="instr-row"><div class="instr-num">5</div><div class="instr-text"><strong>El feed y el TikTok</strong><p>Todas las submissions aparecen en el Foro. Activa el modo Feed (▶) para verlas una a una al estilo TikTok.</p></div></div>
+      <div class="instr-divider"></div>
+      <div class="instr-row"><div class="instr-num">6</div><div class="instr-text"><strong>Quinteto</strong><p>Cada semana elige tu quinteto de 5 titulares + 4 del banquillo. Los titulares suman +10 pts/periodo, el banquillo +4 pts/periodo.</p></div></div>
+      <div class="instr-divider"></div>
+      <div class="instr-row"><div class="instr-num">7</div><div class="instr-text"><strong>Ranking</strong><p>Consulta el ranking mensual o el acumulado GLOBAL. ¡El que más puntos acumule al final de temporada gana!</p></div></div>
+      <div class="instr-divider"></div>
+      <div class="instr-row"><div class="instr-num">8</div><div class="instr-text"><strong>Trofeo</strong><p>¿Ya ganaste? Solicita tu trofeo personalizado con tu nombre y temporada desde la sección Perfil.</p></div></div>
+      <button class="bg" style="margin-top:16px" onclick="closeModal('m-instrucciones')">¡Entendido, a jugar!</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL QUINTETO INFO -->
-<div class="modal-ov" id="m-qinfo" onclick="closeModal('m-qinfo')">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-hdr"><div class="modal-title">Puntuación del Quinteto</div><div class="modal-close" onclick="closeModal('m-qinfo')">✕</div></div>
-    <div class="modal-body">
-      <p style="font-size:13px;color:var(--gl);line-height:1.6;margin-bottom:14px">El quinteto es la alineación de miembros de tu liga que apuestas que rendirán mejor en el siguiente periodo.</p>
-      <div style="background:var(--card);border:1px solid rgba(239,184,16,.2);border-radius:12px;padding:14px;margin-bottom:10px">
-        <div style="font-size:11px;font-weight:800;color:var(--gold);letter-spacing:1px;margin-bottom:8px">TITULARES</div>
-        <p style="font-size:12px;color:var(--gl);line-height:1.5">Son los jugadores que apuestas que completarán más retos. Cada titular recibe los puntos configurados al crear la liga por cada periodo activo.</p>
-      </div>
-      <div style="background:var(--card);border:1px solid #1e1e1e;border-radius:12px;padding:14px;margin-bottom:14px">
-        <div style="font-size:11px;font-weight:800;color:var(--gl);letter-spacing:1px;margin-bottom:8px">SUPLENTES</div>
-        <p style="font-size:12px;color:var(--gl);line-height:1.5">Reciben menos puntos por periodo. Si un titular no completa ningún reto ese periodo, los suplentes no se activan automáticamente.</p>
-      </div>
-      <p style="font-size:11px;color:var(--gray);line-height:1.5;padding:10px;background:#0a0a0a;border-radius:10px">Estos valores se configuran al crear la liga y el admin puede actualizarlos en cualquier momento.</p>
-      <button class="bg" style="margin-top:14px" onclick="closeModal('m-qinfo')">Entendido</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL TROPHY -->
+<!-- TROPHY STORE -->
 <div class="modal-ov" id="m-trophy" onclick="closeModal('m-trophy')">
   <div class="modal-box" onclick="event.stopPropagation()" style="max-height:92vh">
-    <div class="modal-hdr"><div class="modal-title">Solicitar Trofeo</div><div class="modal-close" onclick="closeModal('m-trophy')">✕</div></div>
+    <div class="modal-hdr"><div class="modal-title">🏆 Solicitar Trofeo</div><div class="modal-close" onclick="closeModal('m-trophy')">✕</div></div>
     <div class="modal-body">
-      <div style="text-align:center;padding:16px 0">
-        <div class="trophy-prev-wrap"><span id="trophy-emoji">🏆</span></div>
-        <div class="trophy-name-prev" id="trophy-name-prev">CarlosGOAT</div>
-        <div class="trophy-season-prev" id="trophy-season-prev">Temporada 2026</div>
+      <!-- live preview -->
+      <div class="trophy-hero">
+        <div class="trophy-preview"><span id="trophy-emoji-preview">🏆</span></div>
+        <div class="trophy-name-preview" id="trophy-name-prev">CarlosGOAT</div>
+        <div class="trophy-season-preview" id="trophy-season-prev">Temporada 2026</div>
       </div>
+      <!-- personalization -->
       <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
-        <div class="iw"><label class="il">Nombre en el trofeo</label><input class="inp" id="trophy-name-inp" value="CarlosGOAT" oninput="updateTrophyPreview()"></div>
-        <div class="iw"><label class="il">Temporada</label><input class="inp" id="trophy-season-inp" value="Temporada 2026" oninput="updateTrophyPreview()"></div>
+        <div class="iw"><label class="il">Nombre en el trofeo</label><input class="inp" id="trophy-name-inp" value="CarlosGOAT" oninput="updateTrophyPreview()" placeholder="Tu nombre GOAT"></div>
+        <div class="iw"><label class="il">Temporada</label><input class="inp" id="trophy-season-inp" value="Temporada 2026" oninput="updateTrophyPreview()" placeholder="Temporada 2026"></div>
       </div>
+      <!-- products -->
       <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);font-weight:700;margin-bottom:12px">Elige tu trofeo</div>
-      <div class="t-prod sel" id="tp-1" onclick="selectTrophy(1)"><div class="t-img">🏆</div><div style="flex:1"><div class="t-name">Trofeo Clásico</div><div class="t-desc">Resina dorada · 20cm · grabado láser</div><div class="t-price">29,90 €</div></div><div class="chk">✓</div></div>
-      <div class="t-prod" id="tp-2" onclick="selectTrophy(2)"><div class="t-img">🐐</div><div style="flex:1"><div class="t-name">GOAT Edition</div><div class="t-desc">Cabra dorada premium · 25cm</div><div class="t-price">49,90 €</div></div><div class="chk">✓</div></div>
-      <div class="t-prod" id="tp-3" onclick="selectTrophy(3)"><div class="t-img">👑</div><div style="flex:1"><div class="t-name">Trofeo Élite</div><div class="t-desc">Metal chapado en oro · 30cm · pedestal madera</div><div class="t-price">89,90 €</div></div><div class="chk">✓</div></div>
-      <div class="t-prod" id="tp-4" onclick="selectTrophy(4)"><div class="t-img">📜</div><div style="flex:1"><div class="t-name">Diploma Enmarcado</div><div class="t-desc">Certificado oficial Fantasy GOAT · 30x21cm</div><div class="t-price">19,90 €</div></div><div class="chk">✓</div></div>
-      <button class="bg" style="margin-top:16px" onclick="orderTrophy()">Pedir Trofeo · <span id="trophy-price-btn">29,90 €</span></button>
-      <p style="font-size:10px;color:var(--gray);text-align:center;margin-top:10px;line-height:1.4">Envío en 7–10 días hábiles · Pago seguro</p>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL FEEDBACK -->
-<div class="modal-ov" id="m-feedback" onclick="closeModal('m-feedback')">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-hdr"><div class="modal-title">Comentario</div><div class="modal-close" onclick="closeModal('m-feedback')">✕</div></div>
-    <div class="modal-body">
-      <p style="font-size:13px;color:var(--gl);margin-bottom:14px;line-height:1.5">Cuéntanos qué piensas de Fantasy GOAT. Tu opinión nos ayuda a mejorar la app.</p>
-      <div class="iw" style="margin-bottom:14px">
-        <label class="il">Tu mensaje</label>
-        <textarea class="inp" id="fb-text" style="min-height:150px" maxlength="2000" placeholder="Escribe aquí..." oninput="document.getElementById('fb-count').textContent=this.value.length"></textarea>
-        <div style="text-align:right;font-size:10px;color:var(--gray);margin-top:4px"><span id="fb-count">0</span>/2000</div>
+      <div class="trophy-products">
+        <div class="trophy-prod selected" id="tp-1" onclick="selectTrophy(1)">
+          <div class="tp-img">🏆</div>
+          <div style="flex:1">
+            <div class="tp-name">Trofeo Clásico</div>
+            <div class="tp-desc">Resina dorada · 20cm · grabado láser con nombre y temporada</div>
+            <div class="tp-price">29,90 €</div>
+          </div>
+          <div class="check">✓</div>
+        </div>
+        <div class="trophy-prod" id="tp-2" onclick="selectTrophy(2)">
+          <div class="tp-img" onclick="this.closest('.trophy-prod').click()">🐐</div>
+          <div style="flex:1">
+            <div class="tp-name">Trofeo GOAT Edition</div>
+            <div class="tp-desc">Cabra dorada de resina premium · 25cm · grabado personalizado</div>
+            <div class="tp-price">49,90 €</div>
+          </div>
+          <div class="check">✓</div>
+        </div>
+        <div class="trophy-prod" id="tp-3" onclick="selectTrophy(3)">
+          <div class="tp-img">👑</div>
+          <div style="flex:1">
+            <div class="tp-name">Trofeo Élite</div>
+            <div class="tp-desc">Metal chapado en oro · 30cm · pedestal de madera · edición limitada</div>
+            <div class="tp-price">89,90 €</div>
+          </div>
+          <div class="check">✓</div>
+        </div>
+        <div class="trophy-prod" id="tp-4" onclick="selectTrophy(4)">
+          <div class="tp-img">📜</div>
+          <div style="flex:1">
+            <div class="tp-name">Diploma Enmarcado</div>
+            <div class="tp-desc">Certificado oficial Fantasy GOAT · marco negro 30x21cm · firmado digitalmente</div>
+            <div class="tp-price">19,90 €</div>
+          </div>
+          <div class="check">✓</div>
+        </div>
       </div>
-      <button class="bg" onclick="sendFeedback()">Enviar comentario</button>
+      <button class="bg" style="margin-top:20px" onclick="orderTrophy()">Pedir Trofeo · <span id="trophy-price-btn">29,90 €</span></button>
+      <div style="font-size:10px;color:var(--gray);text-align:center;margin-top:10px;line-height:1.4">Envío en 7–10 días hábiles · Pago seguro<br>Solo disponible para miembros de ligas activas</div>
     </div>
   </div>
 </div>
 
-<!-- MODAL ABOUT -->
-<div class="modal-ov" id="m-about" onclick="closeModal('m-about')">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-hdr"><div class="modal-title">Sobre Fantasy GOAT</div><div class="modal-close" onclick="closeModal('m-about')">✕</div></div>
-    <div class="modal-body">
-      <div style="text-align:center;margin-bottom:20px"><div style="font-size:48px;margin-bottom:8px">🐐</div><div style="font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:4px;color:var(--gold)">FANTASY GOAT</div><p style="font-size:11px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-top:4px">Versión 1.0.0</p></div>
-      <div class="about-block"><div class="about-block-title">¿QUÉ ES?</div><p class="about-block-body">Fantasy GOAT es una plataforma de retos de la vida real entre amigos, inspirada en las ligas de fantasy sports. En lugar de apostar por jugadores de fútbol, apuestas por tus amigos y por ti mismo para superar desafíos del día a día: maratones, noches de fiesta, flexiones, libros, cocina y todo lo que os propongáis.</p></div>
-      <div class="about-block"><div class="about-block-title">¿POR QUÉ SE CREÓ?</div><p class="about-block-body">Nació de una idea simple: hacer que la competición amistosa sea más divertida, estructurada y memorable. Queremos que las personas se motiven a hacer cosas increíbles gracias a la presión positiva del grupo, la recompensa de los puntos y el orgullo de ganar una temporada.</p></div>
-      <div class="about-block"><div class="about-block-title">CÓMO SACARLE EL MÁXIMO</div><p class="about-block-body">Fantasy GOAT funciona mejor cuando los retos son honestos, divertidos y alcanzables para todos. El árbitro debe ser imparcial al validar pruebas. Propón retos creativos, celebra los logros del grupo y recuerda que el espíritu es competir con respeto y pasárselo bien juntos.</p></div>
-      <p style="font-size:10px;color:var(--gray);text-align:center;margin-top:4px">Hecho con trabajo y ganas · Santander, España</p>
-    </div>
-  </div>
-</div>
+</div><!-- /phone -->
 
-<!-- LEAGUE SHEET -->
-<div class="sheet-ov" id="league-sheet" onclick="closeSheet()">
-  <div class="sheet-box" id="sheet-box">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title" id="sheet-league-name">—</div>
-    <div class="sheet-btn" onclick="toast('Enlace copiado');closeSheet()">Compartir liga</div>
-    <div class="sheet-btn" onclick="toast('Ajustes...');closeSheet()">Ajustes de la liga</div>
-    <div class="sheet-btn danger" onclick="showLeaveConfirm()">Salirse de la liga</div>
-    <div class="sheet-btn danger" onclick="showDeleteConfirm()">Eliminar la liga</div>
-  </div>
-</div>
+<script>
+// ═══ STATE ═══
+let CUR='s-login',PREV=null,TT=null;
+let pickedUser=null,pickedSlotIdx=null;
+let currentView='list';
+let tkIdx=0,tkStartY=0;
+let selectedTrophy=1;
+const TROPHY_PRICES={1:'29,90 €',2:'49,90 €',3:'89,90 €',4:'19,90 €'};
+const TROPHY_EMOJIS={1:'🏆',2:'🐐',3:'👑',4:'📜'};
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-var CUR='s-login',PREV=null,TT=null;
-var pickedUser=null,currentView='list',tkIdx=0,tkStartY=0;
-var selectedTrophy=1;
-var TROPHY_PRICES={1:'29,90 €',2:'49,90 €',3:'89,90 €',4:'19,90 €'};
-var TROPHY_EMOJIS={1:'🏆',2:'🐐',3:'👑',4:'📜'};
-var qSize=5,starterPts=10,benchPts=4;
-var currentLeague={name:'',idx:0};
-var dragSrc=null,pickerCtx={type:'tit',idx:0};
-var titulares=[0,1,2,3,null],banquillo=[4,5,null,null];
-var LANG='es';
+// Quinteto state: 5 titulares + 4 bench
+const PLAYERS=[
+  {name:'CarlosGOAT',pts:'4.750',emoji:'😈',bg:'linear-gradient(135deg,#EFB810,#b8860b)',col:'#000',init:'CG'},
+  {name:'MikelFC',pts:'3.240',emoji:'😊',bg:'#242424',col:'#fff',init:'MK'},
+  {name:'LauraElite',pts:'2.890',emoji:'👩',bg:'#1e1e1e',col:'#fff',init:'LE'},
+  {name:'PedroMás',pts:'2.100',emoji:'🧔',bg:'#191919',col:'#fff',init:'PM'},
+  {name:'LeonardoK',pts:'1.850',emoji:'🦁',bg:'#141414',col:'#fff',init:'LK'},
+  {name:'WolfPackX',pts:'1.640',emoji:'🐺',bg:'#111',col:'#fff',init:'WP'},
+  {name:'EagleRise',pts:'1.200',emoji:'🦅',bg:'#0e0e0e',col:'#fff',init:'ER'},
+  {name:'FoxTricky',pts:'980',emoji:'🦊',bg:'#0a0a0a',col:'#fff',init:'FT'},
+];
+// Quinteto lineup: indices into PLAYERS, null = empty
+let titulares=[0,1,2,3,null]; // 5 slots
+let banquillo=[4,5,null,null]; // 4 slots
+let dragSrc=null; // {type:'tit'|'bench', idx}
 
-var PLAYERS=[];
-var subs=[];
-var RANK={global:[],feb:[],ene:[],dic:[],nov:[]};
+// Submissions
+const subs=[
+  {id:1,user:'CarlosGOAT',emoji:'😈',reto:'Salir de fiesta 3 noches seguidas',pts:500,status:'pending',desc:'Viernes, sábado y domingo. Tres noches épicas 🎉',mediaType:'photo',mediaUrl:null,time:'2h'},
+  {id:2,user:'LeonardoK',emoji:'🦁',reto:'Hacer 100 flexiones de una vez',pts:300,status:'pending',desc:'100 de una tacada sin parar. ¿Alguien me supera? 💪',mediaType:'video',mediaUrl:null,time:'5h'},
+  {id:3,user:'PedroMás',emoji:'🧔',reto:'Acabar un maratón completo',pts:750,status:'approved',desc:'42km completados 🏅 Medalla en mano.',mediaType:'photo',mediaUrl:null,time:'Ayer'},
+  {id:4,user:'WolfPackX',emoji:'🐺',reto:'Aprender a cocinar un plato gourmet',pts:200,status:'approved',desc:'Risotto de trufa negra. Nadie se esperaba esto.',mediaType:'photo',mediaUrl:null,time:'Ayer'},
+  {id:5,user:'EagleRise',emoji:'🦅',reto:'Leer un libro en una semana',pts:150,status:'rejected',desc:'312 páginas en 6 días. Sin trampa ni cartón.',mediaType:'text',mediaUrl:null,time:'Hace 2d'},
+];
+let comp={name:'',creator:'',pts:0,neg:false,imgUrl:null,vidUrl:null};
 
+// Ranking data
+const RANK={
+  global:[
+    {name:'LauraElite',emoji:'👩',pts:12400,retos:47},{name:'CarlosGOAT',emoji:'😈',pts:11100,retos:43},
+    {name:'JuanGOAT',emoji:'🙃',pts:9850,retos:38},{name:'MikelFC',emoji:'😊',pts:8720,retos:34},
+    {name:'PedroMás',emoji:'🧔',pts:7600,retos:30},{name:'LeonardoK',emoji:'🦁',pts:6340,retos:25},
+    {name:'WolfPackX',emoji:'🐺',pts:5210,retos:21},{name:'EagleRise',emoji:'🦅',pts:4080,retos:16},
+    {name:'FoxTricky',emoji:'🦊',pts:3150,retos:12},{name:'DarkHorse',emoji:'🐴',pts:1920,retos:7},
+  ],
+  feb:[
+    {name:'CarlosGOAT',emoji:'😈',pts:4750,retos:18},{name:'MikelFC',emoji:'😊',pts:3240,retos:13},
+    {name:'LauraElite',emoji:'👩',pts:2890,retos:11},{name:'PedroMás',emoji:'🧔',pts:2100,retos:8},
+    {name:'LeonardoK',emoji:'🦁',pts:1850,retos:7},{name:'WolfPackX',emoji:'🐺',pts:1640,retos:6},
+    {name:'EagleRise',emoji:'🦅',pts:1200,retos:5},{name:'FoxTricky',emoji:'🦊',pts:980,retos:4},
+  ],
+  ene:[
+    {name:'LauraElite',emoji:'👩',pts:4120,retos:16},{name:'CarlosGOAT',emoji:'😈',pts:3890,retos:15},
+    {name:'JuanGOAT',emoji:'🙃',pts:3200,retos:12},{name:'PedroMás',emoji:'🧔',pts:2760,retos:11},
+    {name:'WolfPackX',emoji:'🐺',pts:2100,retos:8},{name:'MikelFC',emoji:'😊',pts:1980,retos:7},
+    {name:'LeonardoK',emoji:'🦁',pts:1540,retos:6},{name:'EagleRise',emoji:'🦅',pts:1100,retos:4},
+  ],
+  dic:[
+    {name:'MikelFC',emoji:'😊',pts:3900,retos:15},{name:'PedroMás',emoji:'🧔',pts:3640,retos:14},
+    {name:'LauraElite',emoji:'👩',pts:3200,retos:12},{name:'CarlosGOAT',emoji:'😈',pts:2980,retos:11},
+    {name:'FoxTricky',emoji:'🦊',pts:2100,retos:8},{name:'LeonardoK',emoji:'🦁',pts:1800,retos:7},
+  ],
+  nov:[
+    {name:'JuanGOAT',emoji:'🙃',pts:4400,retos:17},{name:'LauraElite',emoji:'👩',pts:4090,retos:16},
+    {name:'CarlosGOAT',emoji:'😈',pts:3480,retos:13},{name:'WolfPackX',emoji:'🐺',pts:2970,retos:11},
+    {name:'EagleRise',emoji:'🦅',pts:1780,retos:7},
+  ],
+};
+
+// ═══ NAVIGATION ═══
 function go(id){
   if(id===CUR)return;
-  if(id!=='s-login') localStorage.setItem('fg_screen',id);
-  var c=document.getElementById(CUR),n=document.getElementById(id);
+  const c=document.getElementById(CUR),n=document.getElementById(id);
   if(!n)return;
   c.classList.remove('active');c.classList.add('prev');
-  setTimeout(function(){c.classList.remove('prev');},380);
+  setTimeout(()=>c.classList.remove('prev'),380);
   n.classList.add('active');n.scrollTop=0;
   PREV=CUR;CUR=id;
   if(id==='s-ranking')renderRanking();
@@ -758,781 +822,309 @@ function go(id){
 function goBack(){if(PREV)go(PREV);}
 function nav(id,idx){
   go(id);
-  setTimeout(function(){
-    var sc=document.getElementById(id);if(!sc)return;
-    sc.querySelectorAll('.ni').forEach(function(el,i){el.classList.toggle('active',i===idx);});
-    sc.querySelectorAll('.nc').forEach(function(c){c.classList.toggle('active',idx===2);});
+  setTimeout(()=>{
+    document.querySelectorAll('#'+id+' .ni').forEach((el,i)=>el.classList.toggle('active',i===idx));
+    document.querySelectorAll('#'+id+' .nc').forEach(c=>c.classList.toggle('active',idx===2));
   },10);
 }
 function toast(msg){
-  var t=document.getElementById('toast');
+  const t=document.getElementById('toast');
   document.getElementById('t-msg').textContent=msg;
   t.classList.add('show');
   if(TT)clearTimeout(TT);
-  TT=setTimeout(function(){t.classList.remove('show');},2200);
+  TT=setTimeout(()=>t.classList.remove('show'),2500);
 }
+
+// ═══ MODALS ═══
 function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 
-function openLeagueSheet(name,idx){
-  currentLeague={name:name,idx:idx};
-  document.getElementById('sheet-league-name').textContent=name;
-  resetSheet();
-  document.getElementById('league-sheet').classList.add('show');
-}
-function closeSheet(){document.getElementById('league-sheet').classList.remove('show');}
-function resetSheet(){
-  var id = currentLeague.id || '';
-  var shareBtn = id
-    ? '<div class="sheet-btn" onclick="compartirSheetLiga()">Compartir liga</div>'
-    : '<div class="sheet-btn" onclick="toast(\'Sin ID disponible\');closeSheet()">Compartir liga</div>';
-  document.getElementById('sheet-box').innerHTML=
-    '<div class="sheet-handle"></div>'+
-    '<div class="sheet-title" id="sheet-league-name">'+currentLeague.name+'</div>'+
-    shareBtn+
-    '<div class="sheet-btn" onclick="toast(\'Próximamente\');closeSheet()">Ajustes de la liga</div>'+
-    '<div class="sheet-btn danger" onclick="showLeaveConfirm()">Salirse de la liga</div>'+
-    '<div class="sheet-btn danger" onclick="showDeleteConfirm()">Eliminar la liga</div>';
-}
-function compartirSheetLiga(){
-  var id = currentLeague.id;
-  if(!id){ toast("Sin ID"); return; }
-  var url = getLigaUrl(id);
-  navigator.clipboard.writeText(url).then(function(){ toast("Enlace copiado"); }).catch(function(){ toast("Enlace: "+url); });
-  closeSheet();
-}
-function showLeaveConfirm(){
-  document.getElementById('sheet-box').innerHTML=
-    '<div class="sheet-handle"></div>'+
-    '<div style="font-size:15px;font-weight:800;color:var(--white);margin-bottom:8px">¿Salir de "'+currentLeague.name+'"?</div>'+
-    '<div style="font-size:12px;color:var(--gray);margin-bottom:20px;line-height:1.4">Perderás acceso al historial de la liga.</div>'+
-    '<div style="display:flex;gap:10px">'+
-      '<button class="bw" style="padding:12px;font-size:12px" onclick="closeSheet()">Cancelar</button>'+
-      '<button class="bdanger" style="padding:12px;font-size:12px" onclick="doLeave()">Sí, salir</button>'+
-    '</div>';
-}
-function showDeleteConfirm(){
-  document.getElementById('sheet-box').innerHTML=
-    '<div class="sheet-handle"></div>'+
-    '<div style="font-size:15px;font-weight:800;color:var(--red);margin-bottom:8px">¿Eliminar "'+currentLeague.name+'"?</div>'+
-    '<div style="font-size:12px;color:var(--gray);margin-bottom:20px;line-height:1.4">Esta acción es irreversible. Se borrarán todos los datos de la liga.</div>'+
-    '<div style="display:flex;gap:10px">'+
-      '<button class="bw" style="padding:12px;font-size:12px" onclick="closeSheet()">Cancelar</button>'+
-      '<button class="bdanger" style="padding:12px;font-size:12px" onclick="doDelete()">Sí, eliminar</button>'+
-    '</div>';
-}
-
-function setTipo(t,el){
+// ═══ FORMS ═══
+function setTipo(t){
+  document.querySelectorAll('#tipo-grp .pill').forEach((p,i)=>p.classList.toggle('active',(t==='priv'&&i===0)||(t==='pub'&&i===1)));
   document.getElementById('f-pass').classList.toggle('show',t==='priv');
   document.getElementById('f-id').classList.toggle('show',t==='pub');
-  el.parentNode.querySelectorAll('.pill').forEach(function(p){p.classList.remove('active');});
-  el.classList.add('active');
 }
 function setPeriod(el){
-  el.parentNode.querySelectorAll('.pill').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('#per-grp .pill').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
 }
-function setQSize(n,el){
-  qSize=n;
-  document.querySelectorAll('.q-size-btn').forEach(function(b){b.classList.remove('active');});
-  el.classList.add('active');
-}
-
-function setLang(l){
-  LANG=l;
-  ['es','en','fr'].forEach(function(c){
-    var b=document.getElementById('lb-'+c);
-    if(b)b.classList.toggle('active',c===l);
-  });
-  toast(l==='es'?'Idioma: Español':l==='en'?'Language: English':'Langue: Français');
-}
-
-function setView(v){
-  currentView=v;
-  document.getElementById('vb-list').classList.toggle('active',v==='list');
-  document.getElementById('vb-feed').classList.toggle('active',v==='feed');
-  document.getElementById('list-view').style.display=v==='list'?'block':'none';
-  var tw=document.getElementById('tiktok-wrap');
-  if(v==='feed'){tw.classList.add('show');renderTikTok();}
-  else tw.classList.remove('show');
-}
-function renderFeed(){
-  var ff=document.getElementById('forum-feed');ff.innerHTML='';
-  if(!subs.length){
-    ff.innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">📭</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin actividad todavía</div><div style="font-size:11px;line-height:1.5">Los retos completados por los miembros aparecerán aquí</div></div>';
-    return;
-  }
-  subs.forEach(function(s){
-    var badge=s.status==='pending'?'<span class="badge b-rev">Pendiente</span>':s.status==='approved'?'<span class="badge b-ok">Aprobado</span>':'<span class="badge b-no">Rechazado</span>';
-    var vbar=s.status==='pending'?'<div class="vbar"><div class="vbtn2 vok" onclick="approvePost(this)">Aprobar</div><div class="vbtn2 vno" onclick="rejectPost(this)">Rechazar</div></div>':'';
-    ff.innerHTML+='<div class="fp">'+
-      '<div class="fp-hdr"><div class="av">'+s.emoji+'</div><div><div class="fp-user">'+s.user+'</div><div class="fp-reto">'+s.reto+'</div></div><div class="fp-time">'+s.time+'</div></div>'+
-      '<div class="fp-media"><span>'+s.emoji+'</span><span class="media-tag">'+s.mediaType+'</span></div>'+
-      vbar+
-      '<div class="fp-foot"><div class="fp-desc">'+s.desc+'</div><div class="fp-btns">'+badge+'<div class="fp-btn">+'+s.pts+' pts</div></div></div>'+
-    '</div>';
-  });
-}
-function approvePost(el){el.closest('.vbar').innerHTML='<div style="padding:4px 14px;font-size:11px;font-weight:700;color:var(--green)">Aprobado</div>';}
-function rejectPost(el){el.closest('.vbar').innerHTML='<div style="padding:4px 14px;font-size:11px;font-weight:700;color:var(--red)">Rechazado</div>';}
-
-function renderTikTok(){
-  var tw=document.getElementById('tiktok-wrap');tw.innerHTML='';
-  // Empty state
-  if(!subs.length){
-    tw.innerHTML=
-      '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--black)">'+
-        '<div style="font-size:40px">📭</div>'+
-        '<div style="font-size:14px;font-weight:700;color:var(--white)">Sin actividad todavía</div>'+
-        '<div style="font-size:11px;color:var(--gray);text-align:center;padding:0 32px;line-height:1.5">Los retos completados por los miembros aparecerán aquí</div>'+
-        '<button onclick="setView(\'list\')" style="margin-top:8px;padding:12px 28px;background:var(--gold);color:#000;border:none;border-radius:12px;font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:1px;cursor:pointer">Volver al foro</button>'+
-      '</div>';
-    return;
-  }
-  subs.forEach(function(s,i){
-    var slide=document.createElement('div');slide.className='tk-slide';slide.style.transform='translateY('+(i===0?0:100)+'%)';
-    slide.innerHTML='<div class="tk-bg"><span>'+s.emoji+'</span></div><div class="tk-grad"></div>'+
-      '<div class="tk-info"><div class="tk-reto">'+s.reto+'</div><div class="tk-user">@'+s.user+'</div></div>'+
-      '<div class="tk-ctr">'+(i+1)+'/'+subs.length+'</div>'+
-      '<div class="tk-back" onclick="setView(\'list\')">‹</div>'+
-      '<div class="tk-side">'+
-        '<div class="tk-sb"><div class="tk-ico">👍</div><div class="tk-tl">Me gusta</div></div>'+
-      '</div>';
-    tw.appendChild(slide);
-  });
-  tkIdx=0;
-  tw.addEventListener('touchstart',function(e){tkStartY=e.touches[0].clientY;},{passive:true});
-  tw.addEventListener('touchend',function(e){
-    var dy=tkStartY-e.changedTouches[0].clientY;
-    if(Math.abs(dy)<40)return;
-    var slides=tw.querySelectorAll('.tk-slide');
-    if(dy>0&&tkIdx<slides.length-1)tkIdx++;
-    else if(dy<0&&tkIdx>0)tkIdx--;
-    slides.forEach(function(s,i){s.style.transform='translateY('+(i-tkIdx)*100+'%)';});
-    tw.querySelector('.tk-ctr').textContent=(tkIdx+1)+'/'+slides.length;
-  });
-}
-
 function switchTab(t){
   document.getElementById('gtab-r').classList.toggle('active',t==='r');
   document.getElementById('gtab-p').classList.toggle('active',t==='p');
   document.getElementById('gpanel-r').style.display=t==='r'?'flex':'none';
   document.getElementById('gpanel-p').style.display=t==='p'?'flex':'none';
 }
-function selPred(el){el.parentNode.querySelectorAll('.pred-opt').forEach(function(o){o.classList.remove('sel');});el.classList.add('sel');}
+function selPred(el){
+  el.closest('.pred-opts').querySelectorAll('.pred-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+}
 
-function openComp(name,creator,pts){
-  document.getElementById('comp-name').textContent=name;
+// ═══ HOME FEED ═══
+function statusBadge(s){
+  if(s==='pending')return '<span class="badge b-pend">⏳ Pendiente</span>';
+  if(s==='approved')return '<span class="badge b-ok">✅ Aprobado</span>';
+  if(s==='rejected')return '<span class="badge b-no">❌ Rechazado</span>';
+  return '';
+}
+function mediaGrad(t){return {photo:'linear-gradient(135deg,#1a0800,#080300)',video:'linear-gradient(135deg,#001008,#000603)',text:'linear-gradient(135deg,#08000f,#040007)'}[t]||'#050505';}
+function mediaEmoji(t){return {photo:'📷',video:'🎥',text:'✍️'}[t]||'📷';}
+function mediaLabel(t){return {photo:'📷 FOTO',video:'▶ VÍDEO',text:'✍️ TEXTO'}[t]||'📷';}
+
+function renderFeed(){
+  const feed=document.getElementById('forum-feed');
+  feed.innerHTML='';
+  subs.forEach(s=>{
+    const mc=s.mediaUrl?(s.mediaType==='video'?`<video class="rm" src="${s.mediaUrl}" playsinline muted style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"></video>`:`<img class="rm" src="${s.mediaUrl}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`):`<span style="font-size:48px">${mediaEmoji(s.mediaType)}</span>`;
+    const vbar=(s.status==='pending')?`<div class="vbar"><div class="vbtn2 vok" onclick="doValidate(${s.id},'approved')">✓ Validar</div><div class="vbtn2 vno" onclick="doValidate(${s.id},'rejected')">✗ Rechazar</div></div>`:'';
+    const sbar=s.status!=='pending'?`<div style="padding:0 14px 12px">${statusBadge(s.status)}</div>`:'';
+    feed.innerHTML+=`<div class="fp" id="fp-${s.id}"><div class="fp-hdr"><div class="av">${s.emoji}</div><div><div class="fp-user">${s.user}</div><div class="fp-reto">🏆 ${s.reto} · ${s.pts} pts</div></div><div class="fp-time">${s.time}</div></div><div class="fp-media" style="background:${mediaGrad(s.mediaType)}">${mc}<span class="media-tag">${mediaLabel(s.mediaType)}</span></div><div class="fp-foot"><div class="fp-desc">${s.desc}</div><div class="fp-btns"><span class="fp-btn fire">🔥</span><span class="fp-btn">💬</span></div></div>${vbar}${sbar}</div>`;
+  });
+}
+function doValidate(id,ns){
+  const s=subs.find(x=>x.id===id);if(!s)return;
+  s.status=ns;
+  toast(ns==='approved'?`✅ Aprobado · +${s.pts} pts para ${s.user}`:`❌ Reto rechazado`);
+  renderFeed();
+  if(currentView==='feed')buildTiktok();
+}
+
+// ═══ TIKTOK ═══
+function setView(v){
+  currentView=v;
+  document.getElementById('vb-list').classList.toggle('active',v==='list');
+  document.getElementById('vb-feed').classList.toggle('active',v==='feed');
+  const lv=document.getElementById('list-view'),tw=document.getElementById('tiktok-wrap'),bn=document.getElementById('home-bnav');
+  if(v==='list'){lv.style.display='block';tw.classList.remove('show');bn.style.display='flex';renderFeed();}
+  else{lv.style.display='none';tw.classList.add('show');bn.style.display='none';tkIdx=0;buildTiktok();}
+}
+function buildTiktok(){
+  const wrap=document.getElementById('tiktok-wrap');wrap.innerHTML='';
+  if(!subs.length){wrap.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--gray);font-size:14px">No hay submissions</div>';return;}
+  subs.forEach((s,i)=>{
+    const mc=s.mediaUrl?(s.mediaType==='video'?`<video class="tk-rm" src="${s.mediaUrl}" autoplay muted loop playsinline></video>`:`<img class="tk-rm" src="${s.mediaUrl}">`):`<span style="font-size:90px">${mediaEmoji(s.mediaType)}</span>`;
+    const slide=document.createElement('div');slide.className='tk-slide';slide.id='tks-'+i;
+    slide.innerHTML=`<div class="tk-bg" style="background:${mediaGrad(s.mediaType)}">${mc}</div><div class="tk-grad"></div><div class="tk-info"><div class="tk-reto">${s.reto}</div><div class="tk-user">@${s.user} · ${s.pts} pts</div>${statusBadge(s.status)}</div><div class="tk-side"><div class="tk-sb"><span class="ico">🔥</span><span class="tl">24</span></div><div class="tk-sb"><span class="ico">💬</span><span class="tl">6</span></div></div><div class="tk-ctr">${i+1} / ${subs.length}</div>`;
+    wrap.appendChild(slide);
+  });
+  const bb=document.createElement('div');bb.className='tk-back-btn';bb.textContent='‹';bb.onclick=()=>setView('list');wrap.appendChild(bb);
+  posTk();
+  wrap.addEventListener('touchstart',e=>{tkStartY=e.touches[0].clientY;},{passive:true});
+  wrap.addEventListener('touchend',e=>{const dy=tkStartY-e.changedTouches[0].clientY;if(Math.abs(dy)>50){if(dy>0&&tkIdx<subs.length-1)tkIdx++;else if(dy<0&&tkIdx>0)tkIdx--;posTk();}},{passive:true});
+}
+function posTk(){subs.forEach((_,i)=>{const el=document.getElementById('tks-'+i);if(el)el.style.transform=`translateY(${i===tkIdx?'0%':i<tkIdx?'-100%':'100%'})`;});}
+
+// ═══ COMPLETAR RETO ═══
+function openComp(name,creator,pts,neg){
+  comp={name,creator,pts,neg:neg||pts<0,imgUrl:null,vidUrl:null};
+  document.getElementById('comp-name').textContent=name.toUpperCase();
   document.getElementById('comp-creator').textContent='@'+creator;
-  var neg=pts<0;
-  document.getElementById('comp-pts').textContent=pts;
-  document.getElementById('comp-pts').className='pts-n'+(neg?' neg':'');
-  document.getElementById('comp-pts-badge').className='pts-badge'+(neg?' neg-badge':'');
+  document.getElementById('comp-pts').textContent=(pts>0?'+':'')+pts;
+  document.getElementById('comp-pts').className='pts-n'+(pts<0?' neg':'');
+  document.getElementById('comp-pts-badge').className='pts-badge'+(pts<0?' neg-badge':'');
   document.getElementById('comp-text').value='';
   clearMedia('img');clearMedia('vid');
   go('s-completar');
 }
-function handleImg(e){
-  var f=e.target.files[0];if(!f)return;
-  var r=new FileReader();r.onload=function(ev){
-    document.getElementById('img-el').src=ev.target.result;
-    document.getElementById('img-prev').style.display='block';
-    document.getElementById('img-area').style.display='none';
-  };r.readAsDataURL(f);
+function handleImg(e){const f=e.target.files[0];if(!f)return;comp.imgUrl=URL.createObjectURL(f);document.getElementById('img-el').src=comp.imgUrl;document.getElementById('img-prev').style.display='block';document.getElementById('img-area').style.display='none';}
+function handleVid(e){const f=e.target.files[0];if(!f)return;if(f.size>20*1024*1024){toast('⚠️ El vídeo supera 20 MB');return;}comp.vidUrl=URL.createObjectURL(f);document.getElementById('vid-el').src=comp.vidUrl;document.getElementById('vid-prev').style.display='block';document.getElementById('vid-area').style.display='none';}
+function clearMedia(t){if(t==='img'){document.getElementById('img-prev').style.display='none';document.getElementById('img-area').style.display='block';document.getElementById('img-input').value='';document.getElementById('img-el').src='';comp.imgUrl=null;}else{document.getElementById('vid-prev').style.display='none';document.getElementById('vid-area').style.display='block';document.getElementById('vid-input').value='';document.getElementById('vid-el').src='';comp.vidUrl=null;}}
+function submitReto(){
+  const text=document.getElementById('comp-text').value.trim();
+  const mediaUrl=comp.imgUrl||comp.vidUrl||null;
+  const mediaType=comp.vidUrl?'video':comp.imgUrl?'photo':'text';
+  subs.unshift({id:Date.now(),user:'CarlosGOAT',emoji:'😈',reto:comp.name,pts:comp.pts,status:'pending',desc:text||'Sin descripción.',mediaType,mediaUrl,time:'Ahora'});
+  toast('📤 Submission enviada · pendiente de aprobación');
+  go('s-home');setView('list');
 }
-function handleVid(e){
-  var f=e.target.files[0];if(!f)return;
-  document.getElementById('vid-el').src=URL.createObjectURL(f);
-  document.getElementById('vid-prev').style.display='block';
-  document.getElementById('vid-area').style.display='none';
-}
-function clearMedia(t){
-  if(t==='img'){document.getElementById('img-prev').style.display='none';document.getElementById('img-area').style.display='block';document.getElementById('img-el').src='';}
-  else{document.getElementById('vid-prev').style.display='none';document.getElementById('vid-area').style.display='block';document.getElementById('vid-el').src='';}
-}
-function submitReto(){go('s-home');}
-function submitRetoSin(){go('s-home');}
+function submitRetoSinPrueba(){comp.imgUrl=null;comp.vidUrl=null;submitReto();}
 
+// ═══ RANKING ═══
 function renderRanking(){
-  var sel=document.getElementById('rank-filter').value;
-  var isG=sel==='global';
-  document.getElementById('rank-global-label').style.display=isG?'block':'none';
-  var data=RANK[sel]||[];
-  var top3=document.getElementById('rank-top3');var list=document.getElementById('rank-list');
-  top3.innerHTML='';list.innerHTML='';
-  if(!data.length){
-    list.innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">🏆</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin datos todavía</div><div style="font-size:11px;line-height:1.5">El ranking se llenará cuando los miembros completen retos</div></div>';
-    return;
-  }
-  if(data.length>=2){
-    var order=data.length>=3?[data[1],data[0],data[2]]:[data[1],data[0]];
-    var classes=['p2','p1','p3'],bars=['pb2','pb1','pb3'],nums=['2','1','3'];
-    order.forEach(function(p,i){
-      var real=i===1;
-      top3.innerHTML+='<div class="pod-item">'+
-        (real?'<div style="font-size:18px;margin-bottom:2px">👑</div>':'')+
-        '<div class="pod-av '+classes[i]+'">'+p.emoji+'</div>'+
-        '<div style="font-size:10px;font-weight:700;color:var(--white);text-align:center;margin-top:3px">'+p.name+'</div>'+
-        '<div style="font-size:9px;color:var(--gold);font-family:\'Bebas Neue\',cursive">'+p.pts.toLocaleString()+'</div>'+
-        '<div class="pod-bar '+bars[i]+'"><span class="pod-n">'+nums[i]+'</span></div>'+
-      '</div>';
+  const filter=document.getElementById('rank-filter').value;
+  const data=RANK[filter]||RANK.feb;
+  document.getElementById('rank-global-label').style.display=filter==='global'?'block':'none';
+  const t3=data.slice(0,3),rest=data.slice(3);
+  const t3el=document.getElementById('rank-top3');t3el.innerHTML='';
+  if(t3.length>=2){
+    const order=t3.length>=3?[t3[1],t3[0],t3[2]]:[t3[1],t3[0]];
+    const cls=['p2','p1','p3'],pos=[2,1,3],barcls=['pb2','pb1','pb3'],pcol=['var(--gl)','var(--gold)','#cd7f32'];
+    order.forEach((p,i)=>{
+      if(!p)return;
+      t3el.innerHTML+=`<div class="pod-item" onclick="nav('s-stats',4)">
+        ${pos[i]!==1?`<div style="font-size:9px;color:var(--gray);font-weight:700;margin-bottom:2px">${pos[i]}°</div>`:''}
+        ${pos[i]===1?'<span class="crown">👑</span>':''}
+        <div class="pod-av ${cls[i]}">${p.emoji}</div>
+        <div style="font-size:10px;font-weight:700;color:${pcol[i]}">${p.name}</div>
+        <div style="font-family:'Bebas Neue',cursive;font-size:13px;color:${pcol[i]}">${p.pts.toLocaleString()}</div>
+        <div class="pod-bar ${barcls[i]}"><div class="pod-n">${pos[i]}</div></div>
+      </div>`;
     });
   }
-  data.forEach(function(p,i){
-    if(i<3)return;
-    var col=i===0?'var(--gold)':i===1?'#aaa':i===2?'#a0522d':'var(--gl)';
-    list.innerHTML+='<div class="rrow">'+
-      '<div class="rn" style="color:'+col+'">'+(i+1)+'</div>'+
-      '<div class="r-av">'+p.emoji+'</div>'+
-      '<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--white)">'+p.name+'</div><div style="font-size:10px;color:var(--gray)">'+p.retos+' retos</div></div>'+
-      '<div class="r-pts" style="color:'+col+'">'+p.pts.toLocaleString()+'</div>'+
-    '</div>';
-  });
+  const rl=document.getElementById('rank-list');rl.innerHTML='';
+  rest.forEach((p,i)=>{rl.innerHTML+=`<div class="rrow" onclick="nav('s-stats',4)"><span class="rn">${i+4}</span><div class="r-av">${p.emoji}</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--white)">${p.name}</div><div style="font-size:10px;color:var(--gray)">${p.retos} retos completados</div></div><div class="r-pts" style="color:var(--gray)">${p.pts.toLocaleString()}</div></div>`;});
 }
 
-function renderQuinteto(){
-  var sp=parseInt((document.getElementById('starter-pts')||{}).value)||10;
-  var bp=parseInt((document.getElementById('bench-pts')||{}).value)||4;
-  starterPts=sp;benchPts=bp;
-  document.getElementById('ip-starter-pts').textContent='+'+sp;
-  document.getElementById('ip-bench-pts').textContent='+'+bp;
-  renderCourt();renderBench();
+// ═══ TROPHY ═══
+function selectTrophy(n){
+  selectedTrophy=n;
+  [1,2,3,4].forEach(i=>document.getElementById('tp-'+i).classList.toggle('selected',i===n));
+  document.getElementById('trophy-price-btn').textContent=TROPHY_PRICES[n];
+  document.getElementById('trophy-emoji-preview').textContent=TROPHY_EMOJIS[n];
 }
-function renderCourt(){
-  var grid=document.getElementById('court-grid');grid.innerHTML='';
-  var size=Math.min(qSize,5);
-  var tits=titulares.slice(0,size);
-  var rows=size<=2?[tits]:size===3?[[tits[0]],[tits[1],tits[2]]]:size===4?[[tits[0],tits[1]],[tits[2],tits[3]]]:[[tits[0]],[tits[1],tits[2]],[tits[3],tits[4]]];
-  rows.forEach(function(row,ri){
-    var rowDiv=document.createElement('div');rowDiv.className='prow';
-    row.forEach(function(pIdx,ci){
-      var slot=document.createElement('div');slot.className='pslot';slot.draggable=true;
-      var p=(pIdx!==null&&pIdx!==undefined)?PLAYERS[pIdx]:null;
-      slot.innerHTML='<div class="pcirc '+(p?'tit':'emp')+'">'+(p?'<span class="emoji">'+p.emoji+'</span>':'')+'</div>'+
-        '<div class="pname">'+(p?p.name:'Vacío')+'</div>'+
-        (p?'<div class="ppts">+'+starterPts+' pts</div>':'');
-      var gi=0;for(var r2=0;r2<ri;r2++)gi+=rows[r2].length;gi+=ci;
-      slot.onclick=(function(g){return function(){openPicker('tit',g);};})(gi);
-      addDrag(slot,'tit',gi);
-      rowDiv.appendChild(slot);
-    });
-    grid.appendChild(rowDiv);
-  });
-}
-function renderBench(){
-  var br=document.getElementById('bench-row');br.innerHTML='';
-  banquillo.forEach(function(pIdx,i){
-    var p=(pIdx!==null&&pIdx!==undefined)?PLAYERS[pIdx]:null;
-    var slot=document.createElement('div');slot.className='bslot';
-    slot.innerHTML='<div class="bcirc '+(p?'filled':'emp2')+'">'+(p?'<span style="font-size:18px">'+p.emoji+'</span>':'')+'</div>'+
-      '<div class="bname">'+(p?p.name:'—')+'</div>'+
-      (p?'<div style="font-size:8px;color:var(--gray);font-weight:600">+'+benchPts+'</div>':'');
-    slot.onclick=(function(bi){return function(){openPicker('bench',bi);};})(i);
-    addDrag(slot,'bench',i);
-    br.appendChild(slot);
-  });
-}
-function addDrag(el,type,idx){
-  el.addEventListener('dragstart',function(e){dragSrc={type:type,idx:idx};el.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
-  el.addEventListener('dragend',function(){el.classList.remove('dragging');document.querySelectorAll('.drag-over').forEach(function(d){d.classList.remove('drag-over');});});
-  el.addEventListener('dragover',function(e){e.preventDefault();el.classList.add('drag-over');});
-  el.addEventListener('dragleave',function(){el.classList.remove('drag-over');});
-  el.addEventListener('drop',function(e){e.preventDefault();el.classList.remove('drag-over');if(!dragSrc)return;doSwap(type,idx);});
-}
-function doSwap(destType,destIdx){
-  var srcArr=dragSrc.type==='tit'?titulares:banquillo;
-  var dstArr=destType==='tit'?titulares:banquillo;
-  var tmp=srcArr[dragSrc.idx];srcArr[dragSrc.idx]=dstArr[destIdx];dstArr[destIdx]=tmp;
-  dragSrc=null;renderCourt();renderBench();
-}
-function toggleInfo(e){e.stopPropagation();document.getElementById('info-popup').classList.toggle('show');}
-document.addEventListener('click',function(){var p=document.getElementById('info-popup');if(p)p.classList.remove('show');});
-
-function openPicker(type,idx){
-  pickerCtx={type:type,idx:idx};
-  document.getElementById('pick-slot').textContent=(type==='tit'?'Titular ':'Suplente ')+(idx+1);
-  var ul=document.querySelector('.ulist');
-  ul.innerHTML='';
-  if(!PLAYERS.length){
-    ul.innerHTML='<div style="text-align:center;padding:24px;color:var(--gray);font-size:12px">No hay miembros en la liga todavía</div>';
-  } else {
-    PLAYERS.forEach(function(p){
-      var row=document.createElement('div');row.className='upick';
-      row.innerHTML='<div class="u-av" style="background:'+p.bg+';color:'+p.col+'">'+p.init+'</div><div class="upick-name">'+p.name+'</div><div class="upick-pts">'+p.pts+'</div>';
-      row.onclick=function(){selUser(row,p.name,p.pts,p.emoji);};
-      ul.appendChild(row);
-    });
-  }
-  document.querySelectorAll('.upick').forEach(function(u){u.classList.remove('sel');});
-  pickedUser=null;
-  document.getElementById('picker').classList.add('show');
-}
-function closePicker(){document.getElementById('picker').classList.remove('show');pickedUser=null;}
-function selUser(el,name,pts,emoji){
-  document.querySelectorAll('.upick').forEach(function(u){u.classList.remove('sel');});
-  el.classList.add('sel');
-  pickedUser={name:name,pts:pts,emoji:emoji};
-}
-function confirmPick(){
-  if(!pickedUser){closePicker();return;}
-  var pi=PLAYERS.findIndex(function(p){return p.name===pickedUser.name;});
-  if(pickerCtx.type==='tit')titulares[pickerCtx.idx]=pi;
-  else banquillo[pickerCtx.idx]=pi;
-  closePicker();renderCourt();renderBench();
-}
-
 function updateTrophyPreview(){
   document.getElementById('trophy-name-prev').textContent=document.getElementById('trophy-name-inp').value||'Tu nombre';
   document.getElementById('trophy-season-prev').textContent=document.getElementById('trophy-season-inp').value||'Temporada';
 }
-function selectTrophy(n){
-  selectedTrophy=n;
-  [1,2,3,4].forEach(function(i){document.getElementById('tp-'+i).classList.toggle('sel',i===n);});
-  document.getElementById('trophy-price-btn').textContent=TROPHY_PRICES[n];
-  document.getElementById('trophy-emoji').textContent=TROPHY_EMOJIS[n];
-}
 function orderTrophy(){
-  toast('Pedido enviado · '+TROPHY_PRICES[selectedTrophy]);
+  const name=document.getElementById('trophy-name-inp').value;
+  const season=document.getElementById('trophy-season-inp').value;
+  toast(`🏆 Pedido recibido · ${name} · ${season} · ${TROPHY_PRICES[selectedTrophy]}`);
   closeModal('m-trophy');
 }
 
-function sendFeedback(){
-  var txt=document.getElementById('fb-text').value.trim();
-  if(!txt){toast('Escribe algo antes de enviar');return;}
-  toast('Comentario enviado. ¡Gracias!');
-  document.getElementById('fb-text').value='';
-  document.getElementById('fb-count').textContent='0';
-  closeModal('m-feedback');
-}
-
-// ── Helpers (used by Firestore functions) ──
-var ligaActual = null;
-
-function genId() {
-  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  var id = 'GOAT-';
-  for(var i=0;i<5;i++) id += chars[Math.floor(Math.random()*chars.length)];
-  return id;
-}
-function getLigaUrl(id) {
-  return window.location.href.split('?')[0] + '?liga=' + id;
-}
-function copiarId() {
-  var id = document.getElementById('invite-id-display').textContent;
-  navigator.clipboard.writeText(id).then(function(){ toast('ID copiado: ' + id); }).catch(function(){ toast('ID: ' + id); });
-}
-function copiarEnlace() {
-  var url = getLigaUrl(document.getElementById('invite-id-display').textContent);
-  navigator.clipboard.writeText(url).then(function(){ toast('Enlace copiado'); }).catch(function(){ toast('No se pudo copiar'); });
-}
-function compartirWhatsApp() {
-  var id  = document.getElementById('invite-id-display').textContent;
-  var url = getLigaUrl(id);
-  var txt = encodeURIComponent('¡Únete a mi liga Fantasy GOAT!\nID: ' + id + '\n' + url);
-  window.open('https://wa.me/?text=' + txt, '_blank');
-}
-// Detect invite link from URL
-(function(){
-  var params = new URLSearchParams(window.location.search);
-  var ligaId = params.get('liga');
-  if(ligaId) window._pendingJoinId = ligaId.toUpperCase();
-})();
-
-// ══ RETOS (Firestore) ══════════════════════════════════════
-// Estructura: /ligas/{ligaId}/retos/{retoId}
-//   { titulo, pts, desc, creador, creadorNombre, creada }
-
-function publicarReto() {
-  var titulo = document.getElementById('reto-titulo').value.trim();
-  var pts    = parseInt(document.getElementById('reto-pts').value);
-  var desc   = document.getElementById('reto-desc').value.trim();
-  if(!titulo)             { toast('Escribe el título del reto'); return; }
-  if(isNaN(pts))          { toast('Indica los puntos'); return; }
-  if(!ligaActual)         { toast('Selecciona una liga primero'); return; }
-  var user = window._currentUser;
-  if(!user)               { toast('Debes iniciar sesión'); return; }
-  // Call Firestore from module scope via window bridge
-  window._fsPublicarReto && window._fsPublicarReto({
-    titulo: titulo, pts: pts, desc: desc || '',
-    creador: user.uid,
-    creadorNombre: user.displayName || user.email.split('@')[0],
-    creada: Date.now()
+// ═══ QUINTETO ═══
+function renderQuinteto(){
+  const grid=document.getElementById('court-grid');
+  const bench=document.getElementById('bench-row');
+  // build rows: 2-1-2
+  const rows=[[0,1],[2],[3,4]];
+  grid.innerHTML='';
+  rows.forEach(row=>{
+    const rowEl=document.createElement('div');rowEl.className='prow';
+    row.forEach(idx=>{
+      const pIdx=titulares[idx];
+      const p=pIdx!==null?PLAYERS[pIdx]:null;
+      rowEl.appendChild(makePSlot(idx,p,true));
+    });
+    grid.appendChild(rowEl);
+  });
+  // bench
+  bench.innerHTML='';
+  banquillo.forEach((pIdx,idx)=>{
+    const p=pIdx!==null?PLAYERS[pIdx]:null;
+    bench.appendChild(makeBSlot(idx,p));
   });
 }
 
-function renderRetos(retos) {
-  var cont = document.getElementById('retos-list');
-  var badge = document.getElementById('retos-pending-badge');
-  if(!cont) return;
-  if(!retos || !retos.length) {
-    cont.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">🎯</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin retos todavía</div><div style="font-size:11px;line-height:1.5">Crea el primer reto de la liga</div></div>';
-    if(badge) badge.style.display='none';
-    return;
+function makePSlot(idx,p,isTit){
+  const div=document.createElement('div');div.className='pslot';div.dataset.type='tit';div.dataset.idx=idx;
+  if(p){
+    div.innerHTML=`<div class="pcirc tit"><span class="emoji">${p.emoji}</span></div><div class="pname">${p.name}</div><div class="ppts">${p.pts} pts</div>`;
+  } else {
+    div.innerHTML=`<div class="pcirc emp"><span style="color:#333;font-size:14px">+</span></div><div class="pname" style="color:#444">Añadir</div><div class="ppts" style="color:#333">— pts</div>`;
   }
-  if(badge){ badge.style.display='inline-flex'; badge.textContent=retos.length+' reto'+(retos.length!==1?'s':''); }
-  cont.innerHTML = '';
-  retos.forEach(function(r) {
-    var neg = r.pts < 0;
-    var div = document.createElement('div'); div.className='rc';
-    var safeT = r.titulo.replace(/"/g,'&quot;');
-    var safeC = r.creadorNombre.replace(/"/g,'&quot;');
-    div.innerHTML =
-      '<div class="rc-top">'+
-        '<div>'+
-          '<div class="rc-title">'+r.titulo+'</div>'+
-          '<div class="rc-creator">@'+r.creadorNombre+(r.desc?' · '+r.desc:'')+'</div>'+
-        '</div>'+
-        '<div class="rc-pts'+(neg?' neg':'')+'">'+r.pts+'<span>'+(neg?'penalización':'pts')+'</span></div>'+
-      '</div>'+
-      '<div class="rc-bot">'+
-        '<div class="rc-who" style="font-size:11px;color:var(--gray)">Creado por @'+r.creadorNombre+'</div>'+
-        '<button class="cbtn2" data-titulo="'+safeT+'" data-creator="'+safeC+'" data-pts="'+r.pts+'" onclick="openCompFromBtn(this)">Completar</button>'+
-      '</div>';
-    cont.appendChild(div);
+  div.onclick=()=>openPicker('tit',idx);
+  addDragEvents(div,'tit',idx);
+  return div;
+}
+
+function makeBSlot(idx,p){
+  const div=document.createElement('div');div.className='bslot';div.dataset.type='bench';div.dataset.idx=idx;
+  if(p){
+    div.innerHTML=`<div class="bcirc filled"><span style="font-size:18px">${p.emoji}</span></div><div class="bname">${p.name}</div>`;
+  } else {
+    div.innerHTML=`<div class="bcirc emp2"><span style="color:#333;font-size:12px">+</span></div><div class="bname" style="color:#444">Añadir</div>`;
+  }
+  div.onclick=()=>openPicker('bench',idx);
+  addDragEvents(div,'bench',idx);
+  return div;
+}
+
+// ── Drag & Drop (touch + mouse) ──
+function addDragEvents(el,type,idx){
+  // MOUSE
+  el.draggable=true;
+  el.addEventListener('dragstart',e=>{dragSrc={type,idx};el.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+  el.addEventListener('dragend',()=>{el.classList.remove('dragging');document.querySelectorAll('.drag-over').forEach(x=>x.classList.remove('drag-over'));});
+  el.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move';el.classList.add('drag-over');});
+  el.addEventListener('dragleave',()=>el.classList.remove('drag-over'));
+  el.addEventListener('drop',e=>{e.preventDefault();el.classList.remove('drag-over');doSwap(type,idx);});
+  // TOUCH (long-press to start drag)
+  let tTimer=null,touching=false;
+  el.addEventListener('touchstart',e=>{touching=true;tTimer=setTimeout(()=>{if(touching){dragSrc={type,idx};el.classList.add('dragging');toast('✋ Arrastra a otra posición');}},600);},{passive:true});
+  el.addEventListener('touchend',()=>{touching=false;clearTimeout(tTimer);if(dragSrc&&dragSrc.type===type&&dragSrc.idx===idx){dragSrc=null;el.classList.remove('dragging');}});
+  el.addEventListener('touchmove',e=>{if(!dragSrc)return;e.preventDefault();
+    const t=e.touches[0];
+    const els=[...document.querySelectorAll('.pslot,.bslot')];
+    els.forEach(x=>x.classList.remove('drag-over'));
+    const target=document.elementFromPoint(t.clientX,t.clientY);
+    const slot=target&&(target.closest('.pslot')||target.closest('.bslot'));
+    if(slot)slot.classList.add('drag-over');
+  },{passive:false});
+  el.addEventListener('touchend',e=>{
+    if(!dragSrc)return;
+    const t=e.changedTouches[0];
+    const target=document.elementFromPoint(t.clientX,t.clientY);
+    const slot=target&&(target.closest('.pslot')||target.closest('.bslot'));
+    el.classList.remove('dragging');
+    document.querySelectorAll('.drag-over').forEach(x=>x.classList.remove('drag-over'));
+    if(slot&&slot!==el){
+      const destType=slot.dataset.type,destIdx=parseInt(slot.dataset.idx);
+      doSwap(destType,destIdx);
+    } else {dragSrc=null;}
   });
 }
 
-// ══ FIX: abrirLigaFS también actualiza goat/ranking headers ══
-function syncLigaUI(l) {
-  if(!l) return;
-  // Home
-  var lname = document.querySelector('#s-home .lname'); if(lname) lname.textContent = l.nombre;
-  var lsub  = document.querySelector('#s-home .lsub');  if(lsub)  lsub.textContent  = (l.miembros||[]).length+' jugadores · '+l.period;
-  // Goat/Retos
-  var gname  = document.getElementById('goat-liga-name');  if(gname)  gname.textContent  = l.nombre;
-  var gbadge = document.getElementById('goat-liga-badge'); if(gbadge){ gbadge.textContent = l.tipo==='priv'?'Privada':'Pública'; gbadge.className='badge '+(l.tipo==='priv'?'b-priv':'b-pub'); }
-  // Ranking header
-  var rname = document.querySelector('#s-ranking .lname'); if(rname) rname.textContent = l.nombre;
+function doSwap(destType,destIdx){
+  if(!dragSrc)return;
+  const {type:srcType,idx:srcIdx}=dragSrc;
+  dragSrc=null;
+  if(srcType===destType&&srcIdx===destIdx)return;
+  // get values
+  const srcVal=srcType==='tit'?titulares[srcIdx]:banquillo[srcIdx];
+  const dstVal=destType==='tit'?titulares[destIdx]:banquillo[destIdx];
+  // swap
+  if(srcType==='tit')titulares[srcIdx]=dstVal;else banquillo[srcIdx]=dstVal;
+  if(destType==='tit')titulares[destIdx]=srcVal;else banquillo[destIdx]=srcVal;
+  renderQuinteto();
+  const sName=srcVal!==null?PLAYERS[srcVal].name:'vacío';
+  const dName=dstVal!==null?PLAYERS[dstVal].name:'vacío';
+  toast(`🔄 ${sName} ↔ ${dName}`);
 }
 
-function openCompFromBtn(btn) {
-  openComp(btn.dataset.titulo, btn.dataset.creator, parseInt(btn.dataset.pts));
+// ── Picker ──
+let pickerCtx={type:'tit',idx:0};
+function openPicker(type,idx){
+  pickerCtx={type,idx};
+  pickedUser=null;
+  const label=type==='tit'?`Titular ${idx+1}`:`Banquillo ${idx+1}`;
+  document.getElementById('pick-slot').textContent='Posición: '+label;
+  document.querySelectorAll('.upick').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('picker').classList.add('show');
+}
+function closePicker(){document.getElementById('picker').classList.remove('show');pickedUser=null;}
+function selUser(el,name,pts,emoji){
+  document.querySelectorAll('.upick').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');pickedUser={name,pts,emoji};
+}
+function confirmPick(){
+  if(!pickedUser){toast('⚠️ Selecciona un jugador');return;}
+  const pIdx=PLAYERS.findIndex(p=>p.name===pickedUser.name);
+  if(pickerCtx.type==='tit')titulares[pickerCtx.idx]=pIdx;else banquillo[pickerCtx.idx]=pIdx;
+  renderQuinteto();
+  toast('✅ '+pickedUser.name+' colocado');
+  closePicker();
 }
 
-renderFeed();
-renderRanking();
-renderLigas();
+// ── Info popup ──
+function toggleInfo(e){e.stopPropagation();document.getElementById('info-popup').classList.toggle('show');}
+document.addEventListener('click',function(e){
+  const popup=document.getElementById('info-popup');
+  if(popup&&!popup.contains(e.target)&&e.target!==document.getElementById('info-btn'))popup.classList.remove('show');
+});
+
+// ═══ INIT ═══
+window.addEventListener('DOMContentLoaded',()=>{
+  renderFeed();renderRanking();renderQuinteto();
+  setTimeout(()=>{
+    const h=document.createElement('div');
+    h.style.cssText='position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:rgba(239,184,16,.93);color:#000;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;padding:8px 18px;border-radius:20px;pointer-events:none;z-index:9999;white-space:nowrap';
+    h.textContent='← Toca cualquier elemento para navegar →';
+    document.body.appendChild(h);
+    setTimeout(()=>{h.style.transition='opacity .7s';h.style.opacity='0';setTimeout(()=>h.remove(),800);},3200);
+  },600);
+});
 </script>
-
-<script type="module">
-  import { initializeApp }   from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-           GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile }
-    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove,
-           collection, addDoc, getDocs, query, orderBy }
-    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyB0-pJ12NXSh4LsdH8AHuK8mg_glWAVrmY",
-    authDomain: "fantasy-goat-5d70d.firebaseapp.com",
-    projectId: "fantasy-goat-5d70d",
-    storageBucket: "fantasy-goat-5d70d.firebasestorage.app",
-    messagingSenderId: "191273517968",
-    appId: "1:191273517968:web:0a6b63ca46e31ff54b6915",
-    measurementId: "G-KY7MHRWWZN"
-  };
-
-  const app  = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
-  const provider = new GoogleAuthProvider();
-
-  // ── Error messages ───────────────────────────────────────
-  function authErr(e) {
-    return e.code==='auth/invalid-credential' ? 'Email o contraseña incorrectos'
-         : e.code==='auth/user-not-found'     ? 'Usuario no encontrado'
-         : e.code==='auth/wrong-password'     ? 'Contraseña incorrecta'
-         : e.code==='auth/email-already-in-use'? 'Este email ya está registrado'
-         : e.code==='auth/invalid-email'      ? 'Email no válido'
-         : e.message;
-  }
-
-  function updateUI(user) {
-    var name = user.displayName || user.email.split('@')[0];
-    ['prof-name','settings-name'].forEach(function(id){
-      var el=document.getElementById(id); if(el) el.textContent=name;
-    });
-    ['prof-email','settings-email'].forEach(function(id){
-      var el=document.getElementById(id); if(el) el.textContent=user.email;
-    });
-  }
-
-  // ── Auth ─────────────────────────────────────────────────
-  window.fbSignIn = function() {
-    var email=document.getElementById('inp-email').value.trim();
-    var pass =document.getElementById('inp-pass').value;
-    if(!email||!pass){ toast('Rellena email y contraseña'); return; }
-    signInWithEmailAndPassword(auth,email,pass).catch(function(e){ toast(authErr(e)); });
-  };
-
-  window.fbSignUp = function() {
-    var email=document.getElementById('inp-email').value.trim();
-    var pass =document.getElementById('inp-pass').value;
-    if(!email||!pass){ toast('Rellena email y contraseña'); return; }
-    if(pass.length<6){ toast('Contraseña mínimo 6 caracteres'); return; }
-    createUserWithEmailAndPassword(auth,email,pass)
-      .then(function(cred){ return updateProfile(cred.user,{displayName:email.split('@')[0]}); })
-      .catch(function(e){ toast(authErr(e)); });
-  };
-
-  window.fbGoogle = function() {
-    signInWithPopup(auth,provider)
-      .catch(function(e){ if(e.code!=='auth/popup-closed-by-user') toast('Error: '+e.message); });
-  };
-
-  window.fbSignOut = function() {
-    localStorage.removeItem('fg_screen');
-    signOut(auth).then(function(){ go('s-login'); });
-  };
-
-  // ── Session ───────────────────────────────────────────────
-  onAuthStateChanged(auth, function(user) {
-    if(!user){ go('s-login'); return; }
-    updateUI(user);
-    window._currentUser = user;
-    cargarMisLigas(user.uid).then(function(){
-      if(window._pendingJoinId) {
-        var inp=document.getElementById('join-id');
-        if(inp) inp.value=window._pendingJoinId;
-        go('s-join');
-      } else {
-        // Restore last screen if available
-        var saved = localStorage.getItem('fg_screen');
-        var safeScreens = ['s-dashboard','s-home','s-ranking','s-goat','s-quinteto','s-stats','s-settings'];
-        if(saved && safeScreens.indexOf(saved) !== -1) {
-          go(saved);
-        } else {
-          go('s-dashboard');
-        }
-      }
-    });
-  });
-
-  // ── Firestore helpers ────────────────────────────────────
-  async function cargarMisLigas(uid) {
-    var snap = await getDoc(doc(db,'usuarios',uid));
-    if(!snap.exists()){ renderLigasFS([]); return; }
-    var ids = snap.data().ligas || [];
-    if(!ids.length){ renderLigasFS([]); return; }
-    var ligas = [];
-    for(var i=0;i<ids.length;i++){
-      var s = await getDoc(doc(db,'ligas',ids[i]));
-      if(s.exists()&&!s.data().eliminada) ligas.push(Object.assign({id:ids[i]},s.data()));
-    }
-    renderLigasFS(ligas);
-  }
-
-  function renderLigasFS(ligas) {
-    window._ligasFS = ligas;
-    var cont = document.getElementById('leagues-list');
-    if(!ligas.length){
-      cont.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">\u{1F3C6}</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Aún no estás en ninguna liga</div><div style="font-size:11px;line-height:1.5">Crea una liga o únete con un ID</div></div>';
-      return;
-    }
-    cont.innerHTML='';
-    ligas.forEach(function(l,i){
-      var bc=l.tipo==='priv'?'b-priv':'b-pub';
-      var bt=l.tipo==='priv'?'Privada':'Pública';
-      var m=(l.miembros||[]).length;
-      var div=document.createElement('div');
-      div.className='lcard'; div.id='lc-fs-'+i;
-      div.innerHTML=
-        '<div class="lcard-body" onclick="abrirLigaFS('+i+')">'+
-          '<div>'+
-            '<div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px">'+l.nombre+'</div>'+
-            '<div style="display:flex;gap:8px;align-items:center">'+
-              '<span class="badge '+bc+'">'+bt+'</span>'+
-              '<span style="width:3px;height:3px;background:#444;border-radius:50%;display:inline-block"></span>'+
-              '<span style="font-size:11px;color:var(--gray)">'+l.period+'</span>'+
-            '</div>'+
-          '</div>'+
-          '<div style="text-align:right"><div style="font-size:11px;color:var(--gray);margin-bottom:4px"><strong style="color:var(--gold)">'+m+'</strong> jugadores</div><span style="color:#444;font-size:14px">›</span></div>'+
-        '</div>'+
-        '<div class="lcard-dots" onclick="openLeagueSheetFS('+i+')">···</div>';
-      cont.appendChild(div);
-    });
-  }
-
-  window.abrirLigaFS = function(idx) {
-    var l=(window._ligasFS||[])[idx]; if(!l) return;
-    ligaActual=l;
-    syncLigaUI(l);
-    cargarRetos(l.id);
-    go('s-home');
-  };
-
-  // ── Retos ────────────────────────────────────────────────
-  async function cargarRetos(ligaId) {
-    if(!ligaId) return;
-    try {
-      var q = query(collection(db,'ligas',ligaId,'retos'), orderBy('creada','desc'));
-      var snap = await getDocs(q);
-      var retos = [];
-      snap.forEach(function(d){ retos.push(Object.assign({id:d.id},d.data())); });
-      renderRetos(retos);
-    } catch(e) {
-      console.warn('cargarRetos error:', e);
-      renderRetos([]);
-    }
-  }
-
-  window._fsPublicarReto = async function(reto) {
-    if(!ligaActual){ toast('Selecciona una liga primero'); return; }
-    try {
-      await addDoc(collection(db,'ligas',ligaActual.id,'retos'), reto);
-      // Clear inputs
-      document.getElementById('reto-titulo').value='';
-      document.getElementById('reto-pts').value='';
-      document.getElementById('reto-desc').value='';
-      toast('Reto publicado');
-      await cargarRetos(ligaActual.id);
-      go('s-goat');
-    } catch(e) {
-      toast('Error al publicar: '+e.message);
-    }
-  };
-
-  // Also load retos when navigating to goat screen
-  var _origGo = window.go;
-  window.go = function(id) {
-    _origGo(id);
-    if(id==='s-goat' && ligaActual) cargarRetos(ligaActual.id);
-  };
-
-  window.openLeagueSheetFS = function(idx) {
-    var l=(window._ligasFS||[])[idx]; if(!l) return;
-    currentLeague={name:l.nombre,idx:idx,id:l.id,creador:l.creador};
-    document.getElementById('sheet-league-name').textContent=l.nombre;
-    resetSheet();
-    document.getElementById('league-sheet').classList.add('show');
-  };
-
-  // ── Crear liga → Firestore ───────────────────────────────
-  window.crearLiga = async function() {
-    var nombre=document.getElementById('liga-nombre').value.trim();
-    if(!nombre){ toast('Ponle un nombre a la liga'); return; }
-    var tipo=document.getElementById('tipo-priv').classList.contains('active')?'priv':'pub';
-    var pass=tipo==='priv'?document.getElementById('liga-pass').value:'';
-    if(tipo==='priv'&&pass.length<6){ toast('La contraseña debe tener al menos 6 caracteres'); return; }
-    var period=document.getElementById('period-sem').classList.contains('active')?'Semanal':'Mensual';
-    var customId=document.getElementById('liga-custom-id')&&document.getElementById('liga-custom-id').value.trim();
-    var id=customId?customId.toUpperCase():genId();
-    var user=window._currentUser;
-    if(!user){ toast('Debes iniciar sesión'); return; }
-
-    // Check ID not taken
-    var existing=await getDoc(doc(db,'ligas',id));
-    if(existing.exists()){ toast('Ese ID ya existe, prueba otro'); return; }
-
-    var liga={
-      id:id, nombre:nombre, tipo:tipo, pass:pass||'', period:period,
-      qSize:qSize,
-      starterPts:parseInt(document.getElementById('starter-pts').value)||10,
-      benchPts:parseInt(document.getElementById('bench-pts').value)||4,
-      creada:Date.now(), miembros:[user.uid], creador:user.uid
-    };
-
-    await setDoc(doc(db,'ligas',id),{
-      nombre:liga.nombre, tipo:liga.tipo, pass:liga.pass, period:liga.period,
-      qSize:liga.qSize, starterPts:liga.starterPts, benchPts:liga.benchPts,
-      creada:liga.creada, miembros:liga.miembros, creador:liga.creador
-    });
-    await setDoc(doc(db,'usuarios',user.uid),{ligas:arrayUnion(id)},{merge:true});
-
-    document.getElementById('invite-id-display').textContent=id;
-    document.getElementById('invite-url-display').textContent=getLigaUrl(id);
-    await cargarMisLigas(user.uid);
-    go('s-invite');
-  };
-
-  // ── Unirse a liga → Firestore ────────────────────────────
-  window.unirseALiga = async function() {
-    var id   = document.getElementById('join-id').value.trim().toUpperCase();
-    var pass = document.getElementById('join-pass').value.trim();
-    if(!id){ toast('Introduce el ID de la liga'); return; }
-    var user = window._currentUser;
-    if(!user){ toast('Debes iniciar sesión'); return; }
-
-    // Disable button while searching
-    var btn = document.querySelector('#s-join .bg');
-    if(btn){ btn.disabled=true; btn.textContent='Buscando...'; }
-
-    try {
-      var snap = await getDoc(doc(db,'ligas',id));
-
-      if(!snap.exists()){
-        toast('No existe una liga con ese ID');
-        return;
-      }
-
-      var data = snap.data();
-
-      if(data.eliminada){
-        toast('Esta liga ya no existe');
-        return;
-      }
-
-      // Check password for private leagues
-      if(data.tipo==='priv' && data.pass && data.pass !== pass){
-        toast('Contraseña incorrecta');
-        return;
-      }
-
-      // Already a member
-      if((data.miembros||[]).includes(user.uid)){
-        toast('Ya estás en esa liga');
-        await cargarMisLigas(user.uid);
-        go('s-dashboard');
-        return;
-      }
-
-      // Join: add uid to liga members and liga id to user doc
-      await updateDoc(doc(db,'ligas',id), { miembros: arrayUnion(user.uid) });
-      await setDoc(doc(db,'usuarios',user.uid), { ligas: arrayUnion(id) }, { merge:true });
-
-      // Reload leagues and navigate
-      await cargarMisLigas(user.uid);
-      document.getElementById('join-id').value = '';
-      document.getElementById('join-pass').value = '';
-      toast('¡Te has unido a ' + data.nombre + '!');
-      go('s-dashboard');
-
-    } catch(e) {
-      console.error('unirseALiga error:', e);
-      if(e.code === 'permission-denied') {
-        toast('Sin permiso — revisa las reglas de Firestore');
-      } else {
-        toast('Error: ' + e.message);
-      }
-    } finally {
-      if(btn){ btn.disabled=false; btn.textContent='Buscar y Unirse'; }
-    }
-  };
-
-  // ── Abandonar / Eliminar → Firestore ────────────────────
-  window.doLeave = function() {
-    closeSheet();
-    var user=window._currentUser; if(!user) return;
-    updateDoc(doc(db,'ligas',currentLeague.id),{miembros:arrayRemove(user.uid)}).then(function(){
-      return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
-    }).then(function(){ cargarMisLigas(user.uid); toast('"'+currentLeague.name+'" abandonada'); });
-  };
-
-  window.doDelete = function() {
-    closeSheet();
-    var user=window._currentUser; if(!user) return;
-    getDoc(doc(db,'ligas',currentLeague.id)).then(function(s){
-      if(!s.exists()) return;
-      if(s.data().creador!==user.uid){ toast('Solo el creador puede eliminar'); return; }
-      return updateDoc(doc(db,'ligas',currentLeague.id),{eliminada:true}).then(function(){
-        return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
-      }).then(function(){ cargarMisLigas(user.uid); toast('"'+currentLeague.name+'" eliminada'); });
-    });
-  };
-
-</script>
-
-</div>
 </body>
 </html>
