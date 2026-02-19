@@ -1108,14 +1108,23 @@ function genId() {
   return id;
 }
 function getLigaUrl(id) {
-  return window.location.href.split('?')[0] + '?liga=' + id;
+  // Use your GitHub Pages URL directly
+  var baseUrl = 'https://chemaabravoo.github.io/fantasyGoat/';
+  // Fallback to current location if not on GitHub Pages
+  if(window.location.href.indexOf('chemaabravoo.github.io') === -1) {
+    baseUrl = window.location.href.split('?')[0].split('#')[0];
+    if(!baseUrl.endsWith('/')) baseUrl += '/';
+  }
+  return baseUrl + '?liga=' + id;
 }
 function copiarId() {
   var id = document.getElementById('invite-id-display').textContent;
   navigator.clipboard.writeText(id).then(function(){ toast('ID copiado: ' + id); }).catch(function(){ toast('ID: ' + id); });
 }
 function copiarEnlace() {
-  var url = getLigaUrl(document.getElementById('invite-id-display').textContent);
+  var id = document.getElementById('invite-id-display').textContent;
+  var url = getLigaUrl(id);
+  console.log('[DEBUG] Generated URL:', url);
   navigator.clipboard.writeText(url).then(function(){ toast('Enlace copiado'); }).catch(function(){ toast('No se pudo copiar'); });
 }
 function compartirWhatsApp() {
@@ -1128,7 +1137,12 @@ function compartirWhatsApp() {
 (function(){
   var params = new URLSearchParams(window.location.search);
   var ligaId = params.get('liga');
-  if(ligaId) window._pendingJoinId = ligaId.toUpperCase();
+  console.log('[DEBUG] URL:', window.location.href);
+  console.log('[DEBUG] Liga param:', ligaId);
+  if(ligaId) {
+    window._pendingJoinId = ligaId.toUpperCase();
+    console.log('[DEBUG] Pending join ID set:', window._pendingJoinId);
+  }
 })();
 
 // ══ RETOS (Firestore) ══════════════════════════════════════
@@ -1410,6 +1424,7 @@ renderLigas();
 
   // ── Crear liga → Firestore ───────────────────────────────
   window.crearLiga = async function() {
+    console.log('[DEBUG crearLiga] Starting...');
     var nombre=document.getElementById('liga-nombre').value.trim();
     if(!nombre){ toast('Ponle un nombre a la liga'); return; }
     var tipo=document.getElementById('tipo-priv').classList.contains('active')?'priv':'pub';
@@ -1418,55 +1433,77 @@ renderLigas();
     var period=document.getElementById('period-sem').classList.contains('active')?'Semanal':'Mensual';
     var customId=document.getElementById('liga-custom-id')&&document.getElementById('liga-custom-id').value.trim();
     var id=customId?customId.toUpperCase():genId();
+    console.log('[DEBUG crearLiga] Generated ID:', id);
+    
     var user=window._currentUser;
-    if(!user){ toast('Debes iniciar sesión'); return; }
+    if(!user){ toast('Debes iniciar sesión'); console.log('[DEBUG crearLiga] No user!'); return; }
+    console.log('[DEBUG crearLiga] User:', user.uid);
 
-    // Check ID not taken
-    var existing=await getDoc(doc(db,'ligas',id));
-    if(existing.exists()){ toast('Ese ID ya existe, prueba otro'); return; }
+    try {
+      // Check ID not taken
+      console.log('[DEBUG crearLiga] Checking if ID exists...');
+      var existing=await getDoc(doc(db,'ligas',id));
+      if(existing.exists()){ toast('Ese ID ya existe, prueba otro'); return; }
 
-    var liga={
-      id:id, nombre:nombre, tipo:tipo, pass:pass||'', period:period,
-      qSize:qSize,
-      starterPts:parseInt(document.getElementById('starter-pts').value)||10,
-      benchPts:parseInt(document.getElementById('bench-pts').value)||4,
-      creada:Date.now(), miembros:[user.uid], creador:user.uid
-    };
+      var liga={
+        id:id, nombre:nombre, tipo:tipo, pass:pass||'', period:period,
+        qSize:qSize,
+        starterPts:parseInt(document.getElementById('starter-pts').value)||10,
+        benchPts:parseInt(document.getElementById('bench-pts').value)||4,
+        creada:Date.now(), miembros:[user.uid], creador:user.uid
+      };
+      console.log('[DEBUG crearLiga] Liga object:', liga);
 
-    await setDoc(doc(db,'ligas',id),{
-      nombre:liga.nombre, tipo:liga.tipo, pass:liga.pass, period:liga.period,
-      qSize:liga.qSize, starterPts:liga.starterPts, benchPts:liga.benchPts,
-      creada:liga.creada, miembros:liga.miembros, creador:liga.creador
-    });
-    await setDoc(doc(db,'usuarios',user.uid),{ligas:arrayUnion(id)},{merge:true});
+      console.log('[DEBUG crearLiga] Saving to Firestore...');
+      await setDoc(doc(db,'ligas',id),{
+        nombre:liga.nombre, tipo:liga.tipo, pass:liga.pass, period:liga.period,
+        qSize:liga.qSize, starterPts:liga.starterPts, benchPts:liga.benchPts,
+        creada:liga.creada, miembros:liga.miembros, creador:liga.creador
+      });
+      console.log('[DEBUG crearLiga] Liga saved!');
+      
+      await setDoc(doc(db,'usuarios',user.uid),{ligas:arrayUnion(id)},{merge:true});
+      console.log('[DEBUG crearLiga] User updated!');
 
-    document.getElementById('invite-id-display').textContent=id;
-    document.getElementById('invite-url-display').textContent=getLigaUrl(id);
-    await cargarMisLigas(user.uid);
-    go('s-invite');
+      document.getElementById('invite-id-display').textContent=id;
+      document.getElementById('invite-url-display').textContent=getLigaUrl(id);
+      await cargarMisLigas(user.uid);
+      console.log('[DEBUG crearLiga] Success! Going to invite screen...');
+      go('s-invite');
+    } catch(e) {
+      console.error('[DEBUG crearLiga] Error:', e);
+      toast('Error al crear liga: ' + e.message);
+    }
   };
 
   // ── Unirse a liga → Firestore ────────────────────────────
   window.unirseALiga = async function() {
     var id   = document.getElementById('join-id').value.trim().toUpperCase();
     var pass = document.getElementById('join-pass').value.trim();
+    console.log('[DEBUG unirseALiga] ID:', id, 'Pass:', pass ? '***' : '(empty)');
+    
     if(!id){ toast('Introduce el ID de la liga'); return; }
     var user = window._currentUser;
     if(!user){ toast('Debes iniciar sesión'); return; }
+    console.log('[DEBUG unirseALiga] User:', user.uid);
 
     // Disable button while searching
     var btn = document.querySelector('#s-join .bg');
     if(btn){ btn.disabled=true; btn.textContent='Buscando...'; }
 
     try {
+      console.log('[DEBUG unirseALiga] Fetching liga from Firestore...');
       var snap = await getDoc(doc(db,'ligas',id));
+      console.log('[DEBUG unirseALiga] Snap exists:', snap.exists());
 
       if(!snap.exists()){
         toast('No existe una liga con ese ID');
+        console.log('[DEBUG unirseALiga] Liga not found');
         return;
       }
 
       var data = snap.data();
+      console.log('[DEBUG unirseALiga] Liga data:', data);
 
       if(data.eliminada){
         toast('Esta liga ya no existe');
@@ -1476,22 +1513,26 @@ renderLigas();
       // Check password for private leagues
       if(data.tipo==='priv' && data.pass && data.pass !== pass){
         toast('Contraseña incorrecta');
+        console.log('[DEBUG unirseALiga] Password mismatch. Expected:', data.pass, 'Got:', pass);
         return;
       }
 
       // Already a member
       if((data.miembros||[]).includes(user.uid)){
         toast('Ya estás en esa liga');
+        console.log('[DEBUG unirseALiga] Already a member');
         await cargarMisLigas(user.uid);
         go('s-dashboard');
         return;
       }
 
       // Join: add uid to liga members and liga id to user doc
+      console.log('[DEBUG unirseALiga] Adding user to liga...');
       await updateDoc(doc(db,'ligas',id), { miembros: arrayUnion(user.uid) });
       await setDoc(doc(db,'usuarios',user.uid), { ligas: arrayUnion(id) }, { merge:true });
 
       // Reload leagues and navigate
+      console.log('[DEBUG unirseALiga] Success! Reloading ligas...');
       await cargarMisLigas(user.uid);
       document.getElementById('join-id').value = '';
       document.getElementById('join-pass').value = '';
@@ -1499,7 +1540,7 @@ renderLigas();
       go('s-dashboard');
 
     } catch(e) {
-      console.error('unirseALiga error:', e);
+      console.error('[DEBUG unirseALiga] Error:', e);
       if(e.code === 'permission-denied') {
         toast('Sin permiso — revisa las reglas de Firestore');
       } else {
