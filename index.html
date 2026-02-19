@@ -409,7 +409,7 @@ textarea.inp{resize:vertical;min-height:80px}
       <div class="pill-grp"><div class="pill active" id="period-sem" onclick="setPeriod(this)">Semanal</div><div class="pill" id="period-men" onclick="setPeriod(this)">Mensual</div></div>
     </div>
     <div class="iw">
-      <div style="display:flex;align-items:center;gap:4px"><label class="il">Tamaño del quinteto</label><span class="info-inline" onclick="openModal('m-qinfo')">i</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><label class="il">Tamaño del equipo</label><span class="info-inline" onclick="openModal('m-qinfo')">i</span></div>
       <div class="q-size-grp">
         <div class="q-size-btn" onclick="setQSize(2,this)">2</div>
         <div class="q-size-btn" onclick="setQSize(3,this)">3</div>
@@ -459,7 +459,7 @@ textarea.inp{resize:vertical;min-height:80px}
     <div class="ni active" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div>
     <div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div>
     <div class="nc" onclick="nav('s-goat',2)">🐐</div>
-    <div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div>
+    <div class="ni" onclick="nav('s-equipo',3)"><span class="icon">⭐</span><span class="lbl">Equipo</span></div>
     <div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div>
   </div>
 </div>
@@ -491,7 +491,7 @@ textarea.inp{resize:vertical;min-height:80px}
       </div>
     </div>
   </div>
-  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc active" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
+  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc active" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-equipo',3)"><span class="icon">⭐</span><span class="lbl">Equipo</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
 </div>
 
 <!-- CREAR RETO -->
@@ -541,7 +541,7 @@ textarea.inp{resize:vertical;min-height:80px}
     <div id="rank-global-label" style="display:none;padding:4px 20px 4px;flex-shrink:0"><span class="global-pill">Acumulado total · todos los meses</span></div>
     <div id="rank-list" class="rank-list"></div>
   </div>
-  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni active" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
+  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni active" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-equipo',3)"><span class="icon">⭐</span><span class="lbl">Equipo</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
 </div>
 
 <!-- PERFIL -->
@@ -567,14 +567,14 @@ textarea.inp{resize:vertical;min-height:80px}
       <div style="font-size:11px;line-height:1.5">Completa retos para ver tus estadísticas aquí</div>
     </div>
   </div>
-  <div style="padding:14px 18px 8px"><button class="bgo" onclick="nav('s-quinteto',3)">Ver Quinteto</button></div>
+  <div style="padding:14px 18px 8px"><button class="bgo" onclick="nav('s-equipo',3)">Ver Equipo</button></div>
   </div>
-  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div><div class="ni active" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
+  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-equipo',3)"><span class="icon">⭐</span><span class="lbl">Equipo</span></div><div class="ni active" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
 </div>
 
-<!-- QUINTETO -->
-<div class="screen" id="s-quinteto">
-  <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname">Mi Quinteto</div></div><div class="lsub" style="padding-left:38px">Los Intocables · Semana 7</div></div><button class="bg bsm2" onclick="toast('Quinteto guardado')">Guardar</button></div>
+<!-- EQUIPO -->
+<div class="screen" id="s-equipo">
+  <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname">Mi Equipo</div></div><div class="lsub" style="padding-left:38px">Los Intocables · Semana 7</div></div><button class="bg bsm2" onclick="toast('Equipo guardado')">Guardar</button></div>
   <div class="cwrap">
     <div class="court" id="court-el">
       <div class="crt-line"></div>
@@ -607,7 +607,7 @@ textarea.inp{resize:vertical;min-height:80px}
       <div class="pick-acts"><button class="pick-cancel" onclick="closePicker()">Cancelar</button><button class="bg" style="flex:2" onclick="confirmPick()">Confirmar</button></div>
     </div>
   </div>
-  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni active" onclick="nav('s-quinteto',3)"><span class="icon">⭐</span><span class="lbl">Quinteto</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
+  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni active" onclick="nav('s-equipo',3)"><span class="icon">⭐</span><span class="lbl">Equipo</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
 </div>
 
 <!-- MODAL INSTRUCCIONES -->
@@ -624,7 +624,7 @@ textarea.inp{resize:vertical;min-height:80px}
       <div class="instr-div"></div>
       <div class="instr-row"><div class="instr-num">4</div><div class="instr-text"><strong>El árbitro valida</strong><p>El admin aprueba o rechaza. Si se aprueba, los puntos se suman al marcador.</p></div></div>
       <div class="instr-div"></div>
-      <div class="instr-row"><div class="instr-num">5</div><div class="instr-text"><strong>Quinteto</strong><p>Elige tu quinteto de titulares más suplentes. Los titulares suman más puntos por periodo.</p></div></div>
+      <div class="instr-row"><div class="instr-num">5</div><div class="instr-text"><strong>Equipo</strong><p>Elige tu equipo de titulares más suplentes. Los titulares suman más puntos por periodo.</p></div></div>
       <div class="instr-div"></div>
       <div class="instr-row"><div class="instr-num">6</div><div class="instr-text"><strong>Ranking</strong><p>Consulta el ranking mensual o el GLOBAL acumulado. El que más puntos tenga al final gana.</p></div></div>
       <button class="bg" style="margin-top:4px" onclick="closeModal('m-instr')">Entendido, a jugar</button>
@@ -632,12 +632,12 @@ textarea.inp{resize:vertical;min-height:80px}
   </div>
 </div>
 
-<!-- MODAL QUINTETO INFO -->
+<!-- MODAL EQUIPO INFO -->
 <div class="modal-ov" id="m-qinfo" onclick="closeModal('m-qinfo')">
   <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-hdr"><div class="modal-title">Puntuación del Quinteto</div><div class="modal-close" onclick="closeModal('m-qinfo')">✕</div></div>
+    <div class="modal-hdr"><div class="modal-title">Puntuación del Equipo</div><div class="modal-close" onclick="closeModal('m-qinfo')">✕</div></div>
     <div class="modal-body">
-      <p style="font-size:13px;color:var(--gl);line-height:1.6;margin-bottom:14px">El quinteto es la alineación de miembros de tu liga que apuestas que rendirán mejor en el siguiente periodo.</p>
+      <p style="font-size:13px;color:var(--gl);line-height:1.6;margin-bottom:14px">El equipo es la alineación de miembros de tu liga que apuestas que rendirán mejor en el siguiente periodo.</p>
       <div style="background:var(--card);border:1px solid rgba(239,184,16,.2);border-radius:12px;padding:14px;margin-bottom:10px">
         <div style="font-size:11px;font-weight:800;color:var(--gold);letter-spacing:1px;margin-bottom:8px">TITULARES</div>
         <p style="font-size:12px;color:var(--gl);line-height:1.5">Son los jugadores que apuestas que completarán más retos. Cada titular recibe los puntos configurados al crear la liga por cada periodo activo.</p>
@@ -746,7 +746,7 @@ function go(id){
   PREV=CUR;CUR=id;
   if(id==='s-ranking')renderRanking();
   if(id==='s-home')renderFeed();
-  if(id==='s-quinteto')renderQuinteto();
+  if(id==='s-equipo')renderEquipo();
 }
 function goBack(){if(PREV)go(PREV);}
 function nav(id,idx){
@@ -983,7 +983,7 @@ function renderRanking(){
   });
 }
 
-function renderQuinteto(){
+function renderEquipo(){
   var sp=parseInt((document.getElementById('starter-pts')||{}).value)||10;
   var bp=parseInt((document.getElementById('bench-pts')||{}).value)||4;
   starterPts=sp;benchPts=bp;
@@ -1316,7 +1316,7 @@ renderLigas();
       } else {
         // Restore last screen if available
         var saved = localStorage.getItem('fg_screen');
-        var safeScreens = ['s-dashboard','s-home','s-ranking','s-goat','s-quinteto','s-stats','s-settings'];
+        var safeScreens = ['s-dashboard','s-home','s-ranking','s-goat','s-equipo','s-stats','s-settings'];
         if(saved && safeScreens.indexOf(saved) !== -1) {
           go(saved);
         } else {
@@ -1401,12 +1401,16 @@ renderLigas();
   window._fsPublicarReto = async function(reto) {
     if(!window.ligaActual){ toast('Selecciona una liga primero'); return; }
     try {
+      var user = window._currentUser;
+      var isAdmin = user && user.uid === window.ligaActual.creador;
+      // Admin's retos are auto-approved, others need validation
+      reto.estado = isAdmin ? 'activo' : 'pendiente';
       await addDoc(collection(db,'ligas',window.ligaActual.id,'retos'), reto);
       // Clear inputs
       document.getElementById('reto-titulo').value='';
       document.getElementById('reto-pts').value='';
       document.getElementById('reto-desc').value='';
-      toast('Reto publicado');
+      toast(isAdmin ? 'Reto publicado' : 'Reto enviado para validación');
       await cargarRetos(window.ligaActual.id);
       go('s-goat');
     } catch(e) {
@@ -1461,6 +1465,16 @@ renderLigas();
         creada:liga.creada, miembros:liga.miembros, creador:liga.creador
       });
       console.log('[DEBUG crearLiga] Liga saved!');
+      
+      // Create ranking entry for creator
+      var userName = user.displayName || user.email.split('@')[0];
+      await setDoc(doc(db,'ligas',id,'ranking',user.uid), {
+        nombre: userName,
+        puntos: 0,
+        retosCompletados: 0,
+        ultimaActualizacion: Date.now()
+      });
+      console.log('[DEBUG crearLiga] Ranking entry created!');
       
       await setDoc(doc(db,'usuarios',user.uid),{ligas:arrayUnion(id)},{merge:true});
       console.log('[DEBUG crearLiga] User updated!');
@@ -1530,6 +1544,16 @@ renderLigas();
       console.log('[DEBUG unirseALiga] Adding user to liga...');
       await updateDoc(doc(db,'ligas',id), { miembros: arrayUnion(user.uid) });
       await setDoc(doc(db,'usuarios',user.uid), { ligas: arrayUnion(id) }, { merge:true });
+
+      // Create ranking entry with 0 points
+      console.log('[DEBUG unirseALiga] Creating ranking entry...');
+      var userName = user.displayName || user.email.split('@')[0];
+      await setDoc(doc(db,'ligas',id,'ranking',user.uid), {
+        nombre: userName,
+        puntos: 0,
+        retosCompletados: 0,
+        ultimaActualizacion: Date.now()
+      });
 
       // Reload leagues and navigate
       console.log('[DEBUG unirseALiga] Success! Reloading ligas...');
