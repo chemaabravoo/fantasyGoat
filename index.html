@@ -309,15 +309,8 @@ textarea.inp{resize:vertical;min-height:80px}
 <div class="toast" id="toast"><span id="t-msg" style="font-size:12px;font-weight:700;color:var(--white)">—</span></div>
 
 <!-- SPLASH -->
-<div class="screen active" id="s-splash" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
-  <span style="font-size:64px;filter:drop-shadow(0 0 20px var(--gglow))">🐐</span>
-  <div style="font-family:'Bebas Neue',cursive;font-size:38px;letter-spacing:5px;color:var(--white)">FANTASY <span style="color:var(--gold)">GOAT</span></div>
-  <div style="width:36px;height:3px;background:var(--gold);border-radius:2px;animation:loadbar 1.2s ease-in-out infinite"></div>
-  <style>@keyframes loadbar{0%,100%{opacity:.3;transform:scaleX(.5)}50%{opacity:1;transform:scaleX(1)}}</style>
-</div>
-
 <!-- LOGIN -->
-<div class="screen full-scroll" id="s-login">
+<div class="screen active full-scroll" id="s-login">
   <div style="flex:1;display:flex;flex-direction:column;padding:32px 28px;min-height:580px">
     <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:40px">
       <span style="font-size:52px;filter:drop-shadow(0 0 14px var(--gglow));margin-bottom:8px;display:block">🐐</span>
@@ -758,10 +751,6 @@ function go(id){
 function goBack(){if(PREV)go(PREV);}
 function nav(id,idx){
   go(id);
-  // Load retos when navigating to goat screen
-  if(id==='s-goat' && window.ligaActual && window._fsCargarRetos) {
-    window._fsCargarRetos(window.ligaActual.id);
-  }
   setTimeout(function(){
     var sc=document.getElementById(id);if(!sc)return;
     sc.querySelectorAll('.ni').forEach(function(el,i){el.classList.toggle('active',i===idx);});
@@ -1110,7 +1099,7 @@ function sendFeedback(){
 }
 
 // ── Helpers (used by Firestore functions) ──
-var ligaActual = null;
+window.ligaActual = null;
 
 function genId() {
   var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -1152,7 +1141,7 @@ function publicarReto() {
   var desc   = document.getElementById('reto-desc').value.trim();
   if(!titulo)             { toast('Escribe el título del reto'); return; }
   if(isNaN(pts))          { toast('Indica los puntos'); return; }
-  if(!ligaActual)         { toast('Selecciona una liga primero'); return; }
+  if(!window.ligaActual)  { toast('Selecciona una liga primero'); return; }
   var user = window._currentUser;
   if(!user)               { toast('Debes iniciar sesión'); return; }
   // Call Firestore from module scope via window bridge
@@ -1291,7 +1280,17 @@ renderLigas();
   };
 
   // ── Session ───────────────────────────────────────────────
+  // Fallback: if Firebase doesn't respond in 4s, show login
+  var authResolved = false;
+  setTimeout(function(){
+    if(!authResolved){
+      console.warn('Firebase auth timeout, forcing login screen');
+      go('s-login');
+    }
+  }, 4000);
+
   onAuthStateChanged(auth, function(user) {
+    authResolved = true;
     if(!user){ go('s-login'); return; }
     updateUI(user);
     window._currentUser = user;
@@ -1310,6 +1309,9 @@ renderLigas();
           go('s-dashboard');
         }
       }
+    }).catch(function(e){
+      console.error('cargarMisLigas error:', e);
+      go('s-dashboard');
     });
   });
 
@@ -1360,7 +1362,7 @@ renderLigas();
 
   window.abrirLigaFS = function(idx) {
     var l=(window._ligasFS||[])[idx]; if(!l) return;
-    ligaActual=l;
+    window.ligaActual=l;
     syncLigaUI(l);
     cargarRetos(l.id);
     go('s-home');
@@ -1383,15 +1385,15 @@ renderLigas();
   window._fsCargarRetos = cargarRetos;
 
   window._fsPublicarReto = async function(reto) {
-    if(!ligaActual){ toast('Selecciona una liga primero'); return; }
+    if(!window.ligaActual){ toast('Selecciona una liga primero'); return; }
     try {
-      await addDoc(collection(db,'ligas',ligaActual.id,'retos'), reto);
+      await addDoc(collection(db,'ligas',window.ligaActual.id,'retos'), reto);
       // Clear inputs
       document.getElementById('reto-titulo').value='';
       document.getElementById('reto-pts').value='';
       document.getElementById('reto-desc').value='';
       toast('Reto publicado');
-      await cargarRetos(ligaActual.id);
+      await cargarRetos(window.ligaActual.id);
       go('s-goat');
     } catch(e) {
       toast('Error al publicar: '+e.message);
