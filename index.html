@@ -758,6 +758,10 @@ function go(id){
 function goBack(){if(PREV)go(PREV);}
 function nav(id,idx){
   go(id);
+  // Load retos when navigating to goat screen
+  if(id==='s-goat' && window.ligaActual && window._fsCargarRetos) {
+    window._fsCargarRetos(window.ligaActual.id);
+  }
   setTimeout(function(){
     var sc=document.getElementById(id);if(!sc)return;
     sc.querySelectorAll('.ni').forEach(function(el,i){el.classList.toggle('active',i===idx);});
@@ -1376,6 +1380,7 @@ renderLigas();
       renderRetos([]);
     }
   }
+  window._fsCargarRetos = cargarRetos;
 
   window._fsPublicarReto = async function(reto) {
     if(!ligaActual){ toast('Selecciona una liga primero'); return; }
@@ -1391,13 +1396,6 @@ renderLigas();
     } catch(e) {
       toast('Error al publicar: '+e.message);
     }
-  };
-
-  // Also load retos when navigating to goat screen
-  var _origGo = window.go;
-  window.go = function(id) {
-    _origGo(id);
-    if(id==='s-goat' && ligaActual) cargarRetos(ligaActual.id);
   };
 
   window.openLeagueSheetFS = function(idx) {
