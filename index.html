@@ -469,7 +469,11 @@ textarea.inp{resize:vertical;min-height:80px}
   <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname" id="goat-liga-name">—</div></div></div><span class="badge b-priv" id="goat-liga-badge">—</span></div>
   <div class="gtop" style="flex-shrink:0">
     <div class="gtitle">RETOS</div>
-    <div class="gtabs"><div class="gtab active" id="gtab-r" onclick="switchTab('r')">Retos</div><div class="gtab" id="gtab-p" onclick="switchTab('p')">Predicciones</div></div>
+    <div class="gtabs">
+      <div class="gtab active" id="gtab-r" onclick="switchTab('r')">Retos</div>
+      <div class="gtab" id="gtab-v" onclick="switchTab('v')" style="display:none">Validar</div>
+      <div class="gtab" id="gtab-p" onclick="switchTab('p')">Predicciones</div>
+    </div>
   </div>
   <div class="screen-scroll">
     <div class="gpanel" id="gpanel-r">
@@ -480,6 +484,15 @@ textarea.inp{resize:vertical;min-height:80px}
           <div style="font-size:36px;margin-bottom:12px">🎯</div>
           <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin retos todavía</div>
           <div style="font-size:11px;line-height:1.5">Crea el primer reto de la liga</div>
+        </div>
+      </div>
+    </div>
+    <div class="gpanel" id="gpanel-v" style="display:none">
+      <div class="secrow"><span class="sectitle">Completados pendientes</span><span class="badge b-gold" id="completados-badge" style="display:none">0</span></div>
+      <div id="completados-list">
+        <div style="text-align:center;padding:40px 20px;color:var(--gray)">
+          <div style="font-size:36px;margin-bottom:12px">✅</div>
+          <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin completados pendientes</div>
         </div>
       </div>
     </div>
@@ -911,9 +924,17 @@ function renderTikTok(){
 
 function switchTab(t){
   document.getElementById('gtab-r').classList.toggle('active',t==='r');
+  var vtab = document.getElementById('gtab-v');
+  if(vtab) vtab.classList.toggle('active',t==='v');
   document.getElementById('gtab-p').classList.toggle('active',t==='p');
   document.getElementById('gpanel-r').style.display=t==='r'?'flex':'none';
+  var vpanel = document.getElementById('gpanel-v');
+  if(vpanel) vpanel.style.display=t==='v'?'flex':'none';
   document.getElementById('gpanel-p').style.display=t==='p'?'flex':'none';
+  // Load completados when switching to validar tab
+  if(t==='v' && window._fsCargarCompletados && window.ligaActual) {
+    window._fsCargarCompletados(window.ligaActual.id);
+  }
 }
 function selPred(el){el.parentNode.querySelectorAll('.pred-opt').forEach(function(o){o.classList.remove('sel');});el.classList.add('sel');}
 
@@ -946,8 +967,14 @@ function clearMedia(t){
   if(t==='img'){document.getElementById('img-prev').style.display='none';document.getElementById('img-area').style.display='block';document.getElementById('img-el').src='';}
   else{document.getElementById('vid-prev').style.display='none';document.getElementById('vid-area').style.display='block';document.getElementById('vid-el').src='';}
 }
-function submitReto(){go('s-home');}
-function submitRetoSin(){go('s-home');}
+function submitReto(){
+  var prueba = document.getElementById('comp-text').value.trim();
+  if(!prueba){ toast('Escribe una justificación'); return; }
+  if(window.submitCompletado) window.submitCompletado(prueba);
+}
+function submitRetoSin(){
+  if(window.submitCompletado) window.submitCompletado('Sin prueba proporcionada');
+}
 
 function renderRanking(){
   var sel=document.getElementById('rank-filter').value;
@@ -1174,29 +1201,76 @@ function renderRetos(retos) {
   var cont = document.getElementById('retos-list');
   var badge = document.getElementById('retos-pending-badge');
   if(!cont) return;
-  if(!retos || !retos.length) {
+  
+  var user = window._currentUser;
+  var isAdmin = user && window.ligaActual && user.uid === window.ligaActual.creador;
+  var visibleRetos = isAdmin ? retos : (retos||[]).filter(function(r){ return r.estado === 'activo'; });
+  
+  if(!visibleRetos || !visibleRetos.length) {
     cont.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">🎯</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin retos todavía</div><div style="font-size:11px;line-height:1.5">Crea el primer reto de la liga</div></div>';
     if(badge) badge.style.display='none';
     return;
   }
-  if(badge){ badge.style.display='inline-flex'; badge.textContent=retos.length+' reto'+(retos.length!==1?'s':''); }
+  
+  var pendientes = (retos||[]).filter(function(r){ return r.estado==='pendiente'; }).length;
+  if(badge && isAdmin && pendientes>0){ 
+    badge.style.display='inline-flex'; 
+    badge.textContent=pendientes+' pendiente'+(pendientes!==1?'s':''); 
+  } else if(badge) { badge.style.display='none'; }
+  
   cont.innerHTML = '';
-  retos.forEach(function(r) {
+  visibleRetos.forEach(function(r) {
     var neg = r.pts < 0;
+    var isPending = r.estado === 'pendiente';
     var div = document.createElement('div'); div.className='rc';
     var safeT = r.titulo.replace(/"/g,'&quot;');
     var safeC = r.creadorNombre.replace(/"/g,'&quot;');
+    var statusBadge = isAdmin && isPending ? '<span class="badge b-rev" style="margin-left:8px">Pendiente</span>' : '';
+    var buttons = '';
+    if(isAdmin && isPending) {
+      buttons = '<button class="cbtn2" style="background:#2a2;margin-right:8px" onclick="aprobarReto(''+r.id+'')">Aprobar</button><button class="cbtn2" style="background:#a22" onclick="rechazarReto(''+r.id+'')">Rechazar</button>';
+    } else if(!isPending) {
+      buttons = '<button class="cbtn2" data-retoid="'+r.id+'" data-titulo="'+safeT+'" data-creator="'+safeC+'" data-pts="'+r.pts+'" onclick="openCompFromBtn(this)">Completar</button>';
+    }
+    div.innerHTML =
+      '<div class="rc-top"><div><div class="rc-title">'+r.titulo+statusBadge+'</div><div class="rc-creator">@'+r.creadorNombre+(r.desc?' · '+r.desc:'')+'</div></div><div class="rc-pts'+(neg?' neg':'')+'">'+r.pts+'<span>'+(neg?'penalización':'pts')+'</span></div></div>'+
+      '<div class="rc-bot"><div class="rc-who" style="font-size:11px;color:var(--gray)">Por @'+r.creadorNombre+'</div>'+buttons+'</div>';
+    cont.appendChild(div);
+  });
+}
+
+function renderCompletados(completados) {
+  var cont = document.getElementById('completados-list');
+  var badge = document.getElementById('completados-badge');
+  if(!cont) return;
+  
+  if(!completados || !completados.length) {
+    cont.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">✅</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin completados pendientes</div></div>';
+    if(badge) badge.style.display='none';
+    return;
+  }
+  
+  if(badge){ badge.style.display='inline-flex'; badge.textContent=completados.length; }
+  cont.innerHTML = '';
+  
+  completados.forEach(function(c) {
+    var div = document.createElement('div'); div.className='rc';
+    var pts = c.retoPts || 0;
+    var neg = pts < 0;
     div.innerHTML =
       '<div class="rc-top">'+
         '<div>'+
-          '<div class="rc-title">'+r.titulo+'</div>'+
-          '<div class="rc-creator">@'+r.creadorNombre+(r.desc?' · '+r.desc:'')+'</div>'+
+          '<div class="rc-title">'+c.retoTitulo+'</div>'+
+          '<div class="rc-creator">Completado por @'+c.usuarioNombre+'</div>'+
         '</div>'+
-        '<div class="rc-pts'+(neg?' neg':'')+'">'+r.pts+'<span>'+(neg?'penalización':'pts')+'</span></div>'+
+        '<div class="rc-pts'+(neg?' neg':'')+'\">'+pts+'<span>pts</span></div>'+
       '</div>'+
       '<div class="rc-bot">'+
-        '<div class="rc-who" style="font-size:11px;color:var(--gray)">Creado por @'+r.creadorNombre+'</div>'+
-        '<button class="cbtn2" data-titulo="'+safeT+'" data-creator="'+safeC+'" data-pts="'+r.pts+'" onclick="openCompFromBtn(this)">Completar</button>'+
+        '<div style="font-size:11px;color:var(--gray);margin-bottom:8px">Prueba: '+c.prueba+'</div>'+
+        '<div style="display:flex;gap:8px">'+
+          '<button class="cbtn2" style="background:#2a2;flex:1" onclick="aprobarCompletado(\''+c.id+'\')">Aprobar</button>'+
+          '<button class="cbtn2" style="background:#a22;flex:1" onclick="rechazarCompletado(\''+c.id+'\')">Rechazar</button>'+
+        '</div>'+
       '</div>';
     cont.appendChild(div);
   });
@@ -1216,6 +1290,7 @@ function syncLigaUI(l) {
 }
 
 function openCompFromBtn(btn) {
+  window._currentRetoId = btn.dataset.retoid;
   openComp(btn.dataset.titulo, btn.dataset.creator, parseInt(btn.dataset.pts));
 }
 
@@ -1384,6 +1459,7 @@ renderRanking();
     syncLigaUI(l);
     cargarRetos(l.id);
     cargarRanking(l.id);
+    cargarCompletados(l.id);
     go('s-home');
   };
 
@@ -1516,6 +1592,112 @@ renderRanking();
       await updateDoc(doc(db,'ligas',window.ligaActual.id,'retos',retoId), { estado: 'rechazado' });
       toast('Reto rechazado');
       await cargarRetos(window.ligaActual.id);
+    } catch(e) {
+      toast('Error: ' + e.message);
+    }
+  };
+
+  // ── Completar Reto (guardar prueba) ──────────────────────
+  window.submitCompletado = async function(prueba) {
+    if(!window.ligaActual || !window._currentRetoId){ toast('Error: sin reto activo'); return; }
+    var user = window._currentUser;
+    if(!user){ toast('Debes iniciar sesión'); return; }
+    try {
+      var retoSnap = await getDoc(doc(db,'ligas',window.ligaActual.id,'retos',window._currentRetoId));
+      if(!retoSnap.exists()){ toast('Reto no encontrado'); return; }
+      var retoData = retoSnap.data();
+      
+      await addDoc(collection(db,'ligas',window.ligaActual.id,'completados'), {
+        retoId: window._currentRetoId,
+        retoTitulo: retoData.titulo,
+        retoPts: retoData.pts,
+        usuarioId: user.uid,
+        usuarioNombre: user.displayName || user.email.split('@')[0],
+        prueba: prueba,
+        estado: 'pendiente_validacion',
+        creado: Date.now()
+      });
+      toast('Enviado para validación del admin');
+      go('s-goat');
+    } catch(e) {
+      toast('Error: ' + e.message);
+    }
+  };
+
+  // ── Cargar y Validar Completados (solo admin) ────────────
+  async function cargarCompletados(ligaId) {
+    if(!ligaId) return;
+    var user = window._currentUser;
+    var isAdmin = user && window.ligaActual && user.uid === window.ligaActual.creador;
+    
+    // Show/hide validar tab based on admin status
+    var vtab = document.getElementById('gtab-v');
+    if(vtab) vtab.style.display = isAdmin ? 'block' : 'none';
+    
+    if(!isAdmin) return;
+    
+    try {
+      var q = query(collection(db,'ligas',ligaId,'completados'), orderBy('creado','desc'));
+      var snap = await getDocs(q);
+      var completados = [];
+      snap.forEach(function(d){ 
+        var data = d.data();
+        if(data.estado === 'pendiente_validacion') {
+          completados.push(Object.assign({id:d.id}, data)); 
+        }
+      });
+      renderCompletados(completados);
+    } catch(e) {
+      console.error('cargarCompletados error:', e);
+      renderCompletados([]);
+    }
+  }
+  window._fsCargarCompletados = cargarCompletados;
+
+  window.aprobarCompletado = async function(completadoId) {
+    if(!window.ligaActual){ toast('Sin liga activa'); return; }
+    var user = window._currentUser;
+    if(!user || user.uid !== window.ligaActual.creador){ toast('Solo el admin'); return; }
+    try {
+      var snap = await getDoc(doc(db,'ligas',window.ligaActual.id,'completados',completadoId));
+      if(!snap.exists()){ toast('No encontrado'); return; }
+      var data = snap.data();
+      
+      // Mark as approved
+      await updateDoc(doc(db,'ligas',window.ligaActual.id,'completados',completadoId), {
+        estado: 'aprobado'
+      });
+      
+      // Update ranking - add points
+      var rankRef = doc(db,'ligas',window.ligaActual.id,'ranking',data.usuarioId);
+      var rankSnap = await getDoc(rankRef);
+      if(rankSnap.exists()) {
+        var current = rankSnap.data();
+        await updateDoc(rankRef, {
+          puntos: (current.puntos || 0) + data.retoPts,
+          retosCompletados: (current.retosCompletados || 0) + 1,
+          ultimaActualizacion: Date.now()
+        });
+      }
+      
+      toast('Completado aprobado - ' + data.retoPts + 'pts sumados');
+      await cargarCompletados(window.ligaActual.id);
+      await cargarRanking(window.ligaActual.id);
+    } catch(e) {
+      toast('Error: ' + e.message);
+    }
+  };
+
+  window.rechazarCompletado = async function(completadoId) {
+    if(!window.ligaActual){ toast('Sin liga activa'); return; }
+    var user = window._currentUser;
+    if(!user || user.uid !== window.ligaActual.creador){ toast('Solo el admin'); return; }
+    try {
+      await updateDoc(doc(db,'ligas',window.ligaActual.id,'completados',completadoId), {
+        estado: 'rechazado'
+      });
+      toast('Completado rechazado');
+      await cargarCompletados(window.ligaActual.id);
     } catch(e) {
       toast('Error: ' + e.message);
     }
