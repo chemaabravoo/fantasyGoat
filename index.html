@@ -391,7 +391,7 @@ textarea.inp{resize:vertical;min-height:80px}
     <div class="srow" onclick="openModal('m-about')"><span style="font-size:14px;color:var(--white);font-weight:600">Sobre Fantasy GOAT</span><span style="color:#444;font-size:16px">›</span></div>
     <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);font-weight:700;margin-top:4px">Cuenta</div>
     <button class="blogout" onclick="fbSignOut()">Cerrar sesión</button>
-    <button class="bdanger" onclick="toast('Acción irreversible')">Eliminar cuenta</button>
+    <button class="bdanger" onclick="confirmarEliminarCuenta()">Eliminar cuenta</button>
   </div>
 </div>
 
@@ -790,6 +790,15 @@ function openLeagueSheet(name,idx){
   document.getElementById('league-sheet').classList.add('show');
 }
 function closeSheet(){document.getElementById('league-sheet').classList.remove('show');}
+
+function confirmarEliminarCuenta(){
+  if(!confirm('⚠️ ADVERTENCIA\n\n¿Estás seguro de que quieres eliminar tu cuenta permanentemente?\n\nEsto eliminará:\n- Tu perfil\n- Tus equipos\n- Tu historial en todas las ligas\n\nEsta acción NO se puede deshacer.')) return;
+  
+  if(!confirm('Última confirmación: ¿Realmente quieres ELIMINAR TU CUENTA de forma permanente?')) return;
+  
+  if(window.fbDeleteAccount) window.fbDeleteAccount();
+  else toast('Error: función no disponible');
+}
 function resetSheet(){
   var id = currentLeague.id || '';
   var shareBtn = id
@@ -1303,10 +1312,10 @@ renderRanking();
 <script type="module">
   import { initializeApp }   from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-           GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile }
+           GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile, deleteUser }
     from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove,
-           collection, addDoc, getDocs, query, orderBy }
+           collection, addDoc, getDocs, query, orderBy, deleteDoc }
     from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -1364,12 +1373,61 @@ renderRanking();
 
   window.fbGoogle = function() {
     signInWithPopup(auth,provider)
-      .catch(function(e){ if(e.code!=='auth/popup-closed-by-user') toast('Error: '+e.message); });
+      .then(function(result){
+        console.log('[DEBUG] Google sign-in success:', result.user.uid);
+        // Navigation is handled by onAuthStateChanged, but log for debugging
+      })
+      .catch(function(e){ 
+        if(e.code!=='auth/popup-closed-by-user') {
+          console.error('[DEBUG] Google sign-in error:', e);
+          toast('Error: '+e.message); 
+        }
+      });
   };
 
   window.fbSignOut = function() {
     localStorage.removeItem('fg_screen');
     signOut(auth).then(function(){ go('s-login'); });
+  };
+
+  window.fbDeleteAccount = async function() {
+    var user = auth.currentUser;
+    if(!user){ toast('No hay sesión activa'); return; }
+    
+    try {
+      // 1. Remove user from all ligas
+      var userDoc = await getDoc(doc(db,'usuarios',user.uid));
+      if(userDoc.exists()) {
+        var ligas = userDoc.data().ligas || [];
+        for(var i=0; i<ligas.length; i++) {
+          var ligaId = ligas[i];
+          await updateDoc(doc(db,'ligas',ligaId), { miembros: arrayRemove(user.uid) });
+          // Remove from ranking
+          await deleteDoc(doc(db,'ligas',ligaId,'ranking',user.uid));
+          // Remove equipo if exists
+          try { await deleteDoc(doc(db,'ligas',ligaId,'equipos',user.uid)); } catch(e){}
+        }
+      }
+      
+      // 2. Delete user doc
+      await deleteDoc(doc(db,'usuarios',user.uid));
+      
+      // 3. Delete Firebase Auth account
+      await deleteUser(user);
+      
+      // 4. Clear local data and redirect
+      localStorage.clear();
+      toast('Cuenta eliminada permanentemente');
+      setTimeout(function(){ go('s-login'); }, 1000);
+      
+    } catch(e) {
+      if(e.code === 'auth/requires-recent-login') {
+        toast('Por seguridad, debes iniciar sesión de nuevo antes de eliminar tu cuenta');
+        fbSignOut();
+      } else {
+        toast('Error: ' + e.message);
+      }
+    }
   };
 
   // ── Session ───────────────────────────────────────────────
@@ -1410,10 +1468,22 @@ renderRanking();
 
   // ── Firestore helpers ────────────────────────────────────
   async function cargarMisLigas(uid) {
+    console.log('[DEBUG cargarMisLigas] Loading for uid:', uid);
     var snap = await getDoc(doc(db,'usuarios',uid));
-    if(!snap.exists()){ renderLigasFS([]); return; }
+    
+    if(!snap.exists()){ 
+      console.log('[DEBUG cargarMisLigas] User doc does not exist, creating...');
+      // Create empty user doc for new users
+      await setDoc(doc(db,'usuarios',uid), { ligas: [] });
+      renderLigasFS([]); 
+      return; 
+    }
+    
     var ids = snap.data().ligas || [];
+    console.log('[DEBUG cargarMisLigas] User has', ids.length, 'ligas');
+    
     if(!ids.length){ renderLigasFS([]); return; }
+    
     var ligas = [];
     for(var i=0;i<ids.length;i++){
       var s = await getDoc(doc(db,'ligas',ids[i]));
