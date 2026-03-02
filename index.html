@@ -1433,37 +1433,36 @@ renderRanking();
   // Fallback: if Firebase doesn't respond in 4s, show login
   var authResolved = false;
   setTimeout(function(){
-    if(!authResolved){
-      console.warn('Firebase auth timeout, forcing login screen');
-      go('s-login');
-    }
-  }, 4000);
+  if(!authResolved){
+    console.warn('Firebase auth timeout, forcing login screen');
+    if(window.go) window.go('s-login');
+  }
+}, 4000);
 
   onAuthStateChanged(auth, function(user) {
     authResolved = true;
-    if(!user){ go('s-login'); return; }
+    if(!user){ if(window.go) window.go('s-login'); return; }
     updateUI(user);
     window._currentUser = user;
     cargarMisLigas(user.uid).then(function(){
       if(window._pendingJoinId) {
         var inp=document.getElementById('join-id');
         if(inp) inp.value=window._pendingJoinId;
-        go('s-join');
+        if(window.go) window.go('s-join');
       } else {
         // Restore last screen if available
         var saved = localStorage.getItem('fg_screen');
         var safeScreens = ['s-dashboard','s-home','s-ranking','s-goat','s-equipo','s-stats','s-settings'];
         if(saved && safeScreens.indexOf(saved) !== -1) {
-          go(saved);
-        } else {
-          go('s-dashboard');
-        }
+  if(window.go) window.go(saved);
+} else {
+  if(window.go) window.go('s-dashboard');
+}
       }
     }).catch(function(e){
-      console.error('cargarMisLigas error:', e);
-      go('s-dashboard');
-    });
-  });
+  console.error('cargarMisLigas error:', e);
+  setTimeout(function(){ if(window.go) window.go('s-dashboard'); }, 100);
+});
 
   // ── Firestore helpers ────────────────────────────────────
   async function cargarMisLigas(uid) {
@@ -1529,7 +1528,7 @@ renderRanking();
     cargarRetos(l.id);
     cargarRanking(l.id);
     cargarCompletados(l.id);
-    go('s-home');
+    if(window.go) window.go('s-home');
   };
 
   // ── Retos ────────────────────────────────────────────────
