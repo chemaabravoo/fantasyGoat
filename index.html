@@ -1237,7 +1237,7 @@ function renderRetos(retos) {
     var statusBadge = isAdmin && isPending ? '<span class="badge b-rev" style="margin-left:8px">Pendiente</span>' : '';
     var buttons = '';
     if(isAdmin && isPending) {
-      buttons = '<button class="cbtn2" style="background:#2a2;margin-right:8px" onclick="aprobarReto(''+r.id+'')">Aprobar</button><button class="cbtn2" style="background:#a22" onclick="rechazarReto(''+r.id+'')">Rechazar</button>';
+      buttons = '<button class="cbtn2" style="background:#2a2;margin-right:8px" onclick="aprobarReto(\''+r.id+'\')">Aprobar</button><button class="cbtn2" style="background:#a22" onclick="rechazarReto(\''+r.id+'\')">Rechazar</button>';
     } else if(!isPending) {
       buttons = '<button class="cbtn2" data-retoid="'+r.id+'" data-titulo="'+safeT+'" data-creator="'+safeC+'" data-pts="'+r.pts+'" onclick="openCompFromBtn(this)">Completar</button>';
     }
