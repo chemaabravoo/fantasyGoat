@@ -1956,4 +1956,11 @@ renderRanking();
       if(s.data().creador!==user.uid){ toast('Solo el creador puede eliminar'); return; }
       return updateDoc(doc(db,'ligas',currentLeague.id),{eliminada:true}).then(function(){
         return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
-      }).then(function(){ cargarMisLigas(user.uid); toast('"'+currentLeag
+      }).then(function(){ cargarMisLigas(user.uid); toast('"'+currentLeague.name+'" eliminada'); });
+    });
+  };
+</script>
+
+</div>
+</body>
+</html>
