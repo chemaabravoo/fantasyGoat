@@ -1332,31 +1332,21 @@ renderRanking();
   const db   = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
-  // Handle Google redirect sign-in results (needed for mobile / popup-blocked environments)
-  getRedirectResult(auth).then(function(result){
-    if(result && result.user){
-      console.log('[DEBUG] Google redirect sign-in success:', result.user.uid);
-      // onAuthStateChanged will handle navigation
-    }
-  }).catch(function(e){
-    console.error('[DEBUG] getRedirectResult error:', e);
-  });
-
-
-  // ── Safe navigation helper: waits for window.go (module loads before main script) ──
-  function safeGo(id) {
-    if (window.go) { window.go(id); return; }
-    const start = Date.now();
-    const t = setInterval(function(){
-      if (window.go) { clearInterval(t); window.go(id); }
-      else if (Date.now() - start > 5000) { clearInterval(t); console.warn('[safeGo] window.go not ready'); }
+  // --- Safe helpers (module loads before main script defines go()/safeToast()) ---
+  function safeGo(id){
+    if(window.go){ window.go(id); return; }
+    var tries = 0;
+    var t = setInterval(function(){
+      tries++;
+      if(window.go){ clearInterval(t); window.go(id); }
+      if(tries > 120){ clearInterval(t); console.warn('[safeGo] go() not ready, skipped:', id); }
     }, 50);
   }
 
-  // ── Safe toast helper ──
   function safeToast(msg){
-    if (window.toast) { window.toast(msg); }
-    else { console.warn('[toast]', msg); alert(msg); }
+    if(window.toast){ window.toast(msg); return; }
+    try { alert(msg); } catch(e){}
+    console.warn('[safeToast]', msg);
   }
 
 
@@ -1385,7 +1375,7 @@ renderRanking();
     var email=document.getElementById('inp-email').value.trim();
     var pass =document.getElementById('inp-pass').value;
     if(!email||!pass){ safeToast('Rellena email y contraseña'); return; }
-    signInWithEmailAndPassword(auth,email,pass).catch(function(e){ safeToast(window.authErr ? window.authErr(e) : ((e && e.message) ? e.message : String(e))); });
+    signInWithEmailAndPassword(auth,email,pass).catch(function(e){ safeToast(authErr(e)); });
   };
 
   window.fbSignUp = function() {
@@ -1395,33 +1385,38 @@ renderRanking();
     if(pass.length<6){ safeToast('Contraseña mínimo 6 caracteres'); return; }
     createUserWithEmailAndPassword(auth,email,pass)
       .then(function(cred){ return updateProfile(cred.user,{displayName:email.split('@')[0]}); })
-      .catch(function(e){ safeToast(window.authErr ? window.authErr(e) : ((e && e.message) ? e.message : String(e))); });
+      .catch(function(e){ safeToast(authErr(e)); });
   };
 
   window.fbGoogle = function() {
-    
-    // Prefer popup on desktop; fallback to redirect on mobile/webview
+    // Prefer popup, but fallback to redirect on mobile/WebView or if popup is blocked.
     signInWithPopup(auth, provider)
       .then(function(result){
-        console.log('[DEBUG] Google sign-in (popup) success:', result.user && result.user.uid);
-        // Navigation handled by onAuthStateChanged
+        console.log('[DEBUG] Google sign-in success (popup):', result && result.user && result.user.uid);
       })
       .catch(function(e){
-        console.error('[DEBUG] Google sign-in (popup) error:', e);
-        const code = e && e.code ? e.code : '';
-        // Common popup failures: popup-blocked / operation-not-supported / web-storage-unsupported / popup-closed-by-user
-        if(code === 'auth/popup-blocked' ||
-           code === 'auth/operation-not-supported-in-this-environment' ||
-           code === 'auth/web-storage-unsupported' ||
-           code === 'auth/cancelled-popup-request') {
-          console.warn('[DEBUG] Falling back to redirect sign-in...');
-          return signInWithRedirect(auth, provider);
-        }
-        if(code !== 'auth/popup-closed-by-user') {
-          safeToast('Google login error: ' + (e.message || code || 'unknown'));
-        }
-      });
+        console.warn('[DEBUG] Google popup sign-in failed:', e && (e.code || e.message), e);
+        // Ignore user closing popup
+        if(e && e.code === 'auth/popup-closed-by-user') return;
 
+        // Common cases: popup blocked or not supported -> redirect
+        var fallbackCodes = [
+          'auth/popup-blocked',
+          'auth/popup-closed-by-user',
+          'auth/operation-not-supported-in-this-environment',
+          'auth/web-storage-unsupported'
+        ];
+        if(!e || fallbackCodes.indexOf(e.code) !== -1){
+          try {
+            signInWithRedirect(auth, provider);
+          } catch(err){
+            safeToast('Error: ' + (err && err.message ? err.message : 'No se pudo iniciar con Google'));
+          }
+          return;
+        }
+
+        safeToast('Error: ' + (e && e.message ? e.message : 'No se pudo iniciar con Google'));
+      });
   };
 
   window.fbSignOut = function() {
@@ -1475,20 +1470,31 @@ renderRanking();
   setTimeout(function(){
   if(!authResolved){
     console.warn('Firebase auth timeout, forcing login screen');
-    if(window.go) window.go('s-login');
+    if(window.go) window.safeGo('s-login');
   }
 }, 4000);
 
   onAuthStateChanged(auth, function(user) {
     authResolved = true;
-    if(!user){ if(window.go) window.go('s-login'); return; }
+    if(!user){ if(window.go) window.safeGo('s-login');
+  // Handle Google redirect result (mobile-friendly)
+  getRedirectResult(auth).then(function(result){
+    if(result && result.user){
+      console.log('[DEBUG] Google sign-in success (redirect):', result.user.uid);
+    }
+  }).catch(function(e){
+    if(e && e.code !== 'auth/no-auth-event'){
+      console.warn('[DEBUG] getRedirectResult error:', e);
+    }
+  });
+ return; }
     updateUI(user);
     window._currentUser = user;
     cargarMisLigas(user.uid).then(function(){
       if(window._pendingJoinId) {
         var inp=document.getElementById('join-id');
         if(inp) inp.value=window._pendingJoinId;
-        if(window.go) window.go('s-join');
+        if(window.go) window.safeGo('s-join');
       } else {
         // Restore last screen if available
         var saved = localStorage.getItem('fg_screen');
@@ -1496,12 +1502,12 @@ renderRanking();
         if(saved && safeScreens.indexOf(saved) !== -1) {
   if(window.go) window.go(saved);
 } else {
-  if(window.go) window.go('s-dashboard');
+  if(window.go) window.safeGo('s-dashboard');
 }
       }
     }).catch(function(e){
   console.error('cargarMisLigas error:', e);
-  setTimeout(function(){ if(window.go) window.go('s-dashboard'); }, 100);
+  setTimeout(function(){ if(window.go) window.safeGo('s-dashboard'); }, 100);
 });
 
   // ── Firestore helpers ────────────────────────────────────
@@ -1568,7 +1574,7 @@ renderRanking();
     cargarRetos(l.id);
     cargarRanking(l.id);
     cargarCompletados(l.id);
-    if(window.go) window.go('s-home');
+    if(window.go) window.safeGo('s-home');
   };
 
   // ── Retos ────────────────────────────────────────────────
