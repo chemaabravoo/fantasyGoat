@@ -313,7 +313,9 @@ textarea.inp{resize:vertical;min-height:80px}
 <div class="screen active full-scroll" id="s-login">
   <div style="flex:1;display:flex;flex-direction:column;padding:32px 28px;min-height:580px">
     <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:40px">
-      <img src="https://chemaabravoo.github.io/fantasyGoat/logo.png" alt="Fantasy GOAT" style="width:230px;height:230px;filter:drop-shadow(0 0 14px var(--gglow));margin-bottom:8px;display:block">
+      <span style="font-size:52px;filter:drop-shadow(0 0 14px var(--gglow));margin-bottom:8px;display:block">🐐</span>
+      <div style="font-family:'Bebas Neue',cursive;font-size:42px;letter-spacing:5px;color:var(--white);line-height:1">FANTASY <span style="color:var(--gold)">GOAT</span></div>
+      <div id="t-tagline" style="font-size:9px;letter-spacing:6px;color:var(--gray);text-transform:uppercase;margin-top:6px">La Liga de los Elegidos</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px">
       <div class="iw"><label class="il">Email</label><input class="inp" id="inp-email" type="email" placeholder="tu@email.com"></div>
@@ -709,8 +711,7 @@ textarea.inp{resize:vertical;min-height:80px}
   <div class="modal-box" onclick="event.stopPropagation()">
     <div class="modal-hdr"><div class="modal-title">Sobre Fantasy GOAT</div><div class="modal-close" onclick="closeModal('m-about')">✕</div></div>
     <div class="modal-body">
-      <div style="text-align:center;margin-bottom:20px">
-<img src="https://chemaabravoo.github.io/fantasyGoat/logo.png" alt="Fantasy GOAT" style="width:120px;height:120px;margin-bottom:12px"><div style="font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:4px;color:var(--gold)">FANTASY GOAT</div><p style="font-size:11px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-top:4px">Versión 1.0.0</p></div>
+      <div style="text-align:center;margin-bottom:20px"><div style="font-size:48px;margin-bottom:8px">🐐</div><div style="font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:4px;color:var(--gold)">FANTASY GOAT</div><p style="font-size:11px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-top:4px">Versión 1.0.0</p></div>
       <div class="about-block"><div class="about-block-title">¿QUÉ ES?</div><p class="about-block-body">Fantasy GOAT es una plataforma de retos de la vida real entre amigos, inspirada en las ligas de fantasy sports. En lugar de apostar por jugadores de fútbol, apuestas por tus amigos y por ti mismo para superar desafíos del día a día: maratones, noches de fiesta, flexiones, libros, cocina y todo lo que os propongáis.</p></div>
       <div class="about-block"><div class="about-block-title">¿POR QUÉ SE CREÓ?</div><p class="about-block-body">Nació de una idea simple: hacer que la competición amistosa sea más divertida, estructurada y memorable. Queremos que las personas se motiven a hacer cosas increíbles gracias a la presión positiva del grupo, la recompensa de los puntos y el orgullo de ganar una temporada.</p></div>
       <div class="about-block"><div class="about-block-title">CÓMO SACARLE EL MÁXIMO</div><p class="about-block-body">Fantasy GOAT funciona mejor cuando los retos son honestos, divertidos y alcanzables para todos. El árbitro debe ser imparcial al validar pruebas. Propón retos creativos, celebra los logros del grupo y recuerda que el espíritu es competir con respeto y pasárselo bien juntos.</p></div>
@@ -1311,7 +1312,7 @@ renderRanking();
 <script type="module">
   import { initializeApp }   from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-           GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, updateProfile, deleteUser }
+           GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile, deleteUser }
     from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove,
            collection, addDoc, getDocs, query, orderBy, deleteDoc }
@@ -1331,24 +1332,6 @@ renderRanking();
   const auth = getAuth(app);
   const db   = getFirestore(app);
   const provider = new GoogleAuthProvider();
-
-  // --- Safe helpers (module loads before main script defines go()/safeToast()) ---
-  function safeGo(id){
-    if(window.go){ window.go(id); return; }
-    var tries = 0;
-    var t = setInterval(function(){
-      tries++;
-      if(window.go){ clearInterval(t); window.go(id); }
-      if(tries > 120){ clearInterval(t); console.warn('[safeGo] go() not ready, skipped:', id); }
-    }, 50);
-  }
-
-  function safeToast(msg){
-    if(window.toast){ window.toast(msg); return; }
-    try { alert(msg); } catch(e){}
-    console.warn('[safeToast]', msg);
-  }
-
 
   // ── Error messages ───────────────────────────────────────
   function authErr(e) {
@@ -1374,59 +1357,42 @@ renderRanking();
   window.fbSignIn = function() {
     var email=document.getElementById('inp-email').value.trim();
     var pass =document.getElementById('inp-pass').value;
-    if(!email||!pass){ safeToast('Rellena email y contraseña'); return; }
-    signInWithEmailAndPassword(auth,email,pass).catch(function(e){ safeToast(authErr(e)); });
+    if(!email||!pass){ toast('Rellena email y contraseña'); return; }
+    signInWithEmailAndPassword(auth,email,pass).catch(function(e){ toast(authErr(e)); });
   };
 
   window.fbSignUp = function() {
     var email=document.getElementById('inp-email').value.trim();
     var pass =document.getElementById('inp-pass').value;
-    if(!email||!pass){ safeToast('Rellena email y contraseña'); return; }
-    if(pass.length<6){ safeToast('Contraseña mínimo 6 caracteres'); return; }
+    if(!email||!pass){ toast('Rellena email y contraseña'); return; }
+    if(pass.length<6){ toast('Contraseña mínimo 6 caracteres'); return; }
     createUserWithEmailAndPassword(auth,email,pass)
       .then(function(cred){ return updateProfile(cred.user,{displayName:email.split('@')[0]}); })
-      .catch(function(e){ safeToast(authErr(e)); });
+      .catch(function(e){ toast(authErr(e)); });
   };
 
   window.fbGoogle = function() {
-    // Prefer popup, but fallback to redirect on mobile/WebView or if popup is blocked.
-    signInWithPopup(auth, provider)
+    signInWithPopup(auth,provider)
       .then(function(result){
-        console.log('[DEBUG] Google sign-in success (popup):', result && result.user && result.user.uid);
+        console.log('[DEBUG] Google sign-in success:', result.user.uid);
+        // Navigation is handled by onAuthStateChanged, but log for debugging
       })
-      .catch(function(e){
-        console.warn('[DEBUG] Google popup sign-in failed:', e && (e.code || e.message), e);
-        // Ignore user closing popup
-        if(e && e.code === 'auth/popup-closed-by-user') return;
-
-        // Common cases: popup blocked or not supported -> redirect
-        var fallbackCodes = [
-          'auth/popup-blocked',
-          'auth/popup-closed-by-user',
-          'auth/operation-not-supported-in-this-environment',
-          'auth/web-storage-unsupported'
-        ];
-        if(!e || fallbackCodes.indexOf(e.code) !== -1){
-          try {
-            signInWithRedirect(auth, provider);
-          } catch(err){
-            safeToast('Error: ' + (err && err.message ? err.message : 'No se pudo iniciar con Google'));
-          }
-          return;
+      .catch(function(e){ 
+        if(e.code!=='auth/popup-closed-by-user') {
+          console.error('[DEBUG] Google sign-in error:', e);
+          toast('Error: '+e.message); 
         }
-
-        safeToast('Error: ' + (e && e.message ? e.message : 'No se pudo iniciar con Google'));
       });
   };
 
   window.fbSignOut = function() {
     localStorage.removeItem('fg_screen');
-    signOut(auth).then(function(){ safeGo('s-login'); });
+    signOut(auth).then(function(){ go('s-login'); });
   };
 
   window.fbDeleteAccount = async function() {
     var user = auth.currentUser;
-    if(!user){ safeToast('No hay sesión activa'); return; }
+    if(!user){ toast('No hay sesión activa'); return; }
     
     try {
       // 1. Remove user from all ligas
@@ -1451,15 +1417,15 @@ renderRanking();
       
       // 4. Clear local data and redirect
       localStorage.clear();
-      safeToast('Cuenta eliminada permanentemente');
-      setTimeout(function(){ safeGo('s-login'); }, 1000);
+      toast('Cuenta eliminada permanentemente');
+      setTimeout(function(){ go('s-login'); }, 1000);
       
     } catch(e) {
       if(e.code === 'auth/requires-recent-login') {
-        safeToast('Por seguridad, debes iniciar sesión de nuevo antes de eliminar tu cuenta');
+        toast('Por seguridad, debes iniciar sesión de nuevo antes de eliminar tu cuenta');
         fbSignOut();
       } else {
-        safeToast('Error: ' + e.message);
+        toast('Error: ' + e.message);
       }
     }
   };
@@ -1468,47 +1434,37 @@ renderRanking();
   // Fallback: if Firebase doesn't respond in 4s, show login
   var authResolved = false;
   setTimeout(function(){
-  if(!authResolved){
-    console.warn('Firebase auth timeout, forcing login screen');
-    if(window.go) window.safeGo('s-login');
-  }
-}, 4000);
+    if(!authResolved){
+      console.warn('Firebase auth timeout, forcing login screen');
+      go('s-login');
+    }
+  }, 4000);
 
   onAuthStateChanged(auth, function(user) {
     authResolved = true;
-    if(!user){ if(window.go) window.safeGo('s-login');
-  // Handle Google redirect result (mobile-friendly)
-  getRedirectResult(auth).then(function(result){
-    if(result && result.user){
-      console.log('[DEBUG] Google sign-in success (redirect):', result.user.uid);
-    }
-  }).catch(function(e){
-    if(e && e.code !== 'auth/no-auth-event'){
-      console.warn('[DEBUG] getRedirectResult error:', e);
-    }
-  });
- return; }
+    if(!user){ go('s-login'); return; }
     updateUI(user);
     window._currentUser = user;
     cargarMisLigas(user.uid).then(function(){
       if(window._pendingJoinId) {
         var inp=document.getElementById('join-id');
         if(inp) inp.value=window._pendingJoinId;
-        if(window.go) window.safeGo('s-join');
+        go('s-join');
       } else {
         // Restore last screen if available
         var saved = localStorage.getItem('fg_screen');
         var safeScreens = ['s-dashboard','s-home','s-ranking','s-goat','s-equipo','s-stats','s-settings'];
         if(saved && safeScreens.indexOf(saved) !== -1) {
-  if(window.go) window.go(saved);
-} else {
-  if(window.go) window.safeGo('s-dashboard');
-}
+          go(saved);
+        } else {
+          go('s-dashboard');
+        }
       }
     }).catch(function(e){
-  console.error('cargarMisLigas error:', e);
-  setTimeout(function(){ if(window.go) window.safeGo('s-dashboard'); }, 100);
-});
+      console.error('cargarMisLigas error:', e);
+      go('s-dashboard');
+    });
+  });
 
   // ── Firestore helpers ────────────────────────────────────
   async function cargarMisLigas(uid) {
@@ -1574,7 +1530,7 @@ renderRanking();
     cargarRetos(l.id);
     cargarRanking(l.id);
     cargarCompletados(l.id);
-    if(window.go) window.safeGo('s-home');
+    go('s-home');
   };
 
   // ── Retos ────────────────────────────────────────────────
@@ -1665,7 +1621,7 @@ renderRanking();
   }
 
   window._fsPublicarReto = async function(reto) {
-    if(!window.ligaActual){ safeToast('Selecciona una liga primero'); return; }
+    if(!window.ligaActual){ toast('Selecciona una liga primero'); return; }
     try {
       var user = window._currentUser;
       var isAdmin = user && user.uid === window.ligaActual.creador;
@@ -1676,49 +1632,49 @@ renderRanking();
       document.getElementById('reto-titulo').value='';
       document.getElementById('reto-pts').value='';
       document.getElementById('reto-desc').value='';
-      safeToast(isAdmin ? 'Reto publicado' : 'Reto enviado para validación');
+      toast(isAdmin ? 'Reto publicado' : 'Reto enviado para validación');
       await cargarRetos(window.ligaActual.id);
-      safeGo('s-goat');
+      go('s-goat');
     } catch(e) {
-      safeToast('Error al publicar: '+e.message);
+      toast('Error al publicar: '+e.message);
     }
   };
 
   // ── Aprobar/Rechazar Retos (solo admin) ──────────────────
   window.aprobarReto = async function(retoId) {
-    if(!window.ligaActual){ safeToast('Sin liga activa'); return; }
+    if(!window.ligaActual){ toast('Sin liga activa'); return; }
     var user = window._currentUser;
-    if(!user || user.uid !== window.ligaActual.creador){ safeToast('Solo el admin puede aprobar'); return; }
+    if(!user || user.uid !== window.ligaActual.creador){ toast('Solo el admin puede aprobar'); return; }
     try {
       await updateDoc(doc(db,'ligas',window.ligaActual.id,'retos',retoId), { estado: 'activo' });
-      safeToast('Reto aprobado');
+      toast('Reto aprobado');
       await cargarRetos(window.ligaActual.id);
     } catch(e) {
-      safeToast('Error: ' + e.message);
+      toast('Error: ' + e.message);
     }
   };
 
   window.rechazarReto = async function(retoId) {
-    if(!window.ligaActual){ safeToast('Sin liga activa'); return; }
+    if(!window.ligaActual){ toast('Sin liga activa'); return; }
     var user = window._currentUser;
-    if(!user || user.uid !== window.ligaActual.creador){ safeToast('Solo el admin puede rechazar'); return; }
+    if(!user || user.uid !== window.ligaActual.creador){ toast('Solo el admin puede rechazar'); return; }
     try {
       await updateDoc(doc(db,'ligas',window.ligaActual.id,'retos',retoId), { estado: 'rechazado' });
-      safeToast('Reto rechazado');
+      toast('Reto rechazado');
       await cargarRetos(window.ligaActual.id);
     } catch(e) {
-      safeToast('Error: ' + e.message);
+      toast('Error: ' + e.message);
     }
   };
 
   // ── Completar Reto (guardar prueba) ──────────────────────
   window.submitCompletado = async function(prueba) {
-    if(!window.ligaActual || !window._currentRetoId){ safeToast('Error: sin reto activo'); return; }
+    if(!window.ligaActual || !window._currentRetoId){ toast('Error: sin reto activo'); return; }
     var user = window._currentUser;
-    if(!user){ safeToast('Debes iniciar sesión'); return; }
+    if(!user){ toast('Debes iniciar sesión'); return; }
     try {
       var retoSnap = await getDoc(doc(db,'ligas',window.ligaActual.id,'retos',window._currentRetoId));
-      if(!retoSnap.exists()){ safeToast('Reto no encontrado'); return; }
+      if(!retoSnap.exists()){ toast('Reto no encontrado'); return; }
       var retoData = retoSnap.data();
       
       await addDoc(collection(db,'ligas',window.ligaActual.id,'completados'), {
@@ -1731,10 +1687,10 @@ renderRanking();
         estado: 'pendiente_validacion',
         creado: Date.now()
       });
-      safeToast('Enviado para validación del admin');
-      safeGo('s-goat');
+      toast('Enviado para validación del admin');
+      go('s-goat');
     } catch(e) {
-      safeToast('Error: ' + e.message);
+      toast('Error: ' + e.message);
     }
   };
 
@@ -1769,12 +1725,12 @@ renderRanking();
   window._fsCargarCompletados = cargarCompletados;
 
   window.aprobarCompletado = async function(completadoId) {
-    if(!window.ligaActual){ safeToast('Sin liga activa'); return; }
+    if(!window.ligaActual){ toast('Sin liga activa'); return; }
     var user = window._currentUser;
-    if(!user || user.uid !== window.ligaActual.creador){ safeToast('Solo el admin'); return; }
+    if(!user || user.uid !== window.ligaActual.creador){ toast('Solo el admin'); return; }
     try {
       var snap = await getDoc(doc(db,'ligas',window.ligaActual.id,'completados',completadoId));
-      if(!snap.exists()){ safeToast('No encontrado'); return; }
+      if(!snap.exists()){ toast('No encontrado'); return; }
       var data = snap.data();
       
       // Mark as approved
@@ -1794,26 +1750,26 @@ renderRanking();
         });
       }
       
-      safeToast('Completado aprobado - ' + data.retoPts + 'pts sumados');
+      toast('Completado aprobado - ' + data.retoPts + 'pts sumados');
       await cargarCompletados(window.ligaActual.id);
       await cargarRanking(window.ligaActual.id);
     } catch(e) {
-      safeToast('Error: ' + e.message);
+      toast('Error: ' + e.message);
     }
   };
 
   window.rechazarCompletado = async function(completadoId) {
-    if(!window.ligaActual){ safeToast('Sin liga activa'); return; }
+    if(!window.ligaActual){ toast('Sin liga activa'); return; }
     var user = window._currentUser;
-    if(!user || user.uid !== window.ligaActual.creador){ safeToast('Solo el admin'); return; }
+    if(!user || user.uid !== window.ligaActual.creador){ toast('Solo el admin'); return; }
     try {
       await updateDoc(doc(db,'ligas',window.ligaActual.id,'completados',completadoId), {
         estado: 'rechazado'
       });
-      safeToast('Completado rechazado');
+      toast('Completado rechazado');
       await cargarCompletados(window.ligaActual.id);
     } catch(e) {
-      safeToast('Error: ' + e.message);
+      toast('Error: ' + e.message);
     }
   };
 
@@ -1829,24 +1785,24 @@ renderRanking();
   window.crearLiga = async function() {
     console.log('[DEBUG crearLiga] Starting...');
     var nombre=document.getElementById('liga-nombre').value.trim();
-    if(!nombre){ safeToast('Ponle un nombre a la liga'); return; }
+    if(!nombre){ toast('Ponle un nombre a la liga'); return; }
     var tipo=document.getElementById('tipo-priv').classList.contains('active')?'priv':'pub';
     var pass=tipo==='priv'?document.getElementById('liga-pass').value:'';
-    if(tipo==='priv'&&pass.length<6){ safeToast('La contraseña debe tener al menos 6 caracteres'); return; }
+    if(tipo==='priv'&&pass.length<6){ toast('La contraseña debe tener al menos 6 caracteres'); return; }
     var period=document.getElementById('period-sem').classList.contains('active')?'Semanal':'Mensual';
     var customId=document.getElementById('liga-custom-id')&&document.getElementById('liga-custom-id').value.trim();
     var id=customId?customId.toUpperCase():genId();
     console.log('[DEBUG crearLiga] Generated ID:', id);
     
     var user=window._currentUser;
-    if(!user){ safeToast('Debes iniciar sesión'); console.log('[DEBUG crearLiga] No user!'); return; }
+    if(!user){ toast('Debes iniciar sesión'); console.log('[DEBUG crearLiga] No user!'); return; }
     console.log('[DEBUG crearLiga] User:', user.uid);
 
     try {
       // Check ID not taken
       console.log('[DEBUG crearLiga] Checking if ID exists...');
       var existing=await getDoc(doc(db,'ligas',id));
-      if(existing.exists()){ safeToast('Ese ID ya existe, prueba otro'); return; }
+      if(existing.exists()){ toast('Ese ID ya existe, prueba otro'); return; }
 
       var liga={
         id:id, nombre:nombre, tipo:tipo, pass:pass||'', period:period,
@@ -1882,10 +1838,10 @@ renderRanking();
       document.getElementById('invite-url-display').textContent=getLigaUrl(id);
       await cargarMisLigas(user.uid);
       console.log('[DEBUG crearLiga] Success! Going to invite screen...');
-      safeGo('s-invite');
+      go('s-invite');
     } catch(e) {
       console.error('[DEBUG crearLiga] Error:', e);
-      safeToast('Error al crear liga: ' + e.message);
+      toast('Error al crear liga: ' + e.message);
     }
   };
 
@@ -1895,9 +1851,9 @@ renderRanking();
     var pass = document.getElementById('join-pass').value.trim();
     console.log('[DEBUG unirseALiga] ID:', id, 'Pass:', pass ? '***' : '(empty)');
     
-    if(!id){ safeToast('Introduce el ID de la liga'); return; }
+    if(!id){ toast('Introduce el ID de la liga'); return; }
     var user = window._currentUser;
-    if(!user){ safeToast('Debes iniciar sesión'); return; }
+    if(!user){ toast('Debes iniciar sesión'); return; }
     console.log('[DEBUG unirseALiga] User:', user.uid);
 
     // Disable button while searching
@@ -1910,7 +1866,7 @@ renderRanking();
       console.log('[DEBUG unirseALiga] Snap exists:', snap.exists());
 
       if(!snap.exists()){
-        safeToast('No existe una liga con ese ID');
+        toast('No existe una liga con ese ID');
         console.log('[DEBUG unirseALiga] Liga not found');
         return;
       }
@@ -1919,23 +1875,23 @@ renderRanking();
       console.log('[DEBUG unirseALiga] Liga data:', data);
 
       if(data.eliminada){
-        safeToast('Esta liga ya no existe');
+        toast('Esta liga ya no existe');
         return;
       }
 
       // Check password for private leagues
       if(data.tipo==='priv' && data.pass && data.pass !== pass){
-        safeToast('Contraseña incorrecta');
+        toast('Contraseña incorrecta');
         console.log('[DEBUG unirseALiga] Password mismatch. Expected:', data.pass, 'Got:', pass);
         return;
       }
 
       // Already a member
       if((data.miembros||[]).includes(user.uid)){
-        safeToast('Ya estás en esa liga');
+        toast('Ya estás en esa liga');
         console.log('[DEBUG unirseALiga] Already a member');
         await cargarMisLigas(user.uid);
-        safeGo('s-dashboard');
+        go('s-dashboard');
         return;
       }
 
@@ -1959,15 +1915,15 @@ renderRanking();
       await cargarMisLigas(user.uid);
       document.getElementById('join-id').value = '';
       document.getElementById('join-pass').value = '';
-      safeToast('¡Te has unido a ' + data.nombre + '!');
-      safeGo('s-dashboard');
+      toast('¡Te has unido a ' + data.nombre + '!');
+      go('s-dashboard');
 
     } catch(e) {
       console.error('[DEBUG unirseALiga] Error:', e);
       if(e.code === 'permission-denied') {
-        safeToast('Sin permiso — revisa las reglas de Firestore');
+        toast('Sin permiso — revisa las reglas de Firestore');
       } else {
-        safeToast('Error: ' + e.message);
+        toast('Error: ' + e.message);
       }
     } finally {
       if(btn){ btn.disabled=false; btn.textContent='Buscar y Unirse'; }
@@ -1980,7 +1936,7 @@ renderRanking();
     var user=window._currentUser; if(!user) return;
     updateDoc(doc(db,'ligas',currentLeague.id),{miembros:arrayRemove(user.uid)}).then(function(){
       return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
-    }).then(function(){ cargarMisLigas(user.uid); safeToast('"'+currentLeague.name+'" abandonada'); });
+    }).then(function(){ cargarMisLigas(user.uid); toast('"'+currentLeague.name+'" abandonada'); });
   };
 
   window.doDelete = function() {
@@ -1988,10 +1944,10 @@ renderRanking();
     var user=window._currentUser; if(!user) return;
     getDoc(doc(db,'ligas',currentLeague.id)).then(function(s){
       if(!s.exists()) return;
-      if(s.data().creador!==user.uid){ safeToast('Solo el creador puede eliminar'); return; }
+      if(s.data().creador!==user.uid){ toast('Solo el creador puede eliminar'); return; }
       return updateDoc(doc(db,'ligas',currentLeague.id),{eliminada:true}).then(function(){
         return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
-      }).then(function(){ cargarMisLigas(user.uid); safeToast('"'+currentLeague.name+'" eliminada'); });
+      }).then(function(){ cargarMisLigas(user.uid); toast('"'+currentLeague.name+'" eliminada'); });
     });
   };
 
