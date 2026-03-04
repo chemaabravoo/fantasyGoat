@@ -1332,6 +1332,17 @@ renderRanking();
   const db   = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
+  // ── Safe navigation helper (waits until window.go exists) ───────────────
+  function safeGo(id){
+    if(window.go) return window.go(id);
+    var tries=0;
+    var t=setInterval(function(){
+      if(window.go){ clearInterval(t); window.go(id); }
+      else if(++tries>100){ clearInterval(t); }
+    },50);
+  }
+
+
   // ── Error messages ───────────────────────────────────────
   function authErr(e) {
     return e.code==='auth/invalid-credential' ? 'Email o contraseña incorrectos'
@@ -1386,7 +1397,7 @@ renderRanking();
 
   window.fbSignOut = function() {
     localStorage.removeItem('fg_screen');
-    signOut(auth).then(function(){ go('s-login'); });
+    signOut(auth).then(function(){ safeGo('s-login'); });
   };
 
   window.fbDeleteAccount = async function() {
@@ -1417,7 +1428,7 @@ renderRanking();
       // 4. Clear local data and redirect
       localStorage.clear();
       toast('Cuenta eliminada permanentemente');
-      setTimeout(function(){ go('s-login'); }, 1000);
+      setTimeout(function(){ safeGo('s-login'); }, 1000);
       
     } catch(e) {
       if(e.code === 'auth/requires-recent-login') {
@@ -1435,33 +1446,33 @@ renderRanking();
   setTimeout(function(){
   if(!authResolved){
     console.warn('Firebase auth timeout, forcing login screen');
-    if(window.go) window.go('s-login');
+    safeGo('s-login');
   }
 }, 4000);
 
   onAuthStateChanged(auth, function(user) {
     authResolved = true;
-    if(!user){ if(window.go) window.go('s-login'); return; }
+    if(!user){ safeGo('s-login'); return; }
     updateUI(user);
     window._currentUser = user;
     cargarMisLigas(user.uid).then(function(){
       if(window._pendingJoinId) {
         var inp=document.getElementById('join-id');
         if(inp) inp.value=window._pendingJoinId;
-        if(window.go) window.go('s-join');
+        safeGo('s-join');
       } else {
         // Restore last screen if available
         var saved = localStorage.getItem('fg_screen');
         var safeScreens = ['s-dashboard','s-home','s-ranking','s-goat','s-equipo','s-stats','s-settings'];
         if(saved && safeScreens.indexOf(saved) !== -1) {
-  if(window.go) window.go(saved);
+  safeGo(saved);
 } else {
-  if(window.go) window.go('s-dashboard');
+  safeGo('s-dashboard');
 }
       }
     }).catch(function(e){
   console.error('cargarMisLigas error:', e);
-  setTimeout(function(){ if(window.go) window.go('s-dashboard'); }, 100);
+  setTimeout(function(){ safeGo('s-dashboard'); }, 100);
 });
 
   // ── Firestore helpers ────────────────────────────────────
@@ -1528,7 +1539,7 @@ renderRanking();
     cargarRetos(l.id);
     cargarRanking(l.id);
     cargarCompletados(l.id);
-    if(window.go) window.go('s-home');
+    safeGo('s-home');
   };
 
   // ── Retos ────────────────────────────────────────────────
@@ -1632,7 +1643,7 @@ renderRanking();
       document.getElementById('reto-desc').value='';
       toast(isAdmin ? 'Reto publicado' : 'Reto enviado para validación');
       await cargarRetos(window.ligaActual.id);
-      go('s-goat');
+      safeGo('s-goat');
     } catch(e) {
       toast('Error al publicar: '+e.message);
     }
@@ -1686,7 +1697,7 @@ renderRanking();
         creado: Date.now()
       });
       toast('Enviado para validación del admin');
-      go('s-goat');
+      safeGo('s-goat');
     } catch(e) {
       toast('Error: ' + e.message);
     }
@@ -1836,7 +1847,7 @@ renderRanking();
       document.getElementById('invite-url-display').textContent=getLigaUrl(id);
       await cargarMisLigas(user.uid);
       console.log('[DEBUG crearLiga] Success! Going to invite screen...');
-      go('s-invite');
+      safeGo('s-invite');
     } catch(e) {
       console.error('[DEBUG crearLiga] Error:', e);
       toast('Error al crear liga: ' + e.message);
@@ -1889,7 +1900,7 @@ renderRanking();
         toast('Ya estás en esa liga');
         console.log('[DEBUG unirseALiga] Already a member');
         await cargarMisLigas(user.uid);
-        go('s-dashboard');
+        safeGo('s-dashboard');
         return;
       }
 
@@ -1914,7 +1925,7 @@ renderRanking();
       document.getElementById('join-id').value = '';
       document.getElementById('join-pass').value = '';
       toast('¡Te has unido a ' + data.nombre + '!');
-      go('s-dashboard');
+      safeGo('s-dashboard');
 
     } catch(e) {
       console.error('[DEBUG unirseALiga] Error:', e);
@@ -1945,12 +1956,4 @@ renderRanking();
       if(s.data().creador!==user.uid){ toast('Solo el creador puede eliminar'); return; }
       return updateDoc(doc(db,'ligas',currentLeague.id),{eliminada:true}).then(function(){
         return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
-      }).then(function(){ cargarMisLigas(user.uid); toast('"'+currentLeague.name+'" eliminada'); });
-    });
-  };
-
-</script>
-
-</div>
-</body>
-</html>
+      }).then(function(){ cargarMisLigas(user.uid); toast('"'+currentLeag
