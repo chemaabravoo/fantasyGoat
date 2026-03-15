@@ -120,7 +120,8 @@ textarea.inp{resize:vertical;min-height:80px}
 .fp-media-carousel{width:100%;aspect-ratio:16/9;position:relative;background:#050505}
 .carousel-slide{position:absolute;top:0;left:0;width:100%;height:100%;display:none;align-items:center;justify-content:center}
 .carousel-slide.active{display:flex}
-.fullscreen-media{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.95);z-index:10000;display:none;align-items:center;justify-content:center}
+.fullscreen-media{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.95);z-index:99999;display:none;align-items:center;justify-content:center;pointer-events:none}
+.fullscreen-media.show{pointer-events:auto}
 .fullscreen-media.show{display:flex}
 .fullscreen-media img,.fullscreen-media video{max-width:100%;max-height:100%;object-fit:contain}
 .fullscreen-close{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10001}
@@ -1026,8 +1027,14 @@ function openMediaFullscreen(url, type) {
 
 function closeFullscreenMedia() {
   var viewer = document.getElementById('fullscreen-media');
+  var content = document.getElementById('fullscreen-content');
+  
   viewer.classList.remove('show');
-  document.getElementById('fullscreen-content').innerHTML = '';
+  
+  // Clean up content properly
+  setTimeout(function() {
+    content.innerHTML = '';
+  }, 300);
 }
 
 
@@ -1358,36 +1365,59 @@ function actualizarJornadaStatus() {
   
   if(liga.jornadaActiva) {
     var ahora = Date.now();
-    var fin = liga.jornadaFin;
-    var diff = fin - ahora;
     
-    if(diff > 0) {
-      var horas = Math.floor(diff / (1000 * 60 * 60));
-      var mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    // Countdown para bloqueo de equipos (24h desde inicio)
+    if(!liga.equiposBloqueados && liga.bloqueoEquiposEn) {
+      var diffBloqueo = liga.bloqueoEquiposEn - ahora;
       
-      if(liga.equiposBloqueados) {
+      if(diffBloqueo > 0) {
+        var horas = Math.floor(diffBloqueo / (1000 * 60 * 60));
+        var mins = Math.floor((diffBloqueo % (1000 * 60 * 60)) / (1000 * 60));
+        var segs = Math.floor((diffBloqueo % (1000 * 60)) / 1000);
+        
+        statusEl.textContent = 'Ajusta tu equipo · Quedan ' + horas + 'h ' + mins + 'm ' + segs + 's';
+        statusEl.style.color = 'var(--gold)';
+        
+        if(countdown) {
+          countdown.style.display = 'block';
+          countdown.textContent = '⏰ Equipos se bloquean en ' + horas + 'h ' + mins + 'm ' + segs + 's';
+        }
+      } else {
+        // Bloquear automáticamente si pasaron las 24h
+        if(!liga.equiposBloqueados) {
+          bloquearEquiposAutomatico();
+        }
+      }
+    }
+    
+    // Si ya están bloqueados
+    if(liga.equiposBloqueados) {
+      var diffFin = liga.jornadaFin - ahora;
+      
+      if(diffFin > 0) {
+        var dias = Math.floor(diffFin / (1000 * 60 * 60 * 24));
+        var horas = Math.floor((diffFin % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        
         statusEl.textContent = 'Jornada en curso · Equipos bloqueados';
         statusEl.style.color = '#a22';
+        
+        if(countdown) {
+          countdown.style.display = 'block';
+          countdown.textContent = 'Equipos bloqueados · Jornada termina en ' + dias + 'd ' + horas + 'h';
+        }
       } else {
-        statusEl.textContent = 'Ajusta tu equipo · Quedan ' + horas + 'h ' + mins + 'm';
-        statusEl.style.color = 'var(--gold)';
+        statusEl.textContent = 'Jornada finalizada';
+        statusEl.style.color = 'var(--gray)';
+        if(countdown) countdown.style.display = 'none';
       }
-      
-      if(btnIniciar) btnIniciar.style.display = 'none';
-      if(btnCerrar) btnCerrar.style.display = 'block';
-      if(countdown) {
-        countdown.style.display = 'block';
-        countdown.textContent = liga.equiposBloqueados ? 
-          'Equipos bloqueados hasta fin de jornada' : 
-          '⏰ Equipos se bloquean en ' + horas + 'h ' + mins + 'm';
-      }
-    } else {
-      statusEl.textContent = 'Jornada finalizada';
-      statusEl.style.color = 'var(--gray)';
-      if(btnIniciar) btnIniciar.style.display = 'block';
-      if(btnCerrar) btnCerrar.style.display = 'none';
-      if(countdown) countdown.style.display = 'none';
     }
+    
+    if(btnIniciar) btnIniciar.style.display = 'none';
+    if(btnCerrar) btnCerrar.style.display = 'block';
+    
+    // Actualizar cada segundo
+    setTimeout(actualizarJornadaStatus, 1000);
+    
   } else {
     statusEl.textContent = 'Sin jornada activa · Equipos libres';
     statusEl.style.color = 'var(--gray)';
@@ -1643,6 +1673,21 @@ function selUser(el,name,pts,emoji){
 function confirmPick(){
   if(!pickedUser){closePicker();return;}
   var pi=PLAYERS.findIndex(function(p){return p.name===pickedUser.name;});
+  
+  // Check if player is already in team
+  var yaEnTitulares = titulares.indexOf(pi);
+  var yaEnBanquillo = banquillo.indexOf(pi);
+  
+  if(yaEnTitulares !== -1 && (pickerCtx.type !== 'tit' || yaEnTitulares !== pickerCtx.idx)) {
+    toast('Este jugador ya está en titulares');
+    return;
+  }
+  
+  if(yaEnBanquillo !== -1 && (pickerCtx.type !== 'bench' || yaEnBanquillo !== pickerCtx.idx)) {
+    toast('Este jugador ya está en el banquillo');
+    return;
+  }
+  
   if(pickerCtx.type==='tit')titulares[pickerCtx.idx]=pi;
   else banquillo[pickerCtx.idx]=pi;
   closePicker();renderCourt();renderBench();
@@ -2074,7 +2119,24 @@ renderRanking();
         if(inp) inp.value=window._pendingJoinId;
         safeGo('s-join');
       } else {
-        // Restore last screen if available
+        // Restore last liga if available
+        var savedLigaId = localStorage.getItem('fg_current_liga');
+        if(savedLigaId && window._ligasFS) {
+          var ligaIdx = window._ligasFS.findIndex(function(l) { return l.id === savedLigaId; });
+          if(ligaIdx !== -1) {
+            window.abrirLigaFS(ligaIdx);
+            
+            // Then restore screen
+            var saved = localStorage.getItem('fg_screen');
+            var safeScreens = ['s-home','s-ranking','s-goat','s-equipo','s-stats','s-settings'];
+            if(saved && safeScreens.indexOf(saved) !== -1) {
+              setTimeout(function() { safeGo(saved); }, 100);
+            }
+            return;
+          }
+        }
+        
+        // No saved liga, go to dashboard
         var saved = localStorage.getItem('fg_screen');
         var safeScreens = ['s-dashboard','s-home','s-ranking','s-goat','s-equipo','s-stats','s-settings'];
         if(saved && safeScreens.indexOf(saved) !== -1) {
@@ -2149,6 +2211,10 @@ renderRanking();
   window.abrirLigaFS = function(idx) {
     var l=(window._ligasFS||[])[idx]; if(!l) return;
     window.ligaActual=l;
+    
+    // Save current liga to localStorage
+    localStorage.setItem('fg_current_liga', l.id);
+    
     syncLigaUI(l);
     actualizarMesesRanking(); // Update month options
     cargarRetos(l.id);
