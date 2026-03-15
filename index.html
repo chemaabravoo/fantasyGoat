@@ -1450,29 +1450,30 @@ renderRanking();
   }
 }, 4000);
 
-  onAuthStateChanged(auth, function(user) {
-    authResolved = true;
-    if(!user){ safeGo('s-login'); return; }
-    updateUI(user);
-    window._currentUser = user;
-    cargarMisLigas(user.uid).then(function(){
-      if(window._pendingJoinId) {
-        var inp=document.getElementById('join-id');
-        if(inp) inp.value=window._pendingJoinId;
-        safeGo('s-join');
+onAuthStateChanged(auth, function(user) {
+  authResolved = true;
+  if(!user){ safeGo('s-login'); return; }
+  updateUI(user);
+  window._currentUser = user;
+  cargarMisLigas(user.uid).then(function(){
+    if(window._pendingJoinId) {
+      var inp=document.getElementById('join-id');
+      if(inp) inp.value=window._pendingJoinId;
+      safeGo('s-join');
+    } else {
+      // Restore last screen if available
+      var saved = localStorage.getItem('fg_screen');
+      var safeScreens = ['s-dashboard','s-home','s-ranking','s-goat','s-equipo','s-stats','s-settings'];
+      if(saved && safeScreens.indexOf(saved) !== -1) {
+        safeGo(saved);
       } else {
-        // Restore last screen if available
-        var saved = localStorage.getItem('fg_screen');
-        var safeScreens = ['s-dashboard','s-home','s-ranking','s-goat','s-equipo','s-stats','s-settings'];
-        if(saved && safeScreens.indexOf(saved) !== -1) {
-  safeGo(saved);
-} else {
-  safeGo('s-dashboard');
-}
+        safeGo('s-dashboard');
       }
-    }).catch(function(e){
-  console.error('cargarMisLigas error:', e);
-  setTimeout(function(){ safeGo('s-dashboard'); }, 100);
+    }
+  }).catch(function(e){
+    console.error('cargarMisLigas error:', e);
+    setTimeout(function(){ safeGo('s-dashboard'); }, 100);
+  });
 });
 
   // ── Firestore helpers ────────────────────────────────────
@@ -1895,7 +1896,7 @@ renderRanking();
         return;
       }
 
-      // Already a member
+     // Already a member
       if((data.miembros||[]).includes(user.uid)){
         toast('Ya estás en esa liga');
         console.log('[DEBUG unirseALiga] Already a member');
@@ -1945,7 +1946,13 @@ renderRanking();
     var user=window._currentUser; if(!user) return;
     updateDoc(doc(db,'ligas',currentLeague.id),{miembros:arrayRemove(user.uid)}).then(function(){
       return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
-    }).then(function(){ cargarMisLigas(user.uid); toast('"'+currentLeague.name+'" abandonada'); });
+    }).then(function(){ 
+      cargarMisLigas(user.uid); 
+      toast('"'+currentLeague.name+'" abandonada'); 
+    }).catch(function(e){
+      console.error('doLeave error:', e);
+      toast('Error: ' + e.message);
+    });
   };
 
   window.doDelete = function() {
@@ -1956,11 +1963,15 @@ renderRanking();
       if(s.data().creador!==user.uid){ toast('Solo el creador puede eliminar'); return; }
       return updateDoc(doc(db,'ligas',currentLeague.id),{eliminada:true}).then(function(){
         return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
-      }).then(function(){ cargarMisLigas(user.uid); toast('"'+currentLeague.name+'" eliminada'); });
+      }).then(function(){ 
+        cargarMisLigas(user.uid); 
+        toast('"'+currentLeague.name+'" eliminada'); 
+      });
+    }).catch(function(e){ 
+      console.error('doDelete error:', e); 
+      toast('Error: ' + e.message); 
     });
   };
-
-</script>
 
 </script>
 
