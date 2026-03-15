@@ -116,8 +116,10 @@ textarea.inp{resize:vertical;min-height:80px}
 .fp-user{font-size:13px;font-weight:700;color:var(--white)}
 .fp-reto{font-size:10px;color:var(--gold);font-weight:600}
 .fp-time{font-size:10px;color:var(--gray);margin-left:auto;white-space:nowrap}
-.fp-media{width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden;background:#050505}
-.fp-media-carousel{width:100%;aspect-ratio:16/9;position:relative;background:#050505}
+.fp-media{width:100%;aspect-ratio:16/9;max-height:min(400px,60vh);display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden;background:#050505}
+.fp-media img,.fp-media video{width:100%;height:100%;object-fit:cover}
+.fp-media-carousel{width:100%;aspect-ratio:16/9;max-height:min(400px,60vh);position:relative;background:#050505}
+.fp-media-carousel img,.fp-media-carousel video{width:100%;height:100%;object-fit:cover}
 .carousel-slide{position:absolute;top:0;left:0;width:100%;height:100%;display:none;align-items:center;justify-content:center}
 .carousel-slide.active{display:flex}
 .fullscreen-media{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.95);z-index:99999;display:none;align-items:center;justify-content:center;pointer-events:none}
@@ -838,6 +840,9 @@ function go(id){
   }
   if(id==='s-home')renderFeed();
   if(id==='s-equipo')renderEquipo();
+  if(id==='s-stats' && window.actualizarEstadisticasPerfil) {
+    window.actualizarEstadisticasPerfil();
+  }
 }
 function goBack(){if(PREV)go(PREV);}
 function nav(id,idx){
@@ -2001,7 +2006,77 @@ renderRanking();
     ['prof-email','settings-email'].forEach(function(id){
       var el=document.getElementById(id); if(el) el.textContent=user.email;
     });
+    
+    // Update profile stats
+    actualizarEstadisticasPerfil();
   }
+  
+  async function actualizarEstadisticasPerfil() {
+    var user = window._currentUser;
+    var liga = window.ligaActual;
+    
+    if(!user) return;
+    
+    // Count active ligas
+    var ligasCount = (window._ligasFS || []).length;
+    var ligasEl = document.getElementById('prof-ligas');
+    if(ligasEl) ligasEl.textContent = ligasCount;
+    
+    if(!liga) {
+      // No liga selected, show zeros
+      ['prof-pts', 'prof-retos'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if(el) el.textContent = '0';
+      });
+      var aprovEl = document.getElementById('prof-aprov');
+      if(aprovEl) aprovEl.textContent = '—';
+      return;
+    }
+    
+    try {
+      // Get user's ranking data from current liga
+      var rankSnap = await getDoc(doc(db, 'ligas', liga.id, 'ranking', user.uid));
+      
+      if(rankSnap.exists()) {
+        var data = rankSnap.data();
+        
+        var ptsEl = document.getElementById('prof-pts');
+        if(ptsEl) ptsEl.textContent = (data.puntos || 0).toLocaleString();
+        
+        var retosEl = document.getElementById('prof-retos');
+        if(retosEl) retosEl.textContent = data.retosCompletados || 0;
+        
+        // Calculate approval rate from completados
+        var completadosSnap = await getDocs(
+          query(
+            collection(db, 'ligas', liga.id, 'completados'),
+            where('usuarioId', '==', user.uid)
+          )
+        );
+        
+        var total = completadosSnap.size;
+        var aprobados = 0;
+        completadosSnap.forEach(function(doc) {
+          if(doc.data().estado === 'aprobado') aprobados++;
+        });
+        
+        var aprovEl = document.getElementById('prof-aprov');
+        if(aprovEl) {
+          if(total === 0) {
+            aprovEl.textContent = '—';
+          } else {
+            var rate = Math.round((aprobados / total) * 100);
+            aprovEl.textContent = rate + '%';
+          }
+        }
+      }
+    } catch(e) {
+      console.error('Error loading profile stats:', e);
+    }
+  }
+  
+  window.actualizarEstadisticasPerfil = actualizarEstadisticasPerfil;
+
 
   // ── Auth ─────────────────────────────────────────────────
   window.fbSignIn = function() {
@@ -2288,6 +2363,12 @@ renderRanking();
     cargarCompletados(l.id);
     cargarTodosCompletados(l.id); // Load all completados for monthly filtering
     cargarFeed(l.id); // Load feed for all users
+    
+    // Update profile stats for this liga
+    if(window.actualizarEstadisticasPerfil) {
+      window.actualizarEstadisticasPerfil();
+    }
+    
     safeGo('s-home');
   };
 
@@ -2415,11 +2496,36 @@ renderRanking();
       };
       var targetMonth = mesesMap[selectedMonth];
       
+      // Get the year for the selected month
+      var now = new Date();
+      var currentMonth = now.getMonth();
+      var targetYear = now.getFullYear();
+      
+      // Calculate which year the target month is in
+      var monthsBack = 0;
+      var selectOptions = select.options;
+      for(var i = 0; i < selectOptions.length; i++) {
+        if(selectOptions[i].value === selectedMonth && selectOptions[i].selected) {
+          // Count how many months back this option is
+          monthsBack = i - 1; // -1 because first option is "GLOBAL"
+          break;
+        }
+      }
+      
+      if(monthsBack > 0) {
+        var monthDiff = currentMonth - monthsBack;
+        if(monthDiff < 0) {
+          targetYear--;
+        }
+      }
+      
+      console.log('[DEBUG] Filtering for month:', selectedMonth, 'year:', targetYear);
+      
       window._completadosData.forEach(function(comp) {
         if(comp.estado !== 'aprobado') return;
         
         var fecha = new Date(comp.creado);
-        if(fecha.getMonth() === targetMonth) {
+        if(fecha.getMonth() === targetMonth && fecha.getFullYear() === targetYear) {
           var uid = comp.usuarioId;
           if(!monthlyPoints[uid]) {
             monthlyPoints[uid] = {
@@ -2444,6 +2550,8 @@ renderRanking();
           emoji: '👤'
         };
       }).sort(function(a, b) { return b.pts - a.pts; });
+      
+      console.log('[DEBUG] Monthly ranking:', ranking.length, 'users');
     }
     
     var top3 = document.getElementById('rank-top3');
@@ -3129,6 +3237,19 @@ renderRanking();
 
   window.fbSaveEquipo = async function(ligaId, userId, equipoData) {
     return await setDoc(doc(db,'ligas',ligaId,'equipos',userId), equipoData);
+  };
+
+  // Generic wrappers for external functions
+  window.fbUpdateDoc = async function(collectionPath, docId, data) {
+    return await updateDoc(doc(db, collectionPath, docId), data);
+  };
+
+  window.fbSetDoc = async function(collectionPath, docId, data, options) {
+    return await setDoc(doc(db, collectionPath, docId), data, options || {});
+  };
+
+  window.fbGetDoc = async function(collectionPath, docId) {
+    return await getDoc(doc(db, collectionPath, docId));
   };
 
 </script>
