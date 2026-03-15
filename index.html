@@ -309,8 +309,15 @@ textarea.inp{resize:vertical;min-height:80px}
 <div class="toast" id="toast"><span id="t-msg" style="font-size:12px;font-weight:700;color:var(--white)">—</span></div>
 
 <!-- SPLASH -->
+<div class="screen active" id="s-loading" style="display:flex;align-items:center;justify-content:center;background:var(--black)">
+  <div style="text-align:center">
+    <img src="https://chemaabravoo.github.io/fantasyGoat/logo.png" alt="Fantasy GOAT" style="width:120px;height:120px;filter:drop-shadow(0 0 14px var(--gglow));margin-bottom:16px;animation:pulse 1.5s infinite">
+    <div style="font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:2px;color:var(--gold)">Cargando...</div>
+  </div>
+</div>
+
 <!-- LOGIN -->
-<div class="screen active full-scroll" id="s-login">
+<div class="screen full-scroll" id="s-login">
   <div style="flex:1;display:flex;flex-direction:column;padding:32px 28px;min-height:580px">
     <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:40px">
       <img src="https://chemaabravoo.github.io/fantasyGoat/logo.png" alt="Fantasy GOAT" style="width:230px;height:230px;filter:drop-shadow(0 0 14px var(--gglow));margin-bottom:8px;display:block">
@@ -529,7 +536,7 @@ textarea.inp{resize:vertical;min-height:80px}
     <div class="iw"><label class="il">Imagen (opcional)</label><div class="upload-area" id="img-area"><input type="file" accept="image/*" multiple id="img-input" onchange="handleImg(event)"><span class="upload-ico">🖼️</span><div class="upload-title">Toca para subir foto</div><div class="upload-sub">PNG · JPG · HEIC</div></div><div class="up-preview" id="img-prev"><img id="img-el" src="" style="border-radius:10px"><button class="rm-btn" onclick="clearMedia('img')">✕</button></div></div>
     <div class="iw"><label class="il">Vídeo corto (máx. 30 seg · 20 MB)</label><div class="upload-area" id="vid-area"><input type="file" accept="video/*" id="vid-input" onchange="handleVid(event)"><span class="upload-ico">🎬</span><div class="upload-title">Toca para subir vídeo</div><div class="upload-sub">MP4 · MOV · máx. 30s</div></div><div class="up-preview" id="vid-prev"><video id="vid-el" controls playsinline style="border-radius:10px"></video><button class="rm-btn" onclick="clearMedia('vid')">✕</button></div></div>
     <div class="iw"><label class="il">Justificación (opcional)</label><textarea class="inp" id="comp-text"></textarea></div>
-    <button class="bg" onclick="submitReto()">Completar Reto</button>
+    <button class="bg" id="btn-submit-reto" onclick="submitReto()">Completar Reto</button>
     <button class="bw" style="padding:12px;font-size:12px" onclick="submitRetoSin()">Completar sin prueba</button>
     <div class="pend-bar"><div class="pend-dot"></div><span style="font-size:12px;color:var(--gold);font-weight:600">Pendiente de aprobación del árbitro</span></div>
   </div>
@@ -1015,6 +1022,14 @@ function submitReto(){
   console.log('[DEBUG] Current reto ID:', window._currentRetoId);
   console.log('[DEBUG] Current liga:', window.ligaActual);
   
+  var btn = document.getElementById('btn-submit-reto');
+  
+  // Prevent double-click
+  if(btn && btn.disabled) {
+    console.log('[DEBUG] Button already disabled, ignoring click');
+    return;
+  }
+  
   var prueba = document.getElementById('comp-text').value.trim();
   console.log('[DEBUG] Prueba text:', prueba);
   
@@ -1035,8 +1050,27 @@ function submitReto(){
     return;
   }
   
+  // Disable button and show loading
+  if(btn) {
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+    btn.style.opacity = '0.6';
+  }
+  
   console.log('[DEBUG] Calling submitCompletado...');
-  window.submitCompletado(prueba);
+  window.submitCompletado(prueba).then(function() {
+    console.log('[DEBUG] Submit completed successfully');
+  }).catch(function(err) {
+    console.error('[DEBUG] Submit failed:', err);
+    toast('Error al enviar: ' + err.message);
+  }).finally(function() {
+    // Re-enable button
+    if(btn) {
+      btn.disabled = false;
+      btn.textContent = 'Completar Reto';
+      btn.style.opacity = '1';
+    }
+  });
 }
 
 function submitRetoSin(){
@@ -1340,6 +1374,15 @@ function renderCompletados(completados) {
     var div = document.createElement('div'); div.className='rc';
     var pts = c.retoPts || 0;
     var neg = pts < 0;
+    
+    // Build media preview if image or video exists
+    var mediaPreview = '';
+    if(c.imagenUrl) {
+      mediaPreview = '<div style="width:100%;max-height:200px;overflow:hidden;border-radius:10px;margin:8px 0;background:#050505"><img src="'+c.imagenUrl+'" style="width:100%;height:auto;object-fit:cover;display:block"></div>';
+    } else if(c.videoUrl) {
+      mediaPreview = '<div style="width:100%;max-height:200px;overflow:hidden;border-radius:10px;margin:8px 0;background:#050505"><video src="'+c.videoUrl+'" controls playsinline style="width:100%;height:auto;object-fit:cover;display:block"></video></div>';
+    }
+    
     div.innerHTML =
       '<div class="rc-top">'+
         '<div>'+
@@ -1348,6 +1391,7 @@ function renderCompletados(completados) {
         '</div>'+
         '<div class="rc-pts'+(neg?' neg':'')+'\">'+pts+'<span>pts</span></div>'+
       '</div>'+
+      mediaPreview+
       '<div class="rc-bot">'+
         '<div style="font-size:11px;color:var(--gray);margin-bottom:8px">Prueba: '+c.prueba+'</div>'+
         '<div style="display:flex;gap:8px">'+
@@ -1572,18 +1616,29 @@ renderRanking();
   };
 
   // ── Session ───────────────────────────────────────────────
-  // Fallback: if Firebase doesn't respond in 4s, show login
+  // Fallback: if Firebase doesn't respond in 3s, show login
   var authResolved = false;
   setTimeout(function(){
-  if(!authResolved){
-    console.warn('Firebase auth timeout, forcing login screen');
-    safeGo('s-login');
-  }
-}, 4000);
+    if(!authResolved){
+      console.warn('Firebase auth timeout, forcing login screen');
+      var loading = document.getElementById('s-loading');
+      if(loading) loading.classList.remove('active');
+      safeGo('s-login');
+    }
+  }, 3000);
 
   onAuthStateChanged(auth, function(user) {
     authResolved = true;
-    if(!user){ safeGo('s-login'); return; }
+    
+    // Hide loading screen
+    var loading = document.getElementById('s-loading');
+    if(loading) loading.classList.remove('active');
+    
+    if(!user){ 
+      safeGo('s-login'); 
+      return; 
+    }
+    
     updateUI(user);
     window._currentUser = user;
     cargarMisLigas(user.uid).then(function(){
@@ -1596,10 +1651,10 @@ renderRanking();
         var saved = localStorage.getItem('fg_screen');
         var safeScreens = ['s-dashboard','s-home','s-ranking','s-goat','s-equipo','s-stats','s-settings'];
         if(saved && safeScreens.indexOf(saved) !== -1) {
-  safeGo(saved);
-} else {
-  safeGo('s-dashboard');
-}
+          safeGo(saved);
+        } else {
+          safeGo('s-dashboard');
+        }
       }
     }).catch(function(e){
       console.error('cargarMisLigas error:', e);
@@ -1810,6 +1865,7 @@ renderRanking();
 
   // ── Completar Reto (guardar prueba) ──────────────────────
   window.submitCompletado = async function(prueba) {
+    var startTime = Date.now();
     console.log('[DEBUG submitCompletado] Starting...');
     console.log('[DEBUG] Prueba:', prueba);
     console.log('[DEBUG] ligaActual:', window.ligaActual);
@@ -1895,6 +1951,9 @@ renderRanking();
       await addDoc(collection(db,'ligas',window.ligaActual.id,'completados'), completadoData);
       console.log('[DEBUG] Saved successfully!');
       
+      var elapsed = Date.now() - startTime;
+      console.log('[DEBUG] Submit completed in', elapsed, 'ms');
+      
       toast('Enviado para validación del admin');
       
       // Clear inputs
@@ -1904,9 +1963,11 @@ renderRanking();
       
       safeGo('s-goat');
     } catch(e) {
-      console.error('[DEBUG] Error in submitCompletado:', e);
+      var elapsed = Date.now() - startTime;
+      console.error('[DEBUG] Error in submitCompletado after', elapsed, 'ms:', e);
       console.error('[DEBUG] Error stack:', e.stack);
       toast('Error: ' + e.message);
+      throw e; // Re-throw to propagate to caller
     }
   };
 
@@ -1977,15 +2038,21 @@ renderRanking();
     if(!window.ligaActual){ toast('Sin liga activa'); return; }
     var user = window._currentUser;
     if(!user || user.uid !== window.ligaActual.creador){ toast('Solo el admin'); return; }
+    
+    console.log('[DEBUG aprobar] Starting approval for:', completadoId);
+    
     try {
       var snap = await getDoc(doc(db,'ligas',window.ligaActual.id,'completados',completadoId));
       if(!snap.exists()){ toast('No encontrado'); return; }
       var data = snap.data();
       
+      console.log('[DEBUG aprobar] Completado data:', data);
+      
       // Mark as approved
       await updateDoc(doc(db,'ligas',window.ligaActual.id,'completados',completadoId), {
         estado: 'aprobado'
       });
+      console.log('[DEBUG aprobar] Marked as approved');
       
       // Update ranking - add points
       var rankRef = doc(db,'ligas',window.ligaActual.id,'ranking',data.usuarioId);
@@ -1997,12 +2064,20 @@ renderRanking();
           retosCompletados: (current.retosCompletados || 0) + 1,
           ultimaActualizacion: Date.now()
         });
+        console.log('[DEBUG aprobar] Ranking updated');
       }
       
-      toast('Completado aprobado - ' + data.retoPts + 'pts sumados');
+      toast('Aprobado: +' + data.retoPts + ' pts a ' + data.usuarioNombre);
+      
+      // Reload everything to show changes immediately
+      console.log('[DEBUG aprobar] Reloading data...');
       await cargarCompletados(window.ligaActual.id);
       await cargarRanking(window.ligaActual.id);
+      await cargarFeed(window.ligaActual.id);
+      
+      console.log('[DEBUG aprobar] Done!');
     } catch(e) {
+      console.error('[DEBUG aprobar] Error:', e);
       toast('Error: ' + e.message);
     }
   };
