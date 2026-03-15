@@ -815,6 +815,13 @@ var RANK={global:[],feb:[],ene:[],dic:[],nov:[]};
 
 function go(id){
   if(id===CUR)return;
+  
+  // Force close fullscreen media viewer on navigation
+  var fullscreenViewer = document.getElementById('fullscreen-media');
+  if(fullscreenViewer && fullscreenViewer.classList.contains('show')) {
+    closeFullscreenMedia();
+  }
+  
   if(id!=='s-login') localStorage.setItem('fg_screen',id);
   var c=document.getElementById(CUR),n=document.getElementById(id);
   if(!n)return;
@@ -1013,6 +1020,9 @@ function approvePost(el){el.closest('.vbar').innerHTML='<div style="padding:4px 
 function rejectPost(el){el.closest('.vbar').innerHTML='<div style="padding:4px 14px;font-size:11px;font-weight:700;color:var(--red)">Rechazado</div>';}
 
 function openMediaFullscreen(url, type) {
+  event.stopPropagation();
+  event.preventDefault();
+  
   var viewer = document.getElementById('fullscreen-media');
   var content = document.getElementById('fullscreen-content');
   
@@ -1023,18 +1033,27 @@ function openMediaFullscreen(url, type) {
   }
   
   viewer.classList.add('show');
+  document.body.style.overflow = 'hidden';
 }
 
-function closeFullscreenMedia() {
+function closeFullscreenMedia(e) {
+  if(e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  
   var viewer = document.getElementById('fullscreen-media');
   var content = document.getElementById('fullscreen-content');
   
-  viewer.classList.remove('show');
+  if(!viewer) return;
   
-  // Clean up content properly
-  setTimeout(function() {
+  viewer.classList.remove('show');
+  document.body.style.overflow = '';
+  
+  // Clean up immediately
+  if(content) {
     content.innerHTML = '';
-  }, 300);
+  }
 }
 
 
@@ -1645,6 +1664,17 @@ function doSwap(destType,destIdx){
 function toggleInfo(e){e.stopPropagation();document.getElementById('info-popup').classList.toggle('show');}
 document.addEventListener('click',function(){var p=document.getElementById('info-popup');if(p)p.classList.remove('show');});
 
+// Close fullscreen media with Escape key
+document.addEventListener('keydown', function(e) {
+  if(e.key === 'Escape') {
+    var viewer = document.getElementById('fullscreen-media');
+    if(viewer && viewer.classList.contains('show')) {
+      closeFullscreenMedia();
+    }
+  }
+});
+
+
 function openPicker(type,idx){
   pickerCtx={type:type,idx:idx};
   document.getElementById('pick-slot').textContent=(type==='tit'?'Titular ':'Suplente ')+(idx+1);
@@ -2092,25 +2122,58 @@ renderRanking();
   var authResolved = false;
   setTimeout(function(){
     if(!authResolved){
-      console.warn('Firebase auth timeout, forcing login screen');
+      console.warn('[AUTH TIMEOUT] Firebase auth timeout after 3s, forcing login screen');
+      
       var loading = document.getElementById('s-loading');
-      if(loading) loading.classList.remove('active');
-      safeGo('s-login');
+      if(loading) {
+        loading.classList.remove('active');
+        loading.style.display = 'none';
+        console.log('[AUTH TIMEOUT] Loading screen hidden');
+      }
+      
+      var loginScreen = document.getElementById('s-login');
+      if(loginScreen) {
+        loginScreen.classList.add('active');
+        loginScreen.style.display = 'flex';
+        loginScreen.style.opacity = '1';
+        loginScreen.style.pointerEvents = 'all';
+        loginScreen.style.transform = 'translateX(0)';
+        console.log('[AUTH TIMEOUT] Login screen forced visible');
+      }
     }
   }, 3000);
 
   onAuthStateChanged(auth, function(user) {
     authResolved = true;
     
-    // Hide loading screen
+    console.log('[AUTH] User state changed:', user ? user.uid : 'NO USER');
+    
+    // Hide loading screen with forced display:none
     var loading = document.getElementById('s-loading');
-    if(loading) loading.classList.remove('active');
+    if(loading) {
+      loading.classList.remove('active');
+      loading.style.display = 'none';
+      console.log('[AUTH] Loading screen hidden');
+    }
     
     if(!user){ 
-      safeGo('s-login'); 
+      console.log('[AUTH] No user, showing login screen');
+      
+      // Force show login screen
+      var loginScreen = document.getElementById('s-login');
+      if(loginScreen) {
+        loginScreen.classList.add('active');
+        loginScreen.style.display = 'flex';
+        loginScreen.style.opacity = '1';
+        loginScreen.style.pointerEvents = 'all';
+        loginScreen.style.transform = 'translateX(0)';
+        console.log('[AUTH] Login screen forced visible');
+      }
+      
       return; 
     }
     
+    console.log('[AUTH] User authenticated, loading data...');
     updateUI(user);
     window._currentUser = user;
     cargarMisLigas(user.uid).then(function(){
