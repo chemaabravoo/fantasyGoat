@@ -117,6 +117,13 @@ textarea.inp{resize:vertical;min-height:80px}
 .fp-reto{font-size:10px;color:var(--gold);font-weight:600}
 .fp-time{font-size:10px;color:var(--gray);margin-left:auto;white-space:nowrap}
 .fp-media{width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden;background:#050505}
+.fp-media-carousel{width:100%;aspect-ratio:16/9;position:relative;background:#050505}
+.carousel-slide{position:absolute;top:0;left:0;width:100%;height:100%;display:none;align-items:center;justify-content:center}
+.carousel-slide.active{display:flex}
+.fullscreen-media{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.95);z-index:10000;display:none;align-items:center;justify-content:center}
+.fullscreen-media.show{display:flex}
+.fullscreen-media img,.fullscreen-media video{max-width:100%;max-height:100%;object-fit:contain}
+.fullscreen-close{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10001}
 .media-tag{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.75);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;color:var(--white);letter-spacing:1px;z-index:2}
 .fp-foot{padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
 .fp-desc{font-size:12px;color:var(--gl);flex:1;line-height:1.4}
@@ -241,7 +248,9 @@ textarea.inp{resize:vertical;min-height:80px}
 .ip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px}
 .ip-text{font-size:11px;color:var(--gl);line-height:1.35}
 .ip-note{font-size:10px;color:var(--gray);margin-top:8px;padding-top:8px;border-top:1px solid #2a2a2a;line-height:1.4}
-.pslot{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:all .2s;user-select:none}
+.pslot{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:all .2s;user-select:none;position:relative}
+.player-remove,.player-remove-bench{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(200,50,50,0.95);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;border:1px solid rgba(255,255,255,0.3);opacity:0;transition:opacity .2s}
+.pslot:hover .player-remove,.bslot:hover .player-remove-bench{opacity:1}
 .pslot:hover{transform:scale(1.06)}
 .pslot.dragging,.bslot.dragging{opacity:.45}
 .pslot.drag-over .pcirc,.bslot.drag-over .bcirc{border-color:var(--gold)!important;box-shadow:0 0 16px rgba(239,184,16,.5)!important}
@@ -254,7 +263,7 @@ textarea.inp{resize:vertical;min-height:80px}
 .bench-box{background:var(--card);border:1px solid #1e1e1e;border-radius:14px;padding:11px 14px}
 .bench-lbl{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gray);font-weight:700;margin-bottom:9px}
 .bench-row{display:flex;gap:10px}
-.bslot{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;user-select:none}
+.bslot{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;user-select:none;position:relative}
 .bcirc{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;transition:all .2s;overflow:hidden}
 .bcirc.filled{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.07)}
 .bcirc.emp2{border-style:dashed;border-color:#262626}
@@ -424,14 +433,15 @@ textarea.inp{resize:vertical;min-height:80px}
       </div>
       <div style="font-size:10px;color:var(--gray);margin-top:2px">Número de titulares en el campo</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="iw">
-        <div style="display:flex;align-items:center;gap:4px"><label class="il">Pts titular / periodo</label><span class="info-inline" onclick="openModal('m-qinfo')">i</span></div>
-        <input class="inp" type="number" id="starter-pts" value="10" min="0" max="999">
-      </div>
-      <div class="iw">
-        <div style="display:flex;align-items:center;gap:4px"><label class="il">Pts suplente / periodo</label><span class="info-inline" onclick="openModal('m-qinfo')">i</span></div>
-        <input class="inp" type="number" id="bench-pts" value="4" min="0" max="999">
+    <div class="iw" style="background:rgba(239,184,16,0.08);border:1px solid rgba(239,184,16,0.2);border-radius:10px;padding:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:6px;display:flex;align-items:center;gap:6px"><span>⚡</span>Sistema de Porcentajes</div>
+      <div id="percentage-info" style="font-size:10px;color:var(--gl);line-height:1.5">
+        <div>• Posición 1: <strong style="color:var(--white)">10%</strong> de los puntos del jugador</div>
+        <div>• Posición 2: <strong style="color:var(--white)">7%</strong> de los puntos del jugador</div>
+        <div>• Posición 3: <strong style="color:var(--white)">5%</strong> de los puntos del jugador</div>
+        <div>• Posición 4: <strong style="color:var(--white)">3%</strong> de los puntos del jugador</div>
+        <div>• Posición 5: <strong style="color:var(--white)">2%</strong> de los puntos del jugador</div>
+        <div style="margin-top:6px;color:var(--gray);font-size:9px">Los porcentajes se ajustan automáticamente según el tamaño del equipo</div>
       </div>
     </div>
     <button class="bg" onclick="crearLiga()">Crear Liga</button>
@@ -589,16 +599,32 @@ textarea.inp{resize:vertical;min-height:80px}
 
 <!-- EQUIPO -->
 <div class="screen" id="s-equipo">
-  <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname">Mi Equipo</div></div><div class="lsub" style="padding-left:38px">Los Intocables · Semana 7</div></div><button class="bg bsm2" onclick="toast('Equipo guardado')">Guardar</button></div>
+  <div class="lhdr">
+    <div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="back bsm" onclick="go('s-dashboard')">‹</div>
+        <div class="lname">Mi Equipo</div>
+      </div>
+      <div class="lsub" style="padding-left:38px" id="equipo-jornada-status">—</div>
+    </div>
+    <button class="bg bsm2" onclick="guardarEquipo()">Guardar</button>
+  </div>
+  
+  <!-- Admin Jornada Controls -->
+  <div id="jornada-admin-controls" style="display:none;padding:12px 18px;background:rgba(239,184,16,0.08);border-bottom:1px solid rgba(239,184,16,0.2)">
+    <button id="btn-iniciar-jornada" class="bg" style="width:100%;padding:12px" onclick="iniciarJornada()">🚀 Iniciar Jornada</button>
+    <button id="btn-cerrar-jornada" class="bdanger" style="width:100%;padding:12px;display:none" onclick="cerrarJornada()">⏹️ Cerrar Jornada</button>
+    <div id="jornada-countdown" style="display:none;text-align:center;padding:8px;font-size:11px;color:var(--gold);font-weight:700"></div>
+  </div>
+  
   <div class="cwrap">
     <div class="court" id="court-el">
       <div class="crt-line"></div>
       <div class="info-btn" onclick="toggleInfo(event)">ⓘ</div>
       <div class="info-popup" id="info-popup">
-        <div class="ip-title">Puntos por alineación</div>
-        <div class="ip-row"><div class="ip-dot" style="background:var(--gold)"></div><div class="ip-text"><strong style="color:var(--white)">Titulares:</strong> <span id="ip-starter-pts">+10</span> pts / periodo</div></div>
-        <div class="ip-row"><div class="ip-dot" style="background:var(--gray)"></div><div class="ip-text"><strong style="color:var(--white)">Banquillo:</strong> <span id="ip-bench-pts">+4</span> pts / periodo</div></div>
-        <div class="ip-note">Se recalcula cada semana / mes según la periodicidad de la liga</div>
+        <div class="ip-title">Sistema de Porcentajes</div>
+        <div id="info-percentages-list"></div>
+        <div class="ip-note">Ejemplo: Si tu jugador en Pos. 1 tiene 300 pts, tú ganas 30 pts (10%)</div>
       </div>
       <div class="pgrid" id="court-grid"></div>
     </div>
@@ -692,6 +718,27 @@ textarea.inp{resize:vertical;min-height:80px}
   </div>
 </div>
 
+<!-- FULLSCREEN MEDIA VIEWER -->
+<div class="fullscreen-media" id="fullscreen-media" onclick="closeFullscreenMedia()">
+  <div class="fullscreen-close" onclick="closeFullscreenMedia()">✕</div>
+  <div id="fullscreen-content" onclick="event.stopPropagation()"></div>
+</div>
+
+<!-- MODAL DELETE COMPLETADO -->
+<div class="modal-ov" id="m-delete-completado" onclick="closeModal('m-delete-completado')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><div class="modal-title">Eliminar Reto Completado</div><div class="modal-close" onclick="closeModal('m-delete-completado')">✕</div></div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--gl);margin-bottom:18px;line-height:1.5">¿Quieres mantener los puntos que este jugador ganó con este reto?</p>
+      <div style="display:flex;gap:10px;flex-direction:column">
+        <button class="bg" onclick="deleteCompletadoConPuntos(true)">Sí, mantener puntos</button>
+        <button class="bdanger" onclick="deleteCompletadoConPuntos(false)">No, quitar puntos también</button>
+        <button class="bw" onclick="closeModal('m-delete-completado')" style="margin-top:4px">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL FEEDBACK -->
 <div class="modal-ov" id="m-feedback" onclick="closeModal('m-feedback')">
   <div class="modal-box" onclick="event.stopPropagation()">
@@ -775,8 +822,11 @@ function go(id){
   n.classList.add('active');n.scrollTop=0;
   PREV=CUR;CUR=id;
   if(id==='s-ranking'){ 
-    if(window._fsCargarRanking && window.ligaActual) window._fsCargarRanking(window.ligaActual.id); 
-    else renderRanking(); 
+    if(window._fsCargarRanking && window.ligaActual) {
+      window._fsCargarRanking(window.ligaActual.id); 
+    } else {
+      renderRankingFS();
+    }
   }
   if(id==='s-home')renderFeed();
   if(id==='s-equipo')renderEquipo();
@@ -871,7 +921,32 @@ function setQSize(n,el){
   qSize=n;
   document.querySelectorAll('.q-size-btn').forEach(function(b){b.classList.remove('active');});
   el.classList.add('active');
+  updatePercentageInfo(n);
 }
+
+function updatePercentageInfo(size) {
+  var percentages = getPercentagesBySize(size);
+  var info = document.getElementById('percentage-info');
+  if(!info) return;
+  
+  var html = '';
+  for(var i = 0; i < size; i++) {
+    html += '<div>• Posición ' + (i+1) + ': <strong style="color:var(--white)">' + percentages[i] + '%</strong> de los puntos del jugador</div>';
+  }
+  html += '<div style="margin-top:6px;color:var(--gray);font-size:9px">Los porcentajes se ajustan automáticamente según el tamaño del equipo</div>';
+  info.innerHTML = html;
+}
+
+function getPercentagesBySize(size) {
+  var distributions = {
+    2: [15, 8],
+    3: [12, 8, 5],
+    4: [12, 8, 5, 3],
+    5: [10, 7, 5, 3, 2]
+  };
+  return distributions[size] || distributions[5];
+}
+
 
 function setLang(l){
   LANG=l;
@@ -897,15 +972,30 @@ function renderFeed(){
     ff.innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">📭</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin actividad todavía</div><div style="font-size:11px;line-height:1.5">Los retos completados por los miembros aparecerán aquí</div></div>';
     return;
   }
-  subs.forEach(function(s){
+  subs.forEach(function(s, idx){
+    var isAdmin = window._currentUser && window.ligaActual && window._currentUser.uid === window.ligaActual.creador;
     var badge=s.status==='pending'?'<span class="badge b-rev">Pendiente</span>':s.status==='approved'?'<span class="badge b-ok">Aprobado</span>':'<span class="badge b-no">Rechazado</span>';
     var vbar=s.status==='pending'?'<div class="vbar"><div class="vbtn2 vok" onclick="approvePost(this)">Aprobar</div><div class="vbtn2 vno" onclick="rejectPost(this)">Rechazar</div></div>':'';
     
+    // Admin delete button for approved posts
+    var deleteBtn = '';
+    if(isAdmin && s.status === 'approved' && s.id) {
+      deleteBtn = '<button onclick="confirmDeleteCompletado(\''+s.id+'\',\''+s.userId+'\','+s.pts+')" style="background:#a22;color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;margin-left:8px">Eliminar</button>';
+    }
+    
     var mediaHtml = '';
-    if(s.imagenUrl) {
-      mediaHtml = '<div class="fp-media"><img src="'+s.imagenUrl+'" onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:32px;margin-bottom:8px&quot;>📷</div><div style=&quot;font-size:11px&quot;>Imagen no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover"><span class="media-tag">'+s.mediaType+'</span></div>';
-    } else if(s.videoUrl) {
-      mediaHtml = '<div class="fp-media"><video src="'+s.videoUrl+'" controls playsinline onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:32px;margin-bottom:8px&quot;>🎥</div><div style=&quot;font-size:11px&quot;>Video no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover"></video><span class="media-tag">'+s.mediaType+'</span></div>';
+    if(s.imagenUrl || s.videoUrl) {
+      // Create swipeable carousel wrapper
+      var carouselId = 'carousel-' + idx;
+      mediaHtml = '<div class="fp-media-carousel" id="'+carouselId+'" style="position:relative;overflow:hidden;touch-action:pan-y">';
+      
+      if(s.imagenUrl) {
+        mediaHtml += '<div class="carousel-slide active"><img src="'+s.imagenUrl+'" oncontextmenu="return false;" ondragstart="return false;" onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:32px;margin-bottom:8px&quot;>📷</div><div style=&quot;font-size:11px&quot;>Imagen no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover;pointer-events:auto;user-select:none;-webkit-user-select:none;cursor:pointer" onclick="openMediaFullscreen(\''+s.imagenUrl+'\',\'image\')"><span class="media-tag">'+s.mediaType+'</span></div>';
+      } else if(s.videoUrl) {
+        mediaHtml += '<div class="carousel-slide active"><video src="'+s.videoUrl+'" controls controlsList="nodownload" playsinline oncontextmenu="return false;" onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:32px;margin-bottom:8px&quot;>🎥</div><div style=&quot;font-size:11px&quot;>Video no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover"></video><span class="media-tag">'+s.mediaType+'</span></div>';
+      }
+      
+      mediaHtml += '</div>';
     } else {
       mediaHtml = '<div class="fp-media"><span>'+s.emoji+'</span><span class="media-tag">'+s.mediaType+'</span></div>';
     }
@@ -914,12 +1004,32 @@ function renderFeed(){
       '<div class="fp-hdr"><div class="av">'+s.emoji+'</div><div><div class="fp-user">'+s.user+'</div><div class="fp-reto">'+s.reto+'</div></div><div class="fp-time">'+s.time+'</div></div>'+
       mediaHtml+
       vbar+
-      '<div class="fp-foot"><div class="fp-desc">'+s.desc+'</div><div class="fp-btns">'+badge+'<div class="fp-btn">+'+s.pts+' pts</div></div></div>'+
+      '<div class="fp-foot"><div class="fp-desc">'+s.desc+'</div><div class="fp-btns">'+badge+'<div class="fp-btn">+'+s.pts+' pts</div>'+deleteBtn+'</div></div>'+
     '</div>';
   });
 }
 function approvePost(el){el.closest('.vbar').innerHTML='<div style="padding:4px 14px;font-size:11px;font-weight:700;color:var(--green)">Aprobado</div>';}
 function rejectPost(el){el.closest('.vbar').innerHTML='<div style="padding:4px 14px;font-size:11px;font-weight:700;color:var(--red)">Rechazado</div>';}
+
+function openMediaFullscreen(url, type) {
+  var viewer = document.getElementById('fullscreen-media');
+  var content = document.getElementById('fullscreen-content');
+  
+  if(type === 'image') {
+    content.innerHTML = '<img src="'+url+'" oncontextmenu="return false;" style="max-width:100%;max-height:100%;object-fit:contain">';
+  } else {
+    content.innerHTML = '<video src="'+url+'" controls controlsList="nodownload" playsinline autoplay style="max-width:100%;max-height:100%;object-fit:contain"></video>';
+  }
+  
+  viewer.classList.add('show');
+}
+
+function closeFullscreenMedia() {
+  var viewer = document.getElementById('fullscreen-media');
+  viewer.classList.remove('show');
+  document.getElementById('fullscreen-content').innerHTML = '';
+}
+
 
 function renderTikTok(){
   var tw=document.getElementById('tiktok-wrap');tw.innerHTML='';
@@ -939,9 +1049,9 @@ function renderTikTok(){
     
     var bgContent = '';
     if(s.imagenUrl) {
-      bgContent = '<img src="'+s.imagenUrl+'" onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:64px;margin-bottom:16px&quot;>📷</div><div style=&quot;font-size:14px&quot;>Imagen no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover">';
+      bgContent = '<img src="'+s.imagenUrl+'" oncontextmenu="return false;" ondragstart="return false;" onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:64px;margin-bottom:16px&quot;>📷</div><div style=&quot;font-size:14px&quot;>Imagen no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none;-webkit-user-select:none">';
     } else if(s.videoUrl) {
-      bgContent = '<video src="'+s.videoUrl+'" autoplay loop muted playsinline onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:64px;margin-bottom:16px&quot;>🎥</div><div style=&quot;font-size:14px&quot;>Video no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover"></video>';
+      bgContent = '<video src="'+s.videoUrl+'" autoplay loop muted playsinline controlsList="nodownload" oncontextmenu="return false;" onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:64px;margin-bottom:16px&quot;>🎥</div><div style=&quot;font-size:14px&quot;>Video no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover"></video>';
     } else {
       bgContent = '<span>'+s.emoji+'</span>';
     }
@@ -1206,43 +1316,285 @@ function renderRanking(){
 }
 
 function renderEquipo(){
-  var sp=parseInt((document.getElementById('starter-pts')||{}).value)||10;
-  var bp=parseInt((document.getElementById('bench-pts')||{}).value)||4;
-  starterPts=sp;benchPts=bp;
-  document.getElementById('ip-starter-pts').textContent='+'+sp;
-  document.getElementById('ip-bench-pts').textContent='+'+bp;
-  renderCourt();renderBench();
+  if(!window.ligaActual) return;
+  
+  var liga = window.ligaActual;
+  var percentages = getPercentagesBySize(liga.qSize || 5);
+  
+  // Update info popup with percentages
+  var infoList = document.getElementById('info-percentages-list');
+  if(infoList) {
+    var html = '';
+    for(var i = 0; i < percentages.length; i++) {
+      html += '<div class="ip-row"><div class="ip-dot" style="background:' + (i < 3 ? 'var(--gold)' : 'var(--gray)') + '"></div><div class="ip-text"><strong style="color:var(--white)">Posición ' + (i+1) + ':</strong> ' + percentages[i] + '% de los puntos</div></div>';
+    }
+    infoList.innerHTML = html;
+  }
+  
+  // Update jornada status
+  actualizarJornadaStatus();
+  
+  // Show/hide admin controls
+  var isAdmin = window._currentUser && liga.creador === window._currentUser.uid;
+  var adminControls = document.getElementById('jornada-admin-controls');
+  if(adminControls) {
+    adminControls.style.display = isAdmin ? 'block' : 'none';
+  }
+  
+  renderCourt();
+  renderBench();
+}
+
+function actualizarJornadaStatus() {
+  var liga = window.ligaActual;
+  if(!liga) return;
+  
+  var statusEl = document.getElementById('equipo-jornada-status');
+  var btnIniciar = document.getElementById('btn-iniciar-jornada');
+  var btnCerrar = document.getElementById('btn-cerrar-jornada');
+  var countdown = document.getElementById('jornada-countdown');
+  
+  if(!statusEl) return;
+  
+  if(liga.jornadaActiva) {
+    var ahora = Date.now();
+    var fin = liga.jornadaFin;
+    var diff = fin - ahora;
+    
+    if(diff > 0) {
+      var horas = Math.floor(diff / (1000 * 60 * 60));
+      var mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      
+      if(liga.equiposBloqueados) {
+        statusEl.textContent = 'Jornada en curso · Equipos bloqueados';
+        statusEl.style.color = '#a22';
+      } else {
+        statusEl.textContent = 'Ajusta tu equipo · Quedan ' + horas + 'h ' + mins + 'm';
+        statusEl.style.color = 'var(--gold)';
+      }
+      
+      if(btnIniciar) btnIniciar.style.display = 'none';
+      if(btnCerrar) btnCerrar.style.display = 'block';
+      if(countdown) {
+        countdown.style.display = 'block';
+        countdown.textContent = liga.equiposBloqueados ? 
+          'Equipos bloqueados hasta fin de jornada' : 
+          '⏰ Equipos se bloquean en ' + horas + 'h ' + mins + 'm';
+      }
+    } else {
+      statusEl.textContent = 'Jornada finalizada';
+      statusEl.style.color = 'var(--gray)';
+      if(btnIniciar) btnIniciar.style.display = 'block';
+      if(btnCerrar) btnCerrar.style.display = 'none';
+      if(countdown) countdown.style.display = 'none';
+    }
+  } else {
+    statusEl.textContent = 'Sin jornada activa · Equipos libres';
+    statusEl.style.color = 'var(--gray)';
+    if(btnIniciar) btnIniciar.style.display = 'block';
+    if(btnCerrar) btnCerrar.style.display = 'none';
+    if(countdown) countdown.style.display = 'none';
+  }
 }
 function renderCourt(){
-  var grid=document.getElementById('court-grid');grid.innerHTML='';
-  var size=Math.min(qSize,5);
+  var grid=document.getElementById('court-grid');
+  if(!grid) return;
+  grid.innerHTML='';
+  
+  var liga = window.ligaActual;
+  var size = liga ? Math.min(liga.qSize || 5, 5) : 5;
+  var percentages = getPercentagesBySize(size);
+  
   var tits=titulares.slice(0,size);
   var rows=size<=2?[tits]:size===3?[[tits[0]],[tits[1],tits[2]]]:size===4?[[tits[0],tits[1]],[tits[2],tits[3]]]:[[tits[0]],[tits[1],tits[2]],[tits[3],tits[4]]];
+  
   rows.forEach(function(row,ri){
     var rowDiv=document.createElement('div');rowDiv.className='prow';
     row.forEach(function(pIdx,ci){
       var slot=document.createElement('div');slot.className='pslot';slot.draggable=true;
       var p=(pIdx!==null&&pIdx!==undefined)?PLAYERS[pIdx]:null;
+      var gi=calculateGlobalIndex(ri,ci,rows);
+      
+      var removeBtn = p ? '<div class="player-remove" onclick="event.stopPropagation();removePlayer(\'tit\','+gi+')">✕</div>' : '';
+      
+      // Show percentage based on position
+      var ptsText = p ? '<div class="ppts">' + percentages[gi] + '% de pts</div>' : '';
+      
       slot.innerHTML='<div class="pcirc '+(p?'tit':'emp')+'">'+(p?'<span class="emoji">'+p.emoji+'</span>':'')+'</div>'+
         '<div class="pname">'+(p?p.name:'Vacío')+'</div>'+
-        (p?'<div class="ppts">+'+starterPts+' pts</div>':'');
-      var gi=0;for(var r2=0;r2<ri;r2++)gi+=rows[r2].length;gi+=ci;
-      slot.onclick=(function(g){return function(){openPicker('tit',g);};})(gi);
+        ptsText+
+        removeBtn;
+      
+      slot.onclick=(function(g){return function(e){if(!e.target.classList.contains('player-remove'))openPicker('tit',g);};})(gi);
       addDrag(slot,'tit',gi);
       rowDiv.appendChild(slot);
     });
     grid.appendChild(rowDiv);
   });
 }
+
+function calculateGlobalIndex(rowIndex, colIndex, rows) {
+  var gi=0;
+  for(var r2=0;r2<rowIndex;r2++) gi+=rows[r2].length;
+  gi+=colIndex;
+  return gi;
+}
+
+function removePlayer(type, idx) {
+  if(type === 'tit') {
+    titulares[idx] = null;
+  } else {
+    banquillo[idx] = null;
+  }
+  renderCourt();
+  renderBench();
+  toast('Jugador eliminado de la posición');
+}
+
+// ── Jornada Management ──────────────────────────────────────
+window.iniciarJornada = async function() {
+  if(!window.ligaActual || !window._currentUser) return;
+  var liga = window.ligaActual;
+  
+  if(window._currentUser.uid !== liga.creador) {
+    toast('Solo el admin puede iniciar jornadas');
+    return;
+  }
+  
+  try {
+    var ahora = Date.now();
+    var fin24h = ahora + (24 * 60 * 60 * 1000); // 24 horas para ajustar equipos
+    
+    // Calcular fin de jornada según periodo
+    var finJornada;
+    if(liga.period === 'Semanal') {
+      finJornada = ahora + (7 * 24 * 60 * 60 * 1000); // 1 semana
+    } else {
+      finJornada = ahora + (30 * 24 * 60 * 60 * 1000); // 1 mes
+    }
+    
+    await updateDoc(doc(db,'ligas',liga.id), {
+      jornadaActiva: true,
+      jornadaInicio: ahora,
+      jornadaFin: finJornada,
+      equiposBloqueados: false,
+      bloqueoEquiposEn: fin24h
+    });
+    
+    // Actualizar localmente
+    liga.jornadaActiva = true;
+    liga.jornadaInicio = ahora;
+    liga.jornadaFin = finJornada;
+    liga.equiposBloqueados = false;
+    liga.bloqueoEquiposEn = fin24h;
+    
+    toast('¡Jornada iniciada! 24h para ajustar equipos');
+    actualizarJornadaStatus();
+    
+    // Programar bloqueo automático en 24h
+    setTimeout(bloquearEquiposAutomatico, 24 * 60 * 60 * 1000);
+    
+  } catch(e) {
+    console.error('Error al iniciar jornada:', e);
+    toast('Error: ' + e.message);
+  }
+};
+
+window.cerrarJornada = async function() {
+  if(!window.ligaActual || !window._currentUser) return;
+  var liga = window.ligaActual;
+  
+  if(window._currentUser.uid !== liga.creador) {
+    toast('Solo el admin puede cerrar jornadas');
+    return;
+  }
+  
+  try {
+    await updateDoc(doc(db,'ligas',liga.id), {
+      jornadaActiva: false,
+      jornadaInicio: null,
+      jornadaFin: null,
+      equiposBloqueados: false,
+      bloqueoEquiposEn: null
+    });
+    
+    // Actualizar localmente
+    liga.jornadaActiva = false;
+    liga.equiposBloqueados = false;
+    
+    toast('Jornada cerrada · Equipos desbloqueados');
+    actualizarJornadaStatus();
+    
+  } catch(e) {
+    console.error('Error al cerrar jornada:', e);
+    toast('Error: ' + e.message);
+  }
+};
+
+async function bloquearEquiposAutomatico() {
+  if(!window.ligaActual) return;
+  var liga = window.ligaActual;
+  
+  try {
+    await updateDoc(doc(db,'ligas',liga.id), {
+      equiposBloqueados: true
+    });
+    
+    liga.equiposBloqueados = true;
+    toast('⏰ Equipos bloqueados hasta fin de jornada');
+    actualizarJornadaStatus();
+    
+  } catch(e) {
+    console.error('Error al bloquear equipos:', e);
+  }
+}
+
+window.guardarEquipo = async function() {
+  if(!window.ligaActual || !window._currentUser) {
+    toast('Debes estar en una liga');
+    return;
+  }
+  
+  var liga = window.ligaActual;
+  
+  // Check if teams are locked
+  if(liga.equiposBloqueados) {
+    toast('❌ Equipos bloqueados hasta fin de jornada');
+    return;
+  }
+  
+  try {
+    var equipoData = {
+      titulares: titulares,
+      banquillo: banquillo,
+      ultimaActualizacion: Date.now()
+    };
+    
+    await setDoc(doc(db,'ligas',liga.id,'equipos',window._currentUser.uid), equipoData);
+    toast('✓ Equipo guardado');
+    
+  } catch(e) {
+    console.error('Error al guardar equipo:', e);
+    toast('Error: ' + e.message);
+  }
+};
+
 function renderBench(){
-  var br=document.getElementById('bench-row');br.innerHTML='';
+  var br=document.getElementById('bench-row');
+  if(!br) return;
+  br.innerHTML='';
+  
   banquillo.forEach(function(pIdx,i){
     var p=(pIdx!==null&&pIdx!==undefined)?PLAYERS[pIdx]:null;
     var slot=document.createElement('div');slot.className='bslot';
+    
+    var removeBtn = p ? '<div class="player-remove-bench" onclick="event.stopPropagation();removePlayer(\'bench\','+i+')">✕</div>' : '';
+    
     slot.innerHTML='<div class="bcirc '+(p?'filled':'emp2')+'">'+(p?'<span style="font-size:18px">'+p.emoji+'</span>':'')+'</div>'+
       '<div class="bname">'+(p?p.name:'—')+'</div>'+
-      (p?'<div style="font-size:8px;color:var(--gray);font-weight:600">+'+benchPts+'</div>':'');
-    slot.onclick=(function(bi){return function(){openPicker('bench',bi);};})(i);
+      '<div style="font-size:8px;color:var(--gray);font-weight:600">Reserva</div>'+
+      removeBtn;
+    slot.onclick=(function(bi){return function(e){if(!e.target.classList.contains('player-remove-bench'))openPicker('bench',bi);};})(i);
     addDrag(slot,'bench',i);
     br.appendChild(slot);
   });
@@ -2243,6 +2595,8 @@ renderRanking();
         var data = d.data();
         if(data.estado === 'aprobado') {
           completados.push({
+            id: d.id,
+            userId: data.usuarioId,
             user: data.usuarioNombre,
             reto: data.retoTitulo,
             pts: data.retoPts,
@@ -2265,6 +2619,76 @@ renderRanking();
     }
   }
   window._fsCargarFeed = cargarFeed;
+
+  // ── Variables temporales para eliminación ──────────────────
+  var _deleteCompletadoId = null;
+  var _deleteUserId = null;
+  var _deletePts = 0;
+
+  window.confirmDeleteCompletado = function(completadoId, userId, pts) {
+    _deleteCompletadoId = completadoId;
+    _deleteUserId = userId;
+    _deletePts = pts;
+    openModal('m-delete-completado');
+  };
+
+  window.deleteCompletadoConPuntos = async function(mantenerPuntos) {
+    if(!_deleteCompletadoId || !window.ligaActual) {
+      toast('Error: datos incompletos');
+      return;
+    }
+    
+    var user = window._currentUser;
+    if(!user || user.uid !== window.ligaActual.creador) {
+      toast('Solo el admin puede eliminar');
+      return;
+    }
+    
+    closeModal('m-delete-completado');
+    
+    try {
+      console.log('[DEBUG delete] Deleting completado:', _deleteCompletadoId, 'mantenerPuntos:', mantenerPuntos);
+      
+      // Delete the completado document
+      await deleteDoc(doc(db,'ligas',window.ligaActual.id,'completados',_deleteCompletadoId));
+      console.log('[DEBUG delete] Completado deleted');
+      
+      // If not keeping points, subtract them from ranking
+      if(!mantenerPuntos && _deleteUserId) {
+        var rankRef = doc(db,'ligas',window.ligaActual.id,'ranking',_deleteUserId);
+        var rankSnap = await getDoc(rankRef);
+        
+        if(rankSnap.exists()) {
+          var current = rankSnap.data();
+          var newPuntos = Math.max(0, (current.puntos || 0) - _deletePts);
+          var newRetos = Math.max(0, (current.retosCompletados || 0) - 1);
+          
+          await updateDoc(rankRef, {
+            puntos: newPuntos,
+            retosCompletados: newRetos,
+            ultimaActualizacion: Date.now()
+          });
+          console.log('[DEBUG delete] Points removed from ranking');
+        }
+      }
+      
+      toast(mantenerPuntos ? 'Reto eliminado (puntos mantenidos)' : 'Reto y puntos eliminados');
+      
+      // Reload everything
+      await cargarFeed(window.ligaActual.id);
+      await cargarRanking(window.ligaActual.id);
+      await cargarTodosCompletados(window.ligaActual.id);
+      
+      // Reset variables
+      _deleteCompletadoId = null;
+      _deleteUserId = null;
+      _deletePts = 0;
+      
+    } catch(e) {
+      console.error('[DEBUG delete] Error:', e);
+      toast('Error al eliminar: ' + e.message);
+    }
+  };
 
   window.aprobarCompletado = async function(completadoId) {
     if(!window.ligaActual){ toast('Sin liga activa'); return; }
@@ -2363,17 +2787,23 @@ renderRanking();
       var liga={
         id:id, nombre:nombre, tipo:tipo, pass:pass||'', period:period,
         qSize:qSize,
-        starterPts:parseInt(document.getElementById('starter-pts').value)||10,
-        benchPts:parseInt(document.getElementById('bench-pts').value)||4,
-        creada:Date.now(), miembros:[user.uid], creador:user.uid
+        creada:Date.now(), miembros:[user.uid], creador:user.uid,
+        jornadaActiva: false,
+        jornadaInicio: null,
+        jornadaFin: null,
+        equiposBloqueados: false
       };
       console.log('[DEBUG crearLiga] Liga object:', liga);
 
       console.log('[DEBUG crearLiga] Saving to Firestore...');
       await setDoc(doc(db,'ligas',id),{
         nombre:liga.nombre, tipo:liga.tipo, pass:liga.pass, period:liga.period,
-        qSize:liga.qSize, starterPts:liga.starterPts, benchPts:liga.benchPts,
-        creada:liga.creada, miembros:liga.miembros, creador:liga.creador
+        qSize:liga.qSize,
+        creada:liga.creada, miembros:liga.miembros, creador:liga.creador,
+        jornadaActiva: false,
+        jornadaInicio: null,
+        jornadaFin: null,
+        equiposBloqueados: false
       });
       console.log('[DEBUG crearLiga] Liga saved!');
       
