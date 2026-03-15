@@ -1558,10 +1558,10 @@ renderRanking();
 }
       }
     }).catch(function(e){
-  console.error('cargarMisLigas error:', e);
-  setTimeout(function(){ safeGo('s-dashboard'); }, 100);
-});
-});
+      console.error('cargarMisLigas error:', e);
+      setTimeout(function(){ safeGo('s-dashboard'); }, 100);
+    });
+  });
 
   // ── Firestore helpers ────────────────────────────────────
   async function cargarMisLigas(uid) {
@@ -2065,14 +2065,17 @@ renderRanking();
   window.doDelete = function() {
     closeSheet();
     var user=window._currentUser; if(!user) return;
+    var ligaName = currentLeague.name;
     getDoc(doc(db,'ligas',currentLeague.id)).then(function(s){
-      if(!s.exists()) return;
+      if(!s.exists()) { toast('Liga no encontrada'); return; }
       if(s.data().creador!==user.uid){ toast('Solo el creador puede eliminar'); return; }
       return updateDoc(doc(db,'ligas',currentLeague.id),{eliminada:true}).then(function(){
         return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
       }).then(function(){ 
-        cargarMisLigas(user.uid); 
-        toast('"'+currentLeague.name+'" eliminada'); 
+        toast('"'+ligaName+'" eliminada');
+        return cargarMisLigas(user.uid);
+      }).then(function(){
+        safeGo('s-dashboard');
       });
     }).catch(function(e){ 
       console.error('doDelete error:', e); 
