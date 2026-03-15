@@ -1000,15 +1000,52 @@ function openComp(name,creator,pts){
   go('s-completar');
 }
 function handleImg(e){
-  var f=e.target.files[0];if(!f)return;
-  var r=new FileReader();r.onload=function(ev){
+  var f=e.target.files[0];
+  if(!f) return;
+  
+  // Check file size (5MB = 5 * 1024 * 1024 bytes)
+  var maxSize = 5 * 1024 * 1024;
+  if(f.size > maxSize) {
+    toast('Imagen muy grande. Máximo 5MB');
+    e.target.value = '';
+    return;
+  }
+  
+  // Check if it's an image
+  if(!f.type.startsWith('image/')) {
+    toast('Solo se permiten imágenes');
+    e.target.value = '';
+    return;
+  }
+  
+  var r=new FileReader();
+  r.onload=function(ev){
     document.getElementById('img-el').src=ev.target.result;
     document.getElementById('img-prev').style.display='block';
     document.getElementById('img-area').style.display='none';
-  };r.readAsDataURL(f);
+  };
+  r.readAsDataURL(f);
 }
+
 function handleVid(e){
-  var f=e.target.files[0];if(!f)return;
+  var f=e.target.files[0];
+  if(!f) return;
+  
+  // Check file size (5MB)
+  var maxSize = 5 * 1024 * 1024;
+  if(f.size > maxSize) {
+    toast('Video muy grande. Máximo 5MB');
+    e.target.value = '';
+    return;
+  }
+  
+  // Check if it's a video
+  if(!f.type.startsWith('video/')) {
+    toast('Solo se permiten videos');
+    e.target.value = '';
+    return;
+  }
+  
   document.getElementById('vid-el').src=URL.createObjectURL(f);
   document.getElementById('vid-prev').style.display='block';
   document.getElementById('vid-area').style.display='none';
@@ -1017,6 +1054,48 @@ function clearMedia(t){
   if(t==='img'){document.getElementById('img-prev').style.display='none';document.getElementById('img-area').style.display='block';document.getElementById('img-el').src='';}
   else{document.getElementById('vid-prev').style.display='none';document.getElementById('vid-area').style.display='block';document.getElementById('vid-el').src='';}
 }
+
+// Compress image to reduce storage costs
+async function compressImage(file, quality, maxWidth) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        
+        // Calculate new dimensions
+        var width = img.width;
+        var height = img.height;
+        
+        if(width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        canvas.toBlob(function(blob) {
+          if(blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Compression failed'));
+          }
+        }, file.type, quality);
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 function submitReto(){
   console.log('[DEBUG submitReto] Button clicked');
   console.log('[DEBUG] Current reto ID:', window._currentRetoId);
@@ -1891,13 +1970,23 @@ renderRanking();
       return;
     }
     
+    // Navigate immediately and show feedback
+    toast('Enviando...');
+    safeGo('s-goat');
+    
+    // Clear inputs immediately
+    document.getElementById('comp-text').value = '';
+    clearMedia('img');
+    clearMedia('vid');
+    
+    // Continue upload in background
     try {
       console.log('[DEBUG] Fetching reto from Firestore...');
       var retoSnap = await getDoc(doc(db,'ligas',window.ligaActual.id,'retos',window._currentRetoId));
       
       if(!retoSnap.exists()) {
         console.error('[DEBUG] Reto not found in Firestore');
-        toast('Reto no encontrado');
+        toast('Error: Reto no encontrado');
         return;
       }
       
@@ -1915,19 +2004,30 @@ renderRanking();
         creado: Date.now()
       };
       
-      // Upload image if exists
+      // Upload image if exists (with compression)
       var imgInput = document.getElementById('img-input');
       if(imgInput && imgInput.files && imgInput.files[0]) {
         console.log('[DEBUG] Uploading image...');
         try {
           var imgFile = imgInput.files[0];
-          var imgRef = ref(storage, 'completados/' + user.uid + '/' + Date.now() + '_' + imgFile.name);
-          await uploadBytes(imgRef, imgFile);
-          completadoData.imagenUrl = await getDownloadURL(imgRef);
-          console.log('[DEBUG] Image uploaded:', completadoData.imagenUrl);
+          
+          // Check file size (max 5MB)
+          if(imgFile.size > 5 * 1024 * 1024) {
+            toast('Imagen muy grande (máx 5MB)');
+            console.error('[DEBUG] Image too large:', imgFile.size);
+          } else {
+            // Compress image before upload
+            var compressedBlob = await compressImage(imgFile, 0.8, 1920);
+            console.log('[DEBUG] Original size:', imgFile.size, 'Compressed:', compressedBlob.size);
+            
+            var imgRef = ref(storage, 'completados/' + user.uid + '/' + Date.now() + '_' + imgFile.name);
+            await uploadBytes(imgRef, compressedBlob);
+            completadoData.imagenUrl = await getDownloadURL(imgRef);
+            console.log('[DEBUG] Image uploaded:', completadoData.imagenUrl);
+          }
         } catch(imgErr) {
           console.error('[DEBUG] Image upload error:', imgErr);
-          toast('Error al subir imagen: ' + imgErr.message);
+          toast('Advertencia: Error al subir imagen');
         }
       }
       
@@ -1937,13 +2037,20 @@ renderRanking();
         console.log('[DEBUG] Uploading video...');
         try {
           var vidFile = vidInput.files[0];
-          var vidRef = ref(storage, 'completados/' + user.uid + '/' + Date.now() + '_' + vidFile.name);
-          await uploadBytes(vidRef, vidFile);
-          completadoData.videoUrl = await getDownloadURL(vidRef);
-          console.log('[DEBUG] Video uploaded:', completadoData.videoUrl);
+          
+          // Check file size (max 5MB for videos)
+          if(vidFile.size > 5 * 1024 * 1024) {
+            toast('Video muy grande (máx 5MB)');
+            console.error('[DEBUG] Video too large:', vidFile.size);
+          } else {
+            var vidRef = ref(storage, 'completados/' + user.uid + '/' + Date.now() + '_' + vidFile.name);
+            await uploadBytes(vidRef, vidFile);
+            completadoData.videoUrl = await getDownloadURL(vidRef);
+            console.log('[DEBUG] Video uploaded:', completadoData.videoUrl);
+          }
         } catch(vidErr) {
           console.error('[DEBUG] Video upload error:', vidErr);
-          toast('Error al subir video: ' + vidErr.message);
+          toast('Advertencia: Error al subir video');
         }
       }
       
@@ -1954,14 +2061,8 @@ renderRanking();
       var elapsed = Date.now() - startTime;
       console.log('[DEBUG] Submit completed in', elapsed, 'ms');
       
-      toast('Enviado para validación del admin');
+      toast('✓ Enviado para validación');
       
-      // Clear inputs
-      document.getElementById('comp-text').value = '';
-      clearMedia('img');
-      clearMedia('vid');
-      
-      safeGo('s-goat');
     } catch(e) {
       var elapsed = Date.now() - startTime;
       console.error('[DEBUG] Error in submitCompletado after', elapsed, 'ms:', e);
