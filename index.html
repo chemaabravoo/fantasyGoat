@@ -547,12 +547,8 @@ textarea.inp{resize:vertical;min-height:80px}
   <div class="lhdr"><div><div style="display:flex;align-items:center;gap:8px"><div class="back bsm" onclick="go('s-dashboard')">‹</div><div class="lname">Los Intocables</div></div></div><span class="badge b-priv">Privada</span></div>
   <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid #111;flex-shrink:0">
     <div style="font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:3px;color:var(--white)">RANKING</div>
-    <select id="rank-filter" onchange="renderRanking()" style="background:var(--card);border:1px solid #222;border-radius:8px;padding:7px 12px;color:var(--white);font-size:11px;font-weight:700;cursor:pointer;outline:none">
+    <select id="rank-filter" onchange="renderRankingFS()" style="background:var(--card);border:1px solid #222;border-radius:8px;padding:7px 12px;color:var(--white);font-size:11px;font-weight:700;cursor:pointer;outline:none">
       <option value="global">GLOBAL</option>
-      <option value="feb" selected>Febrero 2026</option>
-      <option value="ene">Enero 2026</option>
-      <option value="dic">Diciembre 2025</option>
-      <option value="nov">Noviembre 2025</option>
     </select>
   </div>
   <div class="screen-scroll">
@@ -907,9 +903,9 @@ function renderFeed(){
     
     var mediaHtml = '';
     if(s.imagenUrl) {
-      mediaHtml = '<div class="fp-media"><img src="'+s.imagenUrl+'" style="width:100%;height:100%;object-fit:cover"><span class="media-tag">'+s.mediaType+'</span></div>';
+      mediaHtml = '<div class="fp-media"><img src="'+s.imagenUrl+'" onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:32px;margin-bottom:8px&quot;>📷</div><div style=&quot;font-size:11px&quot;>Imagen no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover"><span class="media-tag">'+s.mediaType+'</span></div>';
     } else if(s.videoUrl) {
-      mediaHtml = '<div class="fp-media"><video src="'+s.videoUrl+'" controls playsinline style="width:100%;height:100%;object-fit:cover"></video><span class="media-tag">'+s.mediaType+'</span></div>';
+      mediaHtml = '<div class="fp-media"><video src="'+s.videoUrl+'" controls playsinline onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:32px;margin-bottom:8px&quot;>🎥</div><div style=&quot;font-size:11px&quot;>Video no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover"></video><span class="media-tag">'+s.mediaType+'</span></div>';
     } else {
       mediaHtml = '<div class="fp-media"><span>'+s.emoji+'</span><span class="media-tag">'+s.mediaType+'</span></div>';
     }
@@ -943,9 +939,9 @@ function renderTikTok(){
     
     var bgContent = '';
     if(s.imagenUrl) {
-      bgContent = '<img src="'+s.imagenUrl+'" style="width:100%;height:100%;object-fit:cover">';
+      bgContent = '<img src="'+s.imagenUrl+'" onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:64px;margin-bottom:16px&quot;>📷</div><div style=&quot;font-size:14px&quot;>Imagen no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover">';
     } else if(s.videoUrl) {
-      bgContent = '<video src="'+s.videoUrl+'" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover"></video>';
+      bgContent = '<video src="'+s.videoUrl+'" autoplay loop muted playsinline onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:64px;margin-bottom:16px&quot;>🎥</div><div style=&quot;font-size:14px&quot;>Video no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover"></video>';
     } else {
       bgContent = '<span>'+s.emoji+'</span>';
     }
@@ -1802,9 +1798,15 @@ renderRanking();
     var l=(window._ligasFS||[])[idx]; if(!l) return;
     window.ligaActual=l;
     syncLigaUI(l);
+    actualizarMesesRanking(); // Update month options
     cargarRetos(l.id);
-    cargarRanking(l.id);
+    cargarRanking(l.id).then(function() {
+      // Load team members after ranking is loaded
+      cargarEquipoMiembros();
+    });
     cargarCompletados(l.id);
+    cargarTodosCompletados(l.id); // Load all completados for monthly filtering
+    cargarFeed(l.id); // Load feed for all users
     safeGo('s-home');
   };
 
@@ -1849,8 +1851,120 @@ renderRanking();
   }
   window._fsCargarRanking = cargarRanking;
 
-  function renderRankingFS() {
+  function actualizarMesesRanking() {
+    var select = document.getElementById('rank-filter');
+    if(!select) return;
+    
+    var now = new Date();
+    var meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    var mesesNombres = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    
+    var currentMonth = now.getMonth(); // 0-11
+    var currentYear = now.getFullYear();
+    
+    var html = '<option value="global">GLOBAL</option>';
+    
+    // Add current month and previous 3 months
+    for(var i = 0; i < 4; i++) {
+      var monthIndex = currentMonth - i;
+      var year = currentYear;
+      
+      // Handle year boundary
+      if(monthIndex < 0) {
+        monthIndex += 12;
+        year--;
+      }
+      
+      var value = meses[monthIndex];
+      var label = mesesNombres[monthIndex] + ' ' + year;
+      var selected = i === 0 ? ' selected' : ''; // Current month selected by default
+      
+      html += '<option value="' + value + '"' + selected + '>' + label + '</option>';
+    }
+    
+    select.innerHTML = html;
+  }
+
+  function cargarEquipoMiembros() {
     var ranking = window._rankingData || [];
+    console.log('[DEBUG cargarEquipoMiembros] Loading', ranking.length, 'members');
+    
+    // Convert ranking to PLAYERS array format
+    PLAYERS = ranking.map(function(member) {
+      return {
+        name: member.name,
+        emoji: member.emoji,
+        pts: member.pts
+      };
+    });
+    
+    console.log('[DEBUG cargarEquipoMiembros] PLAYERS loaded:', PLAYERS.length);
+    
+    // Initialize team if empty
+    if(titulares.every(function(t){ return t === null; })) {
+      // Put first players in starting lineup
+      for(var i = 0; i < Math.min(qSize, PLAYERS.length); i++) {
+        titulares[i] = i;
+      }
+      // Put rest on bench
+      for(var j = qSize; j < PLAYERS.length && j < qSize + 5; j++) {
+        banquillo[j - qSize] = j;
+      }
+    }
+  }
+
+  function renderRankingFS() {
+    var allRanking = window._rankingData || [];
+    var select = document.getElementById('rank-filter');
+    var selectedMonth = select ? select.value : 'global';
+    var isGlobal = selectedMonth === 'global';
+    
+    // Show/hide global label
+    var globalLabel = document.getElementById('rank-global-label');
+    if(globalLabel) globalLabel.style.display = isGlobal ? 'block' : 'none';
+    
+    // Filter ranking by month if not global
+    var ranking = allRanking;
+    if(!isGlobal && window._completadosData) {
+      // Calculate points per month from completados
+      var monthlyPoints = {};
+      var mesesMap = {
+        'ene': 0, 'feb': 1, 'mar': 2, 'abr': 3, 'may': 4, 'jun': 5,
+        'jul': 6, 'ago': 7, 'sep': 8, 'oct': 9, 'nov': 10, 'dic': 11
+      };
+      var targetMonth = mesesMap[selectedMonth];
+      
+      window._completadosData.forEach(function(comp) {
+        if(comp.estado !== 'aprobado') return;
+        
+        var fecha = new Date(comp.creado);
+        if(fecha.getMonth() === targetMonth) {
+          var uid = comp.usuarioId;
+          if(!monthlyPoints[uid]) {
+            monthlyPoints[uid] = {
+              uid: uid,
+              nombre: comp.usuarioNombre,
+              puntos: 0,
+              retosCompletados: 0
+            };
+          }
+          monthlyPoints[uid].puntos += comp.retoPts || 0;
+          monthlyPoints[uid].retosCompletados++;
+        }
+      });
+      
+      // Convert to ranking format
+      ranking = Object.values(monthlyPoints).map(function(p) {
+        return {
+          uid: p.uid,
+          name: p.nombre,
+          pts: p.puntos,
+          retos: p.retosCompletados,
+          emoji: '👤'
+        };
+      }).sort(function(a, b) { return b.pts - a.pts; });
+    }
+    
     var top3 = document.getElementById('rank-top3');
     var list = document.getElementById('rank-list');
     if(!top3 || !list) return;
@@ -1859,7 +1973,7 @@ renderRanking();
     list.innerHTML = '';
     
     if(!ranking.length) {
-      list.innerHTML = '<div style="text-align:center;padding:48px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">🏆</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin datos todavía</div><div style="font-size:11px;line-height:1.5">El ranking se llenará cuando los miembros completen retos</div></div>';
+      list.innerHTML = '<div style="text-align:center;padding:48px 20px;color:var(--gray)"><div style="font-size:36px;margin-bottom:12px">🏆</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin datos para este mes</div><div style="font-size:11px;line-height:1.5">El ranking se llenará cuando los miembros completen retos</div></div>';
       return;
     }
     
@@ -2101,6 +2215,23 @@ renderRanking();
     }
   }
   window._fsCargarCompletados = cargarCompletados;
+
+  // ── Cargar TODOS los completados para filtrado por mes ──────────────────
+  async function cargarTodosCompletados(ligaId) {
+    if(!ligaId) return;
+    try {
+      var snap = await getDocs(collection(db,'ligas',ligaId,'completados'));
+      var completados = [];
+      snap.forEach(function(d){ 
+        completados.push(Object.assign({id:d.id}, d.data())); 
+      });
+      window._completadosData = completados;
+      console.log('[DEBUG cargarTodosCompletados] Loaded', completados.length, 'completados');
+    } catch(e) {
+      console.error('cargarTodosCompletados error:', e);
+      window._completadosData = [];
+    }
+  }
 
   // ── Cargar Feed (completados aprobados con imágenes/videos) ──────────────────
   async function cargarFeed(ligaId) {
@@ -2372,22 +2503,63 @@ renderRanking();
 
   window.doDelete = function() {
     closeSheet();
-    var user=window._currentUser; if(!user) return;
+    var user = window._currentUser;
+    if(!user) {
+      toast('Debes iniciar sesión');
+      return;
+    }
+    
+    if(!currentLeague || !currentLeague.id) {
+      toast('No hay liga seleccionada');
+      return;
+    }
+    
+    var ligaId = currentLeague.id;
     var ligaName = currentLeague.name;
-    getDoc(doc(db,'ligas',currentLeague.id)).then(function(s){
-      if(!s.exists()) { toast('Liga no encontrada'); return; }
-      if(s.data().creador!==user.uid){ toast('Solo el creador puede eliminar'); return; }
-      return updateDoc(doc(db,'ligas',currentLeague.id),{eliminada:true}).then(function(){
-        return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
-      }).then(function(){ 
-        toast('"'+ligaName+'" eliminada');
-        return cargarMisLigas(user.uid);
-      }).then(function(){
-        safeGo('s-dashboard');
+    
+    console.log('[DEBUG doDelete] Deleting liga:', ligaId);
+    
+    getDoc(doc(db,'ligas',ligaId)).then(function(s){
+      if(!s.exists()) { 
+        toast('Liga no encontrada'); 
+        return Promise.reject(new Error('Liga not found'));
+      }
+      
+      if(s.data().creador !== user.uid) { 
+        toast('Solo el creador puede eliminar'); 
+        return Promise.reject(new Error('Not creator'));
+      }
+      
+      // Mark as deleted
+      return updateDoc(doc(db,'ligas',ligaId), {eliminada: true});
+    }).then(function(){
+      console.log('[DEBUG doDelete] Liga marked as deleted');
+      
+      // Remove from ALL members' arrays (not just creator)
+      var promises = [];
+      var miembros = currentLeague.miembros || [user.uid];
+      
+      miembros.forEach(function(memberId) {
+        promises.push(
+          setDoc(doc(db,'usuarios',memberId), {
+            ligas: arrayRemove(ligaId)
+          }, {merge: true})
+        );
       });
+      
+      return Promise.all(promises);
+    }).then(function(){
+      console.log('[DEBUG doDelete] Removed from all members');
+      toast('"' + ligaName + '" eliminada');
+      
+      return cargarMisLigas(user.uid);
+    }).then(function(){
+      safeGo('s-dashboard');
     }).catch(function(e){ 
-      console.error('doDelete error:', e); 
-      toast('Error: ' + e.message); 
+      console.error('[DEBUG doDelete] Error:', e); 
+      if(e.message !== 'Liga not found' && e.message !== 'Not creator') {
+        toast('Error: ' + e.message);
+      }
     });
   };
 
