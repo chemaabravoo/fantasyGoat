@@ -1011,12 +1011,52 @@ function clearMedia(t){
   else{document.getElementById('vid-prev').style.display='none';document.getElementById('vid-area').style.display='block';document.getElementById('vid-el').src='';}
 }
 function submitReto(){
+  console.log('[DEBUG submitReto] Button clicked');
+  console.log('[DEBUG] Current reto ID:', window._currentRetoId);
+  console.log('[DEBUG] Current liga:', window.ligaActual);
+  
   var prueba = document.getElementById('comp-text').value.trim();
-  if(!prueba){ toast('Escribe una justificación'); return; }
-  if(window.submitCompletado) window.submitCompletado(prueba);
+  console.log('[DEBUG] Prueba text:', prueba);
+  
+  if(!prueba){ 
+    toast('Escribe una justificación'); 
+    return; 
+  }
+  
+  if(!window._currentRetoId) {
+    console.error('[DEBUG] No reto ID set!');
+    toast('Error: no se ha seleccionado ningún reto');
+    return;
+  }
+  
+  if(!window.submitCompletado) {
+    console.error('[DEBUG] submitCompletado function not found!');
+    toast('Error: función no disponible');
+    return;
+  }
+  
+  console.log('[DEBUG] Calling submitCompletado...');
+  window.submitCompletado(prueba);
 }
+
 function submitRetoSin(){
-  if(window.submitCompletado) window.submitCompletado('Sin prueba proporcionada');
+  console.log('[DEBUG submitRetoSin] Button clicked');
+  console.log('[DEBUG] Current reto ID:', window._currentRetoId);
+  
+  if(!window._currentRetoId) {
+    console.error('[DEBUG] No reto ID set!');
+    toast('Error: no se ha seleccionado ningún reto');
+    return;
+  }
+  
+  if(!window.submitCompletado) {
+    console.error('[DEBUG] submitCompletado function not found!');
+    toast('Error: función no disponible');
+    return;
+  }
+  
+  console.log('[DEBUG] Calling submitCompletado without proof...');
+  window.submitCompletado('Sin prueba proporcionada');
 }
 
 function renderRanking(){
@@ -1334,6 +1374,10 @@ function syncLigaUI(l) {
 
 function openCompFromBtn(btn) {
   window._currentRetoId = btn.dataset.retoid;
+  console.log('[DEBUG openCompFromBtn] Set _currentRetoId:', window._currentRetoId);
+  console.log('[DEBUG] Titulo:', btn.dataset.titulo);
+  console.log('[DEBUG] Creator:', btn.dataset.creator);
+  console.log('[DEBUG] Pts:', btn.dataset.pts);
   openComp(btn.dataset.titulo, btn.dataset.creator, parseInt(btn.dataset.pts));
 }
 
@@ -1766,13 +1810,43 @@ renderRanking();
 
   // ── Completar Reto (guardar prueba) ──────────────────────
   window.submitCompletado = async function(prueba) {
-    if(!window.ligaActual || !window._currentRetoId){ toast('Error: sin reto activo'); return; }
+    console.log('[DEBUG submitCompletado] Starting...');
+    console.log('[DEBUG] Prueba:', prueba);
+    console.log('[DEBUG] ligaActual:', window.ligaActual);
+    console.log('[DEBUG] _currentRetoId:', window._currentRetoId);
+    console.log('[DEBUG] _currentUser:', window._currentUser);
+    
+    if(!window.ligaActual) {
+      console.error('[DEBUG] No liga selected!');
+      toast('Error: selecciona una liga primero');
+      return;
+    }
+    
+    if(!window._currentRetoId) {
+      console.error('[DEBUG] No reto ID!');
+      toast('Error: no se ha seleccionado ningún reto');
+      return;
+    }
+    
     var user = window._currentUser;
-    if(!user){ toast('Debes iniciar sesión'); return; }
+    if(!user) {
+      console.error('[DEBUG] No user logged in!');
+      toast('Debes iniciar sesión');
+      return;
+    }
+    
     try {
+      console.log('[DEBUG] Fetching reto from Firestore...');
       var retoSnap = await getDoc(doc(db,'ligas',window.ligaActual.id,'retos',window._currentRetoId));
-      if(!retoSnap.exists()){ toast('Reto no encontrado'); return; }
+      
+      if(!retoSnap.exists()) {
+        console.error('[DEBUG] Reto not found in Firestore');
+        toast('Reto no encontrado');
+        return;
+      }
+      
       var retoData = retoSnap.data();
+      console.log('[DEBUG] Reto data:', retoData);
       
       var completadoData = {
         retoId: window._currentRetoId,
@@ -1788,25 +1862,50 @@ renderRanking();
       // Upload image if exists
       var imgInput = document.getElementById('img-input');
       if(imgInput && imgInput.files && imgInput.files[0]) {
-        var imgFile = imgInput.files[0];
-        var imgRef = ref(storage, 'completados/' + user.uid + '/' + Date.now() + '_' + imgFile.name);
-        await uploadBytes(imgRef, imgFile);
-        completadoData.imagenUrl = await getDownloadURL(imgRef);
+        console.log('[DEBUG] Uploading image...');
+        try {
+          var imgFile = imgInput.files[0];
+          var imgRef = ref(storage, 'completados/' + user.uid + '/' + Date.now() + '_' + imgFile.name);
+          await uploadBytes(imgRef, imgFile);
+          completadoData.imagenUrl = await getDownloadURL(imgRef);
+          console.log('[DEBUG] Image uploaded:', completadoData.imagenUrl);
+        } catch(imgErr) {
+          console.error('[DEBUG] Image upload error:', imgErr);
+          toast('Error al subir imagen: ' + imgErr.message);
+        }
       }
       
       // Upload video if exists
       var vidInput = document.getElementById('vid-input');
       if(vidInput && vidInput.files && vidInput.files[0]) {
-        var vidFile = vidInput.files[0];
-        var vidRef = ref(storage, 'completados/' + user.uid + '/' + Date.now() + '_' + vidFile.name);
-        await uploadBytes(vidRef, vidFile);
-        completadoData.videoUrl = await getDownloadURL(vidRef);
+        console.log('[DEBUG] Uploading video...');
+        try {
+          var vidFile = vidInput.files[0];
+          var vidRef = ref(storage, 'completados/' + user.uid + '/' + Date.now() + '_' + vidFile.name);
+          await uploadBytes(vidRef, vidFile);
+          completadoData.videoUrl = await getDownloadURL(vidRef);
+          console.log('[DEBUG] Video uploaded:', completadoData.videoUrl);
+        } catch(vidErr) {
+          console.error('[DEBUG] Video upload error:', vidErr);
+          toast('Error al subir video: ' + vidErr.message);
+        }
       }
       
+      console.log('[DEBUG] Saving completado to Firestore...', completadoData);
       await addDoc(collection(db,'ligas',window.ligaActual.id,'completados'), completadoData);
+      console.log('[DEBUG] Saved successfully!');
+      
       toast('Enviado para validación del admin');
+      
+      // Clear inputs
+      document.getElementById('comp-text').value = '';
+      clearMedia('img');
+      clearMedia('vid');
+      
       safeGo('s-goat');
     } catch(e) {
+      console.error('[DEBUG] Error in submitCompletado:', e);
+      console.error('[DEBUG] Error stack:', e.stack);
       toast('Error: ' + e.message);
     }
   };
@@ -1840,6 +1939,39 @@ renderRanking();
     }
   }
   window._fsCargarCompletados = cargarCompletados;
+
+  // ── Cargar Feed (completados aprobados con imágenes/videos) ──────────────────
+  async function cargarFeed(ligaId) {
+    if(!ligaId) return;
+    try {
+      var snap = await getDocs(collection(db,'ligas',ligaId,'completados'));
+      var completados = [];
+      snap.forEach(function(d){ 
+        var data = d.data();
+        if(data.estado === 'aprobado') {
+          completados.push({
+            user: data.usuarioNombre,
+            reto: data.retoTitulo,
+            pts: data.retoPts,
+            desc: data.prueba || 'Sin descripción',
+            time: 'Hace poco',
+            emoji: '✅',
+            mediaType: data.imagenUrl ? 'Imagen' : data.videoUrl ? 'Video' : 'Prueba',
+            status: 'approved',
+            imagenUrl: data.imagenUrl || null,
+            videoUrl: data.videoUrl || null
+          });
+        }
+      });
+      window.subs = completados;
+      renderFeed();
+    } catch(e) {
+      console.error('cargarFeed error:', e);
+      window.subs = [];
+      renderFeed();
+    }
+  }
+  window._fsCargarFeed = cargarFeed;
 
   window.aprobarCompletado = async function(completadoId) {
     if(!window.ligaActual){ toast('Sin liga activa'); return; }
