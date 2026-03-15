@@ -1473,7 +1473,7 @@ window.iniciarJornada = async function() {
       finJornada = ahora + (30 * 24 * 60 * 60 * 1000); // 1 mes
     }
     
-    await updateDoc(doc(db,'ligas',liga.id), {
+    await window.fbUpdateJornada(liga.id, {
       jornadaActiva: true,
       jornadaInicio: ahora,
       jornadaFin: finJornada,
@@ -1510,7 +1510,7 @@ window.cerrarJornada = async function() {
   }
   
   try {
-    await updateDoc(doc(db,'ligas',liga.id), {
+    await window.fbUpdateJornada(liga.id, {
       jornadaActiva: false,
       jornadaInicio: null,
       jornadaFin: null,
@@ -1536,7 +1536,7 @@ async function bloquearEquiposAutomatico() {
   var liga = window.ligaActual;
   
   try {
-    await updateDoc(doc(db,'ligas',liga.id), {
+    await window.fbUpdateJornada(liga.id, {
       equiposBloqueados: true
     });
     
@@ -1570,7 +1570,7 @@ window.guardarEquipo = async function() {
       ultimaActualizacion: Date.now()
     };
     
-    await setDoc(doc(db,'ligas',liga.id,'equipos',window._currentUser.uid), equipoData);
+    await window.fbSaveEquipo(liga.id, window._currentUser.uid, equipoData);
     toast('✓ Equipo guardado');
     
   } catch(e) {
@@ -2991,6 +2991,15 @@ renderRanking();
         toast('Error: ' + e.message);
       }
     });
+  };
+
+  // ── Wrappers para funciones de jornada ──────────────────────
+  window.fbUpdateJornada = async function(ligaId, data) {
+    return await updateDoc(doc(db,'ligas',ligaId), data);
+  };
+
+  window.fbSaveEquipo = async function(ligaId, userId, equipoData) {
+    return await setDoc(doc(db,'ligas',ligaId,'equipos',userId), equipoData);
   };
 
 </script>
