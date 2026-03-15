@@ -766,6 +766,9 @@ function go(id){
 function goBack(){if(PREV)go(PREV);}
 function nav(id,idx){
   go(id);
+  if(id==='s-stats' && window._fsCargarEstadisticas && window._currentUser){
+    window._fsCargarEstadisticas(window._currentUser.uid);
+  }
   setTimeout(function(){
     var sc=document.getElementById(id);if(!sc)return;
     sc.querySelectorAll('.ni').forEach(function(el,i){el.classList.toggle('active',i===idx);});
@@ -1295,6 +1298,18 @@ function syncLigaUI(l) {
   var gbadge = document.getElementById('goat-liga-badge'); if(gbadge){ gbadge.textContent = l.tipo==='priv'?'Privada':'Pública'; gbadge.className='badge '+(l.tipo==='priv'?'b-priv':'b-pub'); }
   // Ranking header
   var rname = document.querySelector('#s-ranking .lname'); if(rname) rname.textContent = l.nombre;
+  // Equipo header
+  var ename = document.querySelector('#s-equipo .lname'); if(ename) ename.textContent = 'Mi Equipo';
+  var esub  = document.querySelector('#s-equipo .lsub');  
+  if(esub && l.creada) {
+    var created = new Date(l.creada);
+    var now = new Date();
+    var diffTime = Math.abs(now - created);
+    var diffWeeks = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
+    var diffMonths = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 30));
+    var period = l.period === 'Semanal' ? ('Semana ' + diffWeeks) : ('Mes ' + (diffMonths + 1));
+    esub.textContent = l.nombre + ' · ' + period;
+  }
 }
 
 function openCompFromBtn(btn) {
@@ -1321,7 +1336,7 @@ renderRanking();
     apiKey: "AIzaSyB0-pJ12NXSh4LsdH8AHuK8mg_glWAVrmY",
     authDomain: "fantasy-goat-5d70d.firebaseapp.com",
     projectId: "fantasy-goat-5d70d",
-    storageBucket: "fantasy-goat-5d70d.firebasestorage.app",
+    storageBucket: "fantasy-goat-5d70d.appspot.com",
     messagingSenderId: "191273517968",
     appId: "1:191273517968:web:0a6b63ca46e31ff54b6915",
     measurementId: "G-KY7MHRWWZN"
@@ -1443,7 +1458,7 @@ renderRanking();
   // ── Session ───────────────────────────────────────────────
   // Fallback: if Firebase doesn't respond in 4s, show login
   var authResolved = false;
-  setTimeout(function(){
+setTimeout(function(){
   if(!authResolved){
     console.warn('Firebase auth timeout, forcing login screen');
     safeGo('s-login');
@@ -1540,6 +1555,8 @@ onAuthStateChanged(auth, function(user) {
     cargarRetos(l.id);
     cargarRanking(l.id);
     cargarCompletados(l.id);
+    if(window._fsCargarFeed) window._fsCargarFeed(l.id);
+    if(window._fsCargarMiembrosEquipo) window._fsCargarMiembrosEquipo(l.id);
     safeGo('s-home');
   };
 
@@ -1734,6 +1751,148 @@ onAuthStateChanged(auth, function(user) {
   }
   window._fsCargarCompletados = cargarCompletados;
 
+  // ── Cargar Feed (completados aprobados) ──────────────────
+  async function cargarFeed(ligaId) {
+    if(!ligaId) return;
+    try {
+      var snap = await getDocs(collection(db,'ligas',ligaId,'completados'));
+      var completados = [];
+      snap.forEach(function(d){ 
+        var data = d.data();
+        if(data.estado === 'aprobado') {
+          completados.push({
+            user: data.usuarioNombre,
+            reto: data.retoTitulo,
+            pts: data.retoPts,
+            desc: data.prueba || 'Sin descripción',
+            time: 'Hace poco',
+            emoji: '✅',
+            mediaType: 'Prueba',
+            status: 'approved'
+          });
+        }
+      });
+      window.subs = completados;
+      renderFeed();
+    } catch(e) {
+      console.error('cargarFeed error:', e);
+      window.subs = [];
+      renderFeed();
+    }
+  }
+  window._fsCargarFeed = cargarFeed;
+
+  // ── Cargar estadísticas del perfil ────────────────────────
+  async function cargarEstadisticas(userId) {
+    if(!userId) return;
+    try {
+      var totalPuntos = 0;
+      var totalRetos = 0;
+      var historial = [];
+      
+      // Get user's ligas
+      var userDoc = await getDoc(doc(db,'usuarios',userId));
+      if(!userDoc.exists()) return;
+      
+      var ligasIds = userDoc.data().ligas || [];
+      
+      // For each liga, get user's completados aprobados
+      for(var i=0; i<ligasIds.length; i++) {
+        var ligaId = ligasIds[i];
+        var ligaSnap = await getDoc(doc(db,'ligas',ligaId));
+        if(!ligaSnap.exists() || ligaSnap.data().eliminada) continue;
+        
+        var ligaNombre = ligaSnap.data().nombre;
+        
+        // Get ranking entry for total points
+        var rankSnap = await getDoc(doc(db,'ligas',ligaId,'ranking',userId));
+        if(rankSnap.exists()) {
+          var rankData = rankSnap.data();
+          totalPuntos += rankData.puntos || 0;
+          totalRetos += rankData.retosCompletados || 0;
+        }
+        
+        // Get completados for historial
+        var compSnap = await getDocs(collection(db,'ligas',ligaId,'completados'));
+        compSnap.forEach(function(d){
+          var data = d.data();
+          if(data.usuarioId === userId && data.estado === 'aprobado') {
+            historial.push({
+              liga: ligaNombre,
+              reto: data.retoTitulo,
+              pts: data.retoPts,
+              fecha: new Date(data.creado).toLocaleDateString('es-ES')
+            });
+          }
+        });
+      }
+      
+      // Update UI
+      document.getElementById('prof-pts').textContent = totalPuntos.toLocaleString();
+      document.getElementById('prof-retos').textContent = totalRetos;
+      document.getElementById('prof-ligas').textContent = ligasIds.length;
+      
+      var aprov = totalRetos > 0 ? '100%' : '0%';
+      document.getElementById('prof-aprov').textContent = aprov;
+      
+      // Render historial
+      var cont = document.getElementById('prof-historial');
+      if(historial.length === 0) {
+        cont.innerHTML = '<div style="text-align:center;padding:32px 20px;color:var(--gray)"><div style="font-size:32px;margin-bottom:10px">📋</div><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px">Sin historial todavía</div><div style="font-size:11px;line-height:1.5">Completa retos para ver tus estadísticas aquí</div></div>';
+      } else {
+        cont.innerHTML = '';
+        historial.forEach(function(h){
+          var neg = h.pts < 0;
+          var div = document.createElement('div');
+          div.className = 'rsc';
+          div.innerHTML = 
+            '<div class="rsc-hdr">'+
+              '<div class="rsc-title">'+h.reto+'</div>'+
+              '<div class="rsc-pts'+(neg?' neg':'')+'" style="color:'+(neg?'var(--red)':'var(--gold)')+'">'+h.pts+'</div>'+
+            '</div>'+
+            '<div style="font-size:10px;color:var(--gray);padding:0 0 4px 0">'+h.liga+' · '+h.fecha+'</div>';
+          cont.appendChild(div);
+        });
+      }
+      
+    } catch(e) {
+      console.error('cargarEstadisticas error:', e);
+    }
+  }
+  window._fsCargarEstadisticas = cargarEstadisticas;
+
+  // ── Cargar miembros para el equipo ─────────────────────────
+  async function cargarMiembrosEquipo(ligaId) {
+    if(!ligaId) return;
+    try {
+      var rankSnap = await getDocs(collection(db,'ligas',ligaId,'ranking'));
+      var miembros = [];
+      rankSnap.forEach(function(d){
+        var data = d.data();
+        miembros.push({
+          uid: d.id,
+          name: data.nombre,
+          pts: (data.puntos || 0).toLocaleString(),
+          emoji: '👤',
+          init: data.nombre.substring(0,2).toUpperCase(),
+          bg: '#242424',
+          col: '#fff'
+        });
+      });
+      // Sort by points
+      miembros.sort(function(a,b){ return parseInt(b.pts.replace(/\./g,'')) - parseInt(a.pts.replace(/\./g,'')); });
+      window.PLAYERS = miembros;
+      renderEquipo();
+    } catch(e) {
+      console.error('cargarMiembrosEquipo error:', e);
+      window.PLAYERS = [];
+    }
+  }
+  window._fsCargarMiembrosEquipo = cargarMiembrosEquipo;
+
+
+
+
   window.aprobarCompletado = async function(completadoId) {
     if(!window.ligaActual){ toast('Sin liga activa'); return; }
     var user = window._currentUser;
@@ -1763,6 +1922,11 @@ onAuthStateChanged(auth, function(user) {
       toast('Completado aprobado - ' + data.retoPts + 'pts sumados');
       await cargarCompletados(window.ligaActual.id);
       await cargarRanking(window.ligaActual.id);
+      if(window._fsCargarFeed) await window._fsCargarFeed(window.ligaActual.id);
+      // Reload stats for the user who completed the reto
+      if(window._fsCargarEstadisticas && window._currentUser && window._currentUser.uid === data.usuarioId) {
+        await window._fsCargarEstadisticas(data.usuarioId);
+      }
     } catch(e) {
       toast('Error: ' + e.message);
     }
@@ -1958,14 +2122,17 @@ onAuthStateChanged(auth, function(user) {
   window.doDelete = function() {
     closeSheet();
     var user=window._currentUser; if(!user) return;
+    var ligaName = currentLeague.name;
     getDoc(doc(db,'ligas',currentLeague.id)).then(function(s){
-      if(!s.exists()) return;
+      if(!s.exists()) { toast('Liga no encontrada'); return; }
       if(s.data().creador!==user.uid){ toast('Solo el creador puede eliminar'); return; }
       return updateDoc(doc(db,'ligas',currentLeague.id),{eliminada:true}).then(function(){
         return setDoc(doc(db,'usuarios',user.uid),{ligas:arrayRemove(currentLeague.id)},{merge:true});
       }).then(function(){ 
-        cargarMisLigas(user.uid); 
-        toast('"'+currentLeague.name+'" eliminada'); 
+        toast('"'+ligaName+'" eliminada');
+        return cargarMisLigas(user.uid);
+      }).then(function(){
+        safeGo('s-dashboard');
       });
     }).catch(function(e){ 
       console.error('doDelete error:', e); 
