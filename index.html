@@ -721,12 +721,6 @@ textarea.inp{resize:vertical;min-height:80px}
   </div>
 </div>
 
-<!-- FULLSCREEN MEDIA VIEWER -->
-<div class="fullscreen-media" id="fullscreen-media">
-  <div class="fullscreen-close" id="fullscreen-close">✕</div>
-  <div id="fullscreen-content"></div>
-</div>
-
 <!-- MODAL DELETE COMPLETADO -->
 <div class="modal-ov" id="m-delete-completado" onclick="closeModal('m-delete-completado')">
   <div class="modal-box" onclick="event.stopPropagation()">
@@ -818,11 +812,8 @@ var RANK={global:[],feb:[],ene:[],dic:[],nov:[]};
 function go(id){
   if(id===CUR)return;
   
-  // Force close fullscreen media viewer on navigation
-  var fullscreenViewer = document.getElementById('fullscreen-media');
-  if(fullscreenViewer && fullscreenViewer.classList.contains('show')) {
-    closeFullscreenMedia();
-  }
+  // Force destroy fullscreen media viewer on navigation
+  destroyFullscreenViewer();
   
   if(id!=='s-login') localStorage.setItem('fg_screen',id);
   var c=document.getElementById(CUR),n=document.getElementById(id);
@@ -1028,9 +1019,26 @@ function openMediaFullscreen(url, type) {
   event.stopPropagation();
   event.preventDefault();
   
-  var viewer = document.getElementById('fullscreen-media');
-  var content = document.getElementById('fullscreen-content');
-  var closeBtn = document.getElementById('fullscreen-close');
+  // First, destroy any existing viewer
+  destroyFullscreenViewer();
+  
+  // Create fresh viewer
+  var viewer = document.createElement('div');
+  viewer.id = 'fullscreen-media';
+  viewer.className = 'fullscreen-media show';
+  viewer.style.display = 'flex';
+  
+  var closeBtn = document.createElement('div');
+  closeBtn.className = 'fullscreen-close';
+  closeBtn.textContent = '✕';
+  closeBtn.onclick = function(e) {
+    e.stopPropagation();
+    closeFullscreenMedia();
+  };
+  
+  var content = document.createElement('div');
+  content.id = 'fullscreen-content';
+  content.onclick = function(e) { e.stopPropagation(); };
   
   if(type === 'image') {
     content.innerHTML = '<img src="'+url+'" oncontextmenu="return false;" style="max-width:100%;max-height:100%;object-fit:contain">';
@@ -1038,28 +1046,17 @@ function openMediaFullscreen(url, type) {
     content.innerHTML = '<video src="'+url+'" controls controlsList="nodownload" playsinline autoplay style="max-width:100%;max-height:100%;object-fit:contain"></video>';
   }
   
-  viewer.classList.add('show');
-  viewer.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+  viewer.appendChild(closeBtn);
+  viewer.appendChild(content);
   
-  // Add event listeners ONLY when viewer is open
-  viewer._clickHandler = function(e) {
+  viewer.onclick = function(e) {
     if(e.target === viewer) closeFullscreenMedia();
   };
-  viewer.addEventListener('click', viewer._clickHandler);
   
-  closeBtn._clickHandler = function(e) {
-    e.stopPropagation();
-    closeFullscreenMedia();
-  };
-  closeBtn.addEventListener('click', closeBtn._clickHandler);
+  document.body.appendChild(viewer);
+  document.body.style.overflow = 'hidden';
   
-  content._clickHandler = function(e) {
-    e.stopPropagation();
-  };
-  content.addEventListener('click', content._clickHandler);
-  
-  console.log('[FULLSCREEN] Opened with listeners');
+  console.log('[FULLSCREEN] Created fresh viewer');
 }
 
 function closeFullscreenMedia(e) {
@@ -1068,38 +1065,16 @@ function closeFullscreenMedia(e) {
     e.preventDefault();
   }
   
+  destroyFullscreenViewer();
+  console.log('[FULLSCREEN] Destroyed viewer');
+}
+
+function destroyFullscreenViewer() {
   var viewer = document.getElementById('fullscreen-media');
-  var content = document.getElementById('fullscreen-content');
-  var closeBtn = document.getElementById('fullscreen-close');
-  
-  if(!viewer) return;
-  
-  // Remove event listeners
-  if(viewer._clickHandler) {
-    viewer.removeEventListener('click', viewer._clickHandler);
-    delete viewer._clickHandler;
+  if(viewer) {
+    viewer.remove();
   }
-  
-  if(closeBtn && closeBtn._clickHandler) {
-    closeBtn.removeEventListener('click', closeBtn._clickHandler);
-    delete closeBtn._clickHandler;
-  }
-  
-  if(content && content._clickHandler) {
-    content.removeEventListener('click', content._clickHandler);
-    delete content._clickHandler;
-  }
-  
-  // Immediate cleanup - no delays
-  viewer.classList.remove('show');
-  viewer.style.display = 'none';
   document.body.style.overflow = '';
-  
-  if(content) {
-    content.innerHTML = '';
-  }
-  
-  console.log('[FULLSCREEN] Closed and cleaned with listeners removed');
 }
 
 
@@ -1713,10 +1688,7 @@ document.addEventListener('click',function(){var p=document.getElementById('info
 // Close fullscreen media with Escape key
 document.addEventListener('keydown', function(e) {
   if(e.key === 'Escape') {
-    var viewer = document.getElementById('fullscreen-media');
-    if(viewer && viewer.classList.contains('show')) {
-      closeFullscreenMedia();
-    }
+    destroyFullscreenViewer();
   }
 });
 
@@ -2390,33 +2362,9 @@ renderRanking();
   window.abrirLigaFS = function(idx) {
     console.log('[ABRIR LIGA] Starting with idx:', idx);
     
-    // FORCE CLOSE fullscreen viewer and remove ALL listeners
-    var fullscreenViewer = document.getElementById('fullscreen-media');
-    var fullscreenContent = document.getElementById('fullscreen-content');
-    var fullscreenClose = document.getElementById('fullscreen-close');
-    
-    if(fullscreenViewer) {
-      // Remove listeners
-      if(fullscreenViewer._clickHandler) {
-        fullscreenViewer.removeEventListener('click', fullscreenViewer._clickHandler);
-        delete fullscreenViewer._clickHandler;
-      }
-      if(fullscreenClose && fullscreenClose._clickHandler) {
-        fullscreenClose.removeEventListener('click', fullscreenClose._clickHandler);
-        delete fullscreenClose._clickHandler;
-      }
-      if(fullscreenContent && fullscreenContent._clickHandler) {
-        fullscreenContent.removeEventListener('click', fullscreenContent._clickHandler);
-        delete fullscreenContent._clickHandler;
-      }
-      
-      // Force hide
-      fullscreenViewer.classList.remove('show');
-      fullscreenViewer.style.display = 'none';
-      if(fullscreenContent) fullscreenContent.innerHTML = '';
-      document.body.style.overflow = '';
-      console.log('[ABRIR LIGA] Forced fullscreen viewer closed and listeners removed');
-    }
+    // NUCLEAR OPTION: Destroy fullscreen viewer completely
+    destroyFullscreenViewer();
+    console.log('[ABRIR LIGA] Destroyed any existing fullscreen viewer');
     
     var l=(window._ligasFS||[])[idx]; 
     if(!l) {
