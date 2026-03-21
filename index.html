@@ -919,13 +919,14 @@ function toast(msg){
 }
 function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){
-  // If closing terms modal with Google user pending, sign them out
-  if(id === 'm-terms' && window._googleNewUser) {
+  // If closing terms modal with Google user pending AND not accepting, sign them out
+  if(id === 'm-terms' && window._googleNewUser && !window._acceptingTerms) {
     console.log('[DEBUG] Terms rejected for Google user, signing out');
-    auth.signOut().then(function() {
-      window._googleNewUser = null;
-      toast('Debes aceptar los términos para usar la app');
-    });
+    if(window.fbSignOut) {
+      window.fbSignOut();
+    }
+    window._googleNewUser = null;
+    toast('Debes aceptar los términos para usar la app');
   }
   
   document.getElementById(id).classList.remove('show');
@@ -2296,6 +2297,9 @@ renderRanking();
   window.acceptTermsAndSignUp = async function() {
     var acceptMarketing = document.getElementById('terms-marketing').checked;
     
+    // Set flag to prevent sign out on modal close
+    window._acceptingTerms = true;
+    
     try {
       // Check if this is a Google sign-up
       if(window._googleNewUser) {
@@ -2368,6 +2372,9 @@ renderRanking();
       console.error('[TERMS] Error accepting terms:', e);
       toast('Error: ' + e.message);
       closeModal('m-terms');
+    } finally {
+      // Clear flag
+      window._acceptingTerms = false;
     }
   };
   
