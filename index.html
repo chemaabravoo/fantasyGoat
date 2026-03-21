@@ -15,7 +15,7 @@ body{font-family:'Montserrat',sans-serif;background:#0a0a0a;display:flex;justify
 .sb{height:44px;background:var(--black);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100;flex-shrink:0}
 .sb .time{font-size:15px;font-weight:700;color:var(--white)}
 .sb .icons{display:flex;gap:6px;align-items:center;color:var(--white);font-size:13px}
-.screen{position:absolute;top:44px;left:0;right:0;bottom:0;background:var(--black);overflow:hidden;opacity:0;pointer-events:none;transform:translateX(30px);transition:opacity .32s cubic-bezier(.4,0,.2,1),transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.screen{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--black);overflow:hidden;opacity:0;pointer-events:none;transform:translateX(30px);transition:opacity .32s cubic-bezier(.4,0,.2,1),transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
 .screen-scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;scrollbar-width:none}
 .screen-scroll::-webkit-scrollbar{display:none}
 .screen.full-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
@@ -317,7 +317,6 @@ textarea.inp{resize:vertical;min-height:80px}
 </head>
 <body>
 <div class="phone" id="phone">
-<div class="sb"><span class="time">9:41</span><div class="icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div></div>
 <div class="toast" id="toast"><span id="t-msg" style="font-size:12px;font-weight:700;color:var(--white)">—</span></div>
 
 <!-- SPLASH -->
@@ -610,7 +609,6 @@ textarea.inp{resize:vertical;min-height:80px}
       </div>
       <div class="lsub" style="padding-left:38px" id="equipo-jornada-status">—</div>
     </div>
-    <button class="bg bsm2" onclick="guardarEquipo()">Guardar</button>
   </div>
   
   <!-- Admin Jornada Controls -->
@@ -618,6 +616,11 @@ textarea.inp{resize:vertical;min-height:80px}
     <button id="btn-iniciar-jornada" class="bg" style="width:100%;padding:12px" onclick="iniciarJornada()">🚀 Iniciar Jornada</button>
     <button id="btn-cerrar-jornada" class="bdanger" style="width:100%;padding:12px;display:none" onclick="cerrarJornada()">⏹️ Cerrar Jornada</button>
     <div id="jornada-countdown" style="display:none;text-align:center;padding:8px;font-size:11px;color:var(--gold);font-weight:700"></div>
+  </div>
+  
+  <!-- Save Button Centered -->
+  <div style="padding:12px 18px;border-bottom:1px solid #111">
+    <button class="bg" style="width:100%;padding:12px" onclick="guardarEquipo()">💾 Guardar Equipo</button>
   </div>
   
   <div class="cwrap">
@@ -736,6 +739,71 @@ textarea.inp{resize:vertical;min-height:80px}
   </div>
 </div>
 
+<!-- MODAL TERMS AND CONDITIONS -->
+<div class="modal-ov" id="m-terms" style="z-index:100000">
+  <div class="modal-box" onclick="event.stopPropagation()" style="max-width:500px;max-height:80vh;overflow-y:auto">
+    <div class="modal-hdr">
+      <div class="modal-title">Términos y Condiciones</div>
+    </div>
+    <div class="modal-body" style="padding:20px">
+      
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:14px;font-weight:800;color:var(--gold);margin-bottom:10px">📋 Política de Privacidad</h3>
+        <p style="font-size:12px;color:var(--gl);line-height:1.6;margin-bottom:10px">
+          Al usar Fantasy GOAT, aceptas que almacenaremos tu información de perfil (email, nombre) y datos de actividad (retos completados, puntos, equipos) para el funcionamiento de la aplicación. Nunca compartiremos tus datos personales con terceros sin tu consentimiento.
+        </p>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:14px;font-weight:800;color:var(--gold);margin-bottom:10px">⚠️ Uso Responsable de Retos</h3>
+        <p style="font-size:12px;color:var(--gl);line-height:1.6;margin-bottom:10px">
+          Fantasy GOAT es una plataforma de entretenimiento entre amigos. Los usuarios son los únicos responsables de los retos que proponen y completan. 
+        </p>
+        <p style="font-size:12px;color:var(--gl);line-height:1.6;margin-bottom:10px">
+          <strong style="color:var(--white)">La empresa NO se hace responsable</strong> de:
+        </p>
+        <ul style="font-size:12px;color:var(--gl);line-height:1.6;margin-left:20px;margin-bottom:10px">
+          <li>Lesiones físicas o daños derivados de retos peligrosos</li>
+          <li>Consecuencias legales de actividades ilegales</li>
+          <li>Daños a terceros o propiedades</li>
+          <li>Problemas de salud mental o física</li>
+        </ul>
+        <p style="font-size:12px;color:var(--gold);line-height:1.6;margin-bottom:10px">
+          <strong>Por favor, usa la aplicación con sentido común y responsabilidad.</strong> Evita retos que puedan poner en riesgo tu salud, seguridad o la de otros.
+        </p>
+      </div>
+
+      <div style="margin-bottom:20px;padding:12px;background:rgba(239,184,16,0.08);border:1px solid rgba(239,184,16,0.2);border-radius:8px">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:12px;color:var(--white)">
+          <input type="checkbox" id="terms-privacy" style="margin-top:2px;width:16px;height:16px;cursor:pointer" onchange="checkTermsAccepted()">
+          <span>Acepto la Política de Privacidad y entiendo cómo se usarán mis datos</span>
+        </label>
+      </div>
+
+      <div style="margin-bottom:20px;padding:12px;background:rgba(239,184,16,0.08);border:1px solid rgba(239,184,16,0.2);border-radius:8px">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:12px;color:var(--white)">
+          <input type="checkbox" id="terms-responsibility" style="margin-top:2px;width:16px;height:16px;cursor:pointer" onchange="checkTermsAccepted()">
+          <span>Entiendo que soy responsable del uso que hago de la app y me comprometo a usar retos con sentido común y responsabilidad</span>
+        </label>
+      </div>
+
+      <div style="margin-bottom:20px;padding:12px;background:rgba(100,100,100,0.1);border:1px solid rgba(100,100,100,0.2);border-radius:8px">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:12px;color:var(--gl)">
+          <input type="checkbox" id="terms-marketing" style="margin-top:2px;width:16px;height:16px;cursor:pointer">
+          <span>(Opcional) Acepto recibir emails sobre actualizaciones y novedades de Fantasy GOAT</span>
+        </label>
+      </div>
+
+      <button class="bg" id="btn-accept-terms" style="width:100%;margin-bottom:8px;opacity:0.5" onclick="acceptTermsAndSignUp()" disabled>
+        Aceptar y Crear Cuenta
+      </button>
+      <button class="bw" style="width:100%" onclick="closeModal('m-terms')">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL FEEDBACK -->
 <div class="modal-ov" id="m-feedback" onclick="closeModal('m-feedback')">
   <div class="modal-box" onclick="event.stopPropagation()">
@@ -783,13 +851,13 @@ textarea.inp{resize:vertical;min-height:80px}
 
 <!-- LEAGUE SHEET -->
 <div class="sheet-ov" id="league-sheet" onclick="closeSheet()">
-  <div class="sheet-box" id="sheet-box">
+  <div class="sheet-box" id="sheet-box" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
     <div class="sheet-title" id="sheet-league-name">—</div>
-    <div class="sheet-btn" onclick="toast('Enlace copiado');closeSheet()">Compartir liga</div>
-    <div class="sheet-btn" onclick="toast('Ajustes...');closeSheet()">Ajustes de la liga</div>
-    <div class="sheet-btn danger" onclick="showLeaveConfirm()">Salirse de la liga</div>
-    <div class="sheet-btn danger" onclick="showDeleteConfirm()">Eliminar la liga</div>
+    <div class="sheet-btn" onclick="compartirLiga()">📱 Compartir liga</div>
+    <div class="sheet-btn" id="sheet-ajustes-btn" onclick="abrirAjustesLiga()">⚙️ Ajustes de la liga</div>
+    <div class="sheet-btn danger" onclick="salirDeLiga()">🚪 Salirse de la liga</div>
+    <div class="sheet-btn danger" id="sheet-eliminar-btn" onclick="confirmarEliminarLiga()" style="display:none">🗑️ Eliminar la liga</div>
   </div>
 </div>
 
@@ -861,6 +929,92 @@ function openLeagueSheet(name,idx){
   document.getElementById('league-sheet').classList.add('show');
 }
 function closeSheet(){document.getElementById('league-sheet').classList.remove('show');}
+
+function compartirLiga() {
+  if(!window.currentLeagueSheet) return;
+  var liga = window.currentLeagueSheet;
+  var url = 'https://chemaabravoo.github.io/fantasyGoat/?liga=' + liga.id;
+  
+  if(navigator.share) {
+    navigator.share({
+      title: 'Únete a ' + liga.name,
+      text: 'ID: ' + liga.id + (liga.data.pass ? '\nContraseña: ' + liga.data.pass : ''),
+      url: url
+    }).then(function() {
+      toast('Compartido');
+      closeSheet();
+    }).catch(function(e) {
+      console.log('Share cancelled', e);
+    });
+  } else {
+    navigator.clipboard.writeText(url).then(function() {
+      toast('Enlace copiado');
+      closeSheet();
+    });
+  }
+}
+
+function abrirAjustesLiga() {
+  if(!window.currentLeagueSheet) return;
+  var liga = window.currentLeagueSheet;
+  
+  // Check if user is admin
+  if(!window._currentUser || liga.creador !== window._currentUser.uid) {
+    toast('Solo el admin puede editar los ajustes');
+    closeSheet();
+    return;
+  }
+  
+  toast('Ajustes de liga próximamente');
+  closeSheet();
+  // TODO: Implement edit liga settings
+}
+
+function salirDeLiga() {
+  if(!window.currentLeagueSheet) return;
+  var liga = window.currentLeagueSheet;
+  
+  if(!confirm('¿Seguro que quieres salir de "' + liga.name + '"?\n\nPerderás acceso a todos los retos y ranking de esta liga.')) {
+    return;
+  }
+  
+  closeSheet();
+  
+  if(window.fbSalirDeLiga) {
+    window.fbSalirDeLiga(liga.id);
+  } else {
+    toast('Error: función no disponible');
+  }
+}
+
+function confirmarEliminarLiga() {
+  if(!window.currentLeagueSheet) return;
+  var liga = window.currentLeagueSheet;
+  
+  // Double check admin
+  if(!window._currentUser || liga.creador !== window._currentUser.uid) {
+    toast('Solo el admin puede eliminar la liga');
+    closeSheet();
+    return;
+  }
+  
+  if(!confirm('⚠️ ELIMINAR LIGA\n\n¿Estás seguro de que quieres eliminar "' + liga.name + '" permanentemente?\n\nEsto eliminará:\n- Todos los retos\n- El ranking\n- Los equipos\n- El historial completo\n\nEsta acción NO se puede deshacer.')) {
+    return;
+  }
+  
+  if(!confirm('Última confirmación: ¿ELIMINAR "' + liga.name + '" para siempre?')) {
+    return;
+  }
+  
+  closeSheet();
+  
+  if(window.doDeleteLiga) {
+    window.doDeleteLiga(liga.id);
+  } else {
+    toast('Error: función no disponible');
+  }
+}
+
 
 function confirmarEliminarCuenta(){
   if(!confirm('⚠️ ADVERTENCIA\n\n¿Estás seguro de que quieres eliminar tu cuenta permanentemente?\n\nEsto eliminará:\n- Tu perfil\n- Tus equipos\n- Tu historial en todas las ligas\n\nEsta acción NO se puede deshacer.')) return;
@@ -1016,8 +1170,10 @@ function approvePost(el){el.closest('.vbar').innerHTML='<div style="padding:4px 
 function rejectPost(el){el.closest('.vbar').innerHTML='<div style="padding:4px 14px;font-size:11px;font-weight:700;color:var(--red)">Rechazado</div>';}
 
 function openMediaFullscreen(url, type) {
-  event.stopPropagation();
-  event.preventDefault();
+  if(window.event) {
+    window.event.stopPropagation();
+    window.event.preventDefault();
+  }
   
   // First, destroy any existing viewer
   destroyFullscreenViewer();
@@ -1026,11 +1182,12 @@ function openMediaFullscreen(url, type) {
   var viewer = document.createElement('div');
   viewer.id = 'fullscreen-media';
   viewer.className = 'fullscreen-media show';
-  viewer.style.display = 'flex';
+  viewer.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.95);z-index:99999;display:flex;align-items:center;justify-content:center;pointer-events:auto;visibility:visible';
   
   var closeBtn = document.createElement('div');
   closeBtn.className = 'fullscreen-close';
   closeBtn.textContent = '✕';
+  closeBtn.style.cssText = 'position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10001';
   closeBtn.onclick = function(e) {
     e.stopPropagation();
     closeFullscreenMedia();
@@ -1071,8 +1228,8 @@ function closeFullscreenMedia(e) {
 
 function destroyFullscreenViewer() {
   var viewer = document.getElementById('fullscreen-media');
-  if(viewer) {
-    viewer.remove();
+  if(viewer && viewer.parentNode) {
+    viewer.parentNode.removeChild(viewer);
   }
   document.body.style.overflow = '';
 }
@@ -2104,10 +2261,65 @@ renderRanking();
     var pass =document.getElementById('inp-pass').value;
     if(!email||!pass){ toast('Rellena email y contraseña'); return; }
     if(pass.length<6){ toast('Contraseña mínimo 6 caracteres'); return; }
-    createUserWithEmailAndPassword(auth,email,pass)
-      .then(function(cred){ return updateProfile(cred.user,{displayName:email.split('@')[0]}); })
-      .catch(function(e){ toast(authErr(e)); });
+    
+    // Store credentials temporarily
+    window._signupEmail = email;
+    window._signupPass = pass;
+    
+    // Reset checkboxes
+    document.getElementById('terms-privacy').checked = false;
+    document.getElementById('terms-responsibility').checked = false;
+    document.getElementById('terms-marketing').checked = false;
+    checkTermsAccepted();
+    
+    // Show terms modal
+    openModal('m-terms');
   };
+  
+  window.acceptTermsAndSignUp = function() {
+    if(!window._signupEmail || !window._signupPass) {
+      toast('Error: datos no disponibles');
+      return;
+    }
+    
+    var acceptMarketing = document.getElementById('terms-marketing').checked;
+    
+    createUserWithEmailAndPassword(auth, window._signupEmail, window._signupPass)
+      .then(function(cred){ 
+        // Save marketing preference
+        if(acceptMarketing) {
+          setDoc(doc(db, 'usuarios', cred.user.uid), {
+            acceptsMarketing: true,
+            termsAcceptedAt: Date.now()
+          }, {merge: true});
+        }
+        return updateProfile(cred.user,{displayName: window._signupEmail.split('@')[0]}); 
+      })
+      .then(function() {
+        closeModal('m-terms');
+        window._signupEmail = null;
+        window._signupPass = null;
+      })
+      .catch(function(e){ 
+        toast(authErr(e)); 
+        closeModal('m-terms');
+      });
+  };
+  
+  function checkTermsAccepted() {
+    var privacy = document.getElementById('terms-privacy').checked;
+    var responsibility = document.getElementById('terms-responsibility').checked;
+    var btn = document.getElementById('btn-accept-terms');
+    
+    if(privacy && responsibility) {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+    }
+  }
+
 
   window.fbGoogle = function() {
     signInWithPopup(auth,provider)
@@ -3020,8 +3232,15 @@ renderRanking();
 
   window.openLeagueSheetFS = function(idx) {
     var l=(window._ligasFS||[])[idx]; if(!l) return;
-    currentLeague={name:l.nombre,idx:idx,id:l.id,creador:l.creador};
+    window.currentLeagueSheet = {name:l.nombre,idx:idx,id:l.id,creador:l.creador, data:l};
+    
     document.getElementById('sheet-league-name').textContent=l.nombre;
+    
+    // Show delete button only for admin
+    var isAdmin = window._currentUser && l.creador === window._currentUser.uid;
+    var deleteBtn = document.getElementById('sheet-eliminar-btn');
+    if(deleteBtn) deleteBtn.style.display = isAdmin ? 'block' : 'none';
+    
     resetSheet();
     document.getElementById('league-sheet').classList.add('show');
   };
@@ -3278,6 +3497,34 @@ renderRanking();
 
   window.fbGetDoc = async function(collectionPath, docId) {
     return await getDoc(doc(db, collectionPath, docId));
+  };
+
+  // Leave liga
+  window.fbSalirDeLiga = async function(ligaId) {
+    var user = window._currentUser;
+    if(!user) { toast('Debes iniciar sesión'); return; }
+    
+    try {
+      // Remove user from liga members
+      await updateDoc(doc(db,'ligas',ligaId), {
+        miembros: arrayRemove(user.uid)
+      });
+      
+      // Remove liga from user's ligas
+      await updateDoc(doc(db,'usuarios',user.uid), {
+        ligas: arrayRemove(ligaId)
+      });
+      
+      toast('Has salido de la liga');
+      
+      // Reload ligas and go to dashboard
+      await cargarMisLigas(user.uid);
+      safeGo('s-dashboard');
+      
+    } catch(e) {
+      console.error('Error leaving liga:', e);
+      toast('Error: ' + e.message);
+    }
   };
 
 </script>
