@@ -1,0 +1,24 @@
+{
+  "name": "Fantasy GOAT",
+  "short_name": "GOAT",
+  "description": "Aplicación de retos y equipos Fantasy",
+  "start_url": "/fantasyGoat/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#EFB810",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
