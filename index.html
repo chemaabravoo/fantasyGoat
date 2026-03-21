@@ -11,7 +11,9 @@
 html,body{height:100%}
 body{font-family:'Montserrat',sans-serif;background:#0a0a0a;display:flex;justify-content:center;align-items:center;overflow:hidden}
 .phone{width:390px;height:844px;background:var(--black);border-radius:44px;overflow:hidden;position:relative;box-shadow:0 0 0 2px #222,0 0 60px rgba(239,184,16,.08),0 40px 80px rgba(0,0,0,.9);flex-shrink:0}
-@media(max-width:500px){body{display:block}.phone{width:100vw;height:100svh;border-radius:0;box-shadow:none}.sb{display:none}.screen{top:0!important}}
+@media(max-width:500px){body{display:block}.phone{width:100vw;height:100svh;border-radius:0;box-shadow:none}.screen{top:0!important}}
+@media(min-width:501px) and (max-width:900px){.phone{width:100%;max-width:500px;height:100vh;border-radius:20px}}
+@media(min-width:901px){.phone{width:390px;height:844px}}
 .sb{height:44px;background:var(--black);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100;flex-shrink:0}
 .sb .time{font-size:15px;font-weight:700;color:var(--white)}
 .sb .icons{display:flex;gap:6px;align-items:center;color:var(--white);font-size:13px}
@@ -50,7 +52,7 @@ body{font-family:'Montserrat',sans-serif;background:#0a0a0a;display:flex;justify
 .inp:focus{border-color:var(--gold)}
 .inp::placeholder{color:#444}
 textarea.inp{resize:vertical;min-height:80px}
-.bg{width:100%;padding:16px;background:var(--gold);color:var(--black);border:none;border-radius:14px;font-family:'Montserrat',sans-serif;font-weight:900;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.bg{width:100%;padding:16px;background:var(--gold);color:var(--black);border:none;border-radius:14px;font-family:'Montserrat',sans-serif;font-weight:900;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;text-align:center}
 .bg::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent 60%)}
 .bg:active{transform:scale(.97)}
 .bg:hover{box-shadow:0 0 24px var(--gglow)}
@@ -916,7 +918,18 @@ function toast(msg){
   TT=setTimeout(function(){t.classList.remove('show');},2200);
 }
 function openModal(id){document.getElementById(id).classList.add('show');}
-function closeModal(id){document.getElementById(id).classList.remove('show');}
+function closeModal(id){
+  // If closing terms modal with Google user pending, sign them out
+  if(id === 'm-terms' && window._googleNewUser) {
+    console.log('[DEBUG] Terms rejected for Google user, signing out');
+    auth.signOut().then(function() {
+      window._googleNewUser = null;
+      toast('Debes aceptar los términos para usar la app');
+    });
+  }
+  
+  document.getElementById(id).classList.remove('show');
+}
 
 function openLeagueSheet(name,idx){
   currentLeague={name:name,idx:idx};
@@ -1002,10 +1015,18 @@ function confirmarEliminarLiga() {
     return;
   }
   
+  // Set currentLeague so doDelete can use it
+  window.currentLeague = {
+    id: liga.id,
+    name: liga.name,
+    creador: liga.creador,
+    miembros: liga.data.miembros || [window._currentUser.uid]
+  };
+  
   closeSheet();
   
-  if(window.doDeleteLiga) {
-    window.doDeleteLiga(liga.id);
+  if(window.doDelete) {
+    window.doDelete();
   } else {
     toast('Error: función no disponible');
   }
@@ -2272,34 +2293,52 @@ renderRanking();
     openModal('m-terms');
   };
   
-  window.acceptTermsAndSignUp = function() {
-    if(!window._signupEmail || !window._signupPass) {
-      toast('Error: datos no disponibles');
-      return;
-    }
-    
+  window.acceptTermsAndSignUp = async function() {
     var acceptMarketing = document.getElementById('terms-marketing').checked;
     
-    createUserWithEmailAndPassword(auth, window._signupEmail, window._signupPass)
-      .then(function(cred){ 
-        // Save marketing preference
-        if(acceptMarketing) {
-          setDoc(doc(db, 'usuarios', cred.user.uid), {
-            acceptsMarketing: true,
-            termsAcceptedAt: Date.now()
-          }, {merge: true});
-        }
-        return updateProfile(cred.user,{displayName: window._signupEmail.split('@')[0]}); 
-      })
-      .then(function() {
+    try {
+      // Check if this is a Google sign-up
+      if(window._googleNewUser) {
+        var user = window._googleNewUser;
+        
+        // Save terms acceptance for Google user
+        await setDoc(doc(db, 'usuarios', user.uid), {
+          ligas: [],
+          acceptsMarketing: acceptMarketing,
+          termsAcceptedAt: Date.now()
+        }, {merge: true});
+        
+        closeModal('m-terms');
+        window._googleNewUser = null;
+        
+        toast('¡Bienvenido ' + user.displayName + '!');
+        // Navigation handled by onAuthStateChanged
+        
+      } else if(window._signupEmail && window._signupPass) {
+        // Email/password sign-up
+        var cred = await createUserWithEmailAndPassword(auth, window._signupEmail, window._signupPass);
+        
+        // Save terms acceptance
+        await setDoc(doc(db, 'usuarios', cred.user.uid), {
+          ligas: [],
+          acceptsMarketing: acceptMarketing,
+          termsAcceptedAt: Date.now()
+        }, {merge: true});
+        
+        await updateProfile(cred.user, {displayName: window._signupEmail.split('@')[0]});
+        
         closeModal('m-terms');
         window._signupEmail = null;
         window._signupPass = null;
-      })
-      .catch(function(e){ 
-        toast(authErr(e)); 
-        closeModal('m-terms');
-      });
+        
+      } else {
+        toast('Error: datos no disponibles');
+      }
+    } catch(e) {
+      console.error('Error accepting terms:', e);
+      toast(authErr(e));
+      closeModal('m-terms');
+    }
   };
   
   function checkTermsAccepted() {
@@ -2319,9 +2358,35 @@ renderRanking();
 
   window.fbGoogle = function() {
     signInWithPopup(auth,provider)
-      .then(function(result){
+      .then(async function(result){
         console.log('[DEBUG] Google sign-in success:', result.user.uid);
-        // Navigation is handled by onAuthStateChanged, but log for debugging
+        
+        // Check if this is a new user
+        var isNewUser = result._tokenResponse && result._tokenResponse.isNewUser;
+        
+        // Also check if user doc exists in Firestore
+        var userDoc = await getDoc(doc(db, 'usuarios', result.user.uid));
+        var userExists = userDoc.exists();
+        
+        console.log('[DEBUG] isNewUser:', isNewUser, 'userExists:', userExists);
+        
+        // If new user, show terms modal
+        if(isNewUser || !userExists) {
+          console.log('[DEBUG] New Google user, showing terms');
+          
+          // Store user temporarily
+          window._googleNewUser = result.user;
+          
+          // Reset checkboxes
+          document.getElementById('terms-privacy').checked = false;
+          document.getElementById('terms-responsibility').checked = false;
+          document.getElementById('terms-marketing').checked = false;
+          checkTermsAccepted();
+          
+          // Show terms modal
+          openModal('m-terms');
+        }
+        // If existing user, navigation is handled by onAuthStateChanged
       })
       .catch(function(e){ 
         if(e.code!=='auth/popup-closed-by-user') {
@@ -2330,6 +2395,7 @@ renderRanking();
         }
       });
   };
+
 
   window.fbSignOut = function() {
     localStorage.removeItem('fg_screen');
