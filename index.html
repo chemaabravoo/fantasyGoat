@@ -2309,9 +2309,12 @@ renderRanking();
         
         // Save terms acceptance for Google user
         await setDoc(doc(db, 'usuarios', user.uid), {
+          email: user.email,
+          nombre: user.displayName || user.email.split('@')[0],
           ligas: [],
           acceptsMarketing: acceptMarketing,
-          termsAcceptedAt: Date.now()
+          termsAcceptedAt: Date.now(),
+          provider: 'google'
         }, {merge: true});
         
         console.log('[TERMS] Terms saved, closing modal');
@@ -2339,14 +2342,19 @@ renderRanking();
         
         console.log('[TERMS] Account created:', cred.user.uid);
         
+        var displayName = window._signupEmail.split('@')[0];
+        
         // Save terms acceptance
         await setDoc(doc(db, 'usuarios', cred.user.uid), {
+          email: window._signupEmail,
+          nombre: displayName,
           ligas: [],
           acceptsMarketing: acceptMarketing,
-          termsAcceptedAt: Date.now()
+          termsAcceptedAt: Date.now(),
+          provider: 'email'
         }, {merge: true});
         
-        await updateProfile(cred.user, {displayName: window._signupEmail.split('@')[0]});
+        await updateProfile(cred.user, {displayName: displayName});
         
         console.log('[TERMS] Terms saved, closing modal');
         closeModal('m-terms');
@@ -2620,8 +2628,13 @@ renderRanking();
     
     if(!snap.exists()){ 
       console.log('[DEBUG cargarMisLigas] User doc does not exist, creating...');
-      // Create empty user doc for new users
-      await setDoc(doc(db,'usuarios',uid), { ligas: [] });
+      var currentUser = window._currentUser;
+      // Create empty user doc for new users with email and name
+      await setDoc(doc(db,'usuarios',uid), { 
+        ligas: [],
+        email: currentUser?.email || '',
+        nombre: currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Usuario'
+      });
       renderLigasFS([]); 
       return; 
     }
