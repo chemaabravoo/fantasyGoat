@@ -334,7 +334,7 @@ textarea.inp{resize:vertical;min-height:80px}
 <!-- SPLASH -->
 <div class="screen active" id="s-loading" style="display:flex;align-items:center;justify-content:center;background:var(--black)">
   <div style="text-align:center">
-    <img src="https://chemaabravoo.github.io/fantasyGoat/logo.png" alt="Fantasy GOAT" style="width:120px;height:120px;filter:drop-shadow(0 0 14px var(--gglow));margin-bottom:16px;animation:pulse 1.5s infinite">
+    <img src="logo.png" alt="Fantasy GOAT" style="width:120px;height:120px;filter:drop-shadow(0 0 14px var(--gglow));margin-bottom:16px;animation:pulse 1.5s infinite">
     <div style="font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:2px;color:var(--gold)">Cargando...</div>
   </div>
 </div>
@@ -343,7 +343,7 @@ textarea.inp{resize:vertical;min-height:80px}
 <div class="screen full-scroll" id="s-login">
   <div style="flex:1;display:flex;flex-direction:column;padding:32px 28px;min-height:580px">
     <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:40px">
-      <img src="https://chemaabravoo.github.io/fantasyGoat/logo.png" alt="Fantasy GOAT" style="width:230px;height:230px;filter:drop-shadow(0 0 14px var(--gglow));margin-bottom:8px;display:block">
+      <img src="logo.png" alt="Fantasy GOAT" style="width:230px;height:230px;filter:drop-shadow(0 0 14px var(--gglow));margin-bottom:8px;display:block">
     </div>
     <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px">
       <div class="iw"><label class="il">Email</label><input class="inp" id="inp-email" type="email" placeholder="tu@email.com"></div>
@@ -486,11 +486,11 @@ textarea.inp{resize:vertical;min-height:80px}
   </div>
   <div id="tiktok-wrap"></div>
   <div class="bnav">
-    <div class="ni active" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div>
-    <div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div>
-    <div class="nc" onclick="nav('s-goat',2)">🐐</div>
-    <div class="ni" onclick="nav('s-equipo',3)"><span class="icon">⭐</span><span class="lbl">Equipo</span></div>
-    <div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div>
+    <div class="ni active" onclick="nav('s-home',0)"><span class="icon"><img src="icono casa.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Foro</span></div>
+    <div class="ni" onclick="nav('s-ranking',1)"><span class="icon"><img src="icono trofeo.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Ranking</span></div>
+    <div class="nc" onclick="nav('s-goat',2)"><img src="logo.png" style="width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 0 8px var(--gglow))"></div>
+    <div class="ni" onclick="nav('s-equipo',3)"><span class="icon"><img src="icono estrella.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Equipo</span></div>
+    <div class="ni" onclick="nav('s-stats',4)"><span class="icon"><img src="icono perfil.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Perfil</span></div>
   </div>
 </div>
 
@@ -534,7 +534,7 @@ textarea.inp{resize:vertical;min-height:80px}
       </div>
     </div>
   </div>
-  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc active" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-equipo',3)"><span class="icon">⭐</span><span class="lbl">Equipo</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
+  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon"><img src="icono casa.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon"><img src="icono trofeo.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Ranking</span></div><div class="nc active" onclick="nav('s-goat',2)"><img src="logo.png" style="width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 0 8px var(--gglow))"></div><div class="ni" onclick="nav('s-equipo',3)"><span class="icon"><img src="icono estrella.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Equipo</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon"><img src="icono perfil.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Perfil</span></div></div>
 </div>
 
 <!-- CREAR RETO -->
@@ -580,7 +580,7 @@ textarea.inp{resize:vertical;min-height:80px}
     <div id="rank-global-label" style="display:none;padding:4px 20px 4px;flex-shrink:0"><span class="global-pill">Acumulado total · todos los meses</span></div>
     <div id="rank-list" class="rank-list"></div>
   </div>
-  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni active" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-equipo',3)"><span class="icon">⭐</span><span class="lbl">Equipo</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
+  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon"><img src="icono casa.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Foro</span></div><div class="ni active" onclick="nav('s-ranking',1)"><span class="icon"><img src="icono trofeo.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)"><img src="logo.png" style="width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 0 8px var(--gglow))"></div><div class="ni" onclick="nav('s-equipo',3)"><span class="icon"><img src="icono estrella.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Equipo</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon"><img src="icono perfil.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Perfil</span></div></div>
 </div>
 
 <!-- PERFIL -->
@@ -608,7 +608,7 @@ textarea.inp{resize:vertical;min-height:80px}
   </div>
   <div style="padding:14px 18px 8px"><button class="bgo" onclick="nav('s-equipo',3)">Ver Equipo</button></div>
   </div>
-  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni" onclick="nav('s-equipo',3)"><span class="icon">⭐</span><span class="lbl">Equipo</span></div><div class="ni active" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
+  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon"><img src="icono casa.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon"><img src="icono trofeo.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)"><img src="logo.png" style="width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 0 8px var(--gglow))"></div><div class="ni" onclick="nav('s-equipo',3)"><span class="icon"><img src="icono estrella.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Equipo</span></div><div class="ni active" onclick="nav('s-stats',4)"><span class="icon"><img src="icono perfil.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Perfil</span></div></div>
 </div>
 
 <!-- EQUIPO -->
@@ -662,7 +662,7 @@ textarea.inp{resize:vertical;min-height:80px}
       <div class="pick-acts"><button class="pick-cancel" onclick="closePicker()">Cancelar</button><button class="bg" style="flex:2" onclick="confirmPick()">Confirmar</button></div>
     </div>
   </div>
-  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon">🏠</span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon">🏆</span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)">🐐</div><div class="ni active" onclick="nav('s-equipo',3)"><span class="icon">⭐</span><span class="lbl">Equipo</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon">👤</span><span class="lbl">Perfil</span></div></div>
+  <div class="bnav"><div class="ni" onclick="nav('s-home',0)"><span class="icon"><img src="icono casa.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Foro</span></div><div class="ni" onclick="nav('s-ranking',1)"><span class="icon"><img src="icono trofeo.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Ranking</span></div><div class="nc" onclick="nav('s-goat',2)"><img src="logo.png" style="width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 0 8px var(--gglow))"></div><div class="ni active" onclick="nav('s-equipo',3)"><span class="icon"><img src="icono estrella.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Equipo</span></div><div class="ni" onclick="nav('s-stats',4)"><span class="icon"><img src="icono perfil.png" style="width:24px;height:24px;object-fit:contain"></span><span class="lbl">Perfil</span></div></div>
 </div>
 
 <!-- MODAL INSTRUCCIONES -->
