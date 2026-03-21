@@ -1003,7 +1003,7 @@ function renderFeed(){
       mediaHtml = '<div class="fp-media-carousel" id="'+carouselId+'" style="position:relative;overflow:hidden;touch-action:pan-y">';
       
       if(s.imagenUrl) {
-        mediaHtml += '<div class="carousel-slide active"><img src="'+s.imagenUrl+'" oncontextmenu="return false;" ondragstart="return false;" onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:32px;margin-bottom:8px&quot;>📷</div><div style=&quot;font-size:11px&quot;>Imagen no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover;pointer-events:auto;user-select:none;-webkit-user-select:none;cursor:pointer" onclick="openMediaFullscreen(\''+s.imagenUrl+'\',\'image\')"><span class="media-tag">'+s.mediaType+'</span></div>';
+        mediaHtml += '<div class="carousel-slide active"><img src="'+s.imagenUrl+'" oncontextmenu="return false;" ondragstart="return false;" onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:32px;margin-bottom:8px&quot;>📷</div><div style=&quot;font-size:11px&quot;>Imagen no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover;pointer-events:auto;user-select:none;-webkit-user-select:none;cursor:pointer" onclick="event.stopPropagation();event.preventDefault();openMediaFullscreen(\''+s.imagenUrl+'\',\'image\')"><span class="media-tag">'+s.mediaType+'</span></div>';
       } else if(s.videoUrl) {
         mediaHtml += '<div class="carousel-slide active"><video src="'+s.videoUrl+'" controls controlsList="nodownload" playsinline oncontextmenu="return false;" onerror="this.parentElement.innerHTML=\'<div style=&quot;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--gray)&quot;><div style=&quot;font-size:32px;margin-bottom:8px&quot;>🎥</div><div style=&quot;font-size:11px&quot;>Video no disponible</div></div>\'" style="width:100%;height:100%;object-fit:cover"></video><span class="media-tag">'+s.mediaType+'</span></div>';
       }
@@ -1038,6 +1038,7 @@ function openMediaFullscreen(url, type) {
   }
   
   viewer.classList.add('show');
+  viewer.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
 
@@ -1052,13 +1053,16 @@ function closeFullscreenMedia(e) {
   
   if(!viewer) return;
   
+  // Immediate cleanup - no delays
   viewer.classList.remove('show');
+  viewer.style.display = 'none';
   document.body.style.overflow = '';
   
-  // Clean up immediately
   if(content) {
     content.innerHTML = '';
   }
+  
+  console.log('[FULLSCREEN] Closed and cleaned');
 }
 
 
@@ -2347,7 +2351,26 @@ renderRanking();
   }
 
   window.abrirLigaFS = function(idx) {
-    var l=(window._ligasFS||[])[idx]; if(!l) return;
+    console.log('[ABRIR LIGA] Starting with idx:', idx);
+    
+    // FORCE CLOSE fullscreen viewer first
+    var fullscreenViewer = document.getElementById('fullscreen-media');
+    if(fullscreenViewer) {
+      fullscreenViewer.classList.remove('show');
+      fullscreenViewer.style.display = 'none';
+      var content = document.getElementById('fullscreen-content');
+      if(content) content.innerHTML = '';
+      document.body.style.overflow = '';
+      console.log('[ABRIR LIGA] Forced fullscreen viewer closed');
+    }
+    
+    var l=(window._ligasFS||[])[idx]; 
+    if(!l) {
+      console.error('[ABRIR LIGA] Liga not found at index:', idx);
+      return;
+    }
+    
+    console.log('[ABRIR LIGA] Opening liga:', l.nombre);
     window.ligaActual=l;
     
     // Save current liga to localStorage
@@ -2369,7 +2392,10 @@ renderRanking();
       window.actualizarEstadisticasPerfil();
     }
     
-    safeGo('s-home');
+    // Small delay to ensure fullscreen is fully closed
+    setTimeout(function() {
+      safeGo('s-home');
+    }, 50);
   };
 
   // ── Retos ────────────────────────────────────────────────
