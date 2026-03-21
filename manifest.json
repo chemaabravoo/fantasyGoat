@@ -1,6 +1,6 @@
 {
-  "name": "Fantasy GOAT",
-  "short_name": "GOAT",
+  "name": "GOATEN",
+  "short_name": "GOATEN",
   "description": "Aplicación de retos y equipos Fantasy",
   "start_url": "/fantasyGoat/",
   "display": "standalone",
@@ -9,10 +9,16 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "logo.png",
+      "src": "logo-app-icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
