@@ -2301,6 +2301,8 @@ renderRanking();
       if(window._googleNewUser) {
         var user = window._googleNewUser;
         
+        console.log('[TERMS] Accepting terms for Google user:', user.uid);
+        
         // Save terms acceptance for Google user
         await setDoc(doc(db, 'usuarios', user.uid), {
           ligas: [],
@@ -2308,18 +2310,30 @@ renderRanking();
           termsAcceptedAt: Date.now()
         }, {merge: true});
         
+        console.log('[TERMS] Terms saved, closing modal');
         closeModal('m-terms');
-        window._googleNewUser = null;
         
         toast('¡Bienvenido ' + user.displayName + '!');
         
-        // Force navigation since user is already authenticated
-        await cargarMisLigas(user.uid);
-        safeGo('s-dashboard');
+        // Set current user and navigate
+        window._currentUser = user;
+        updateUI(user);
+        
+        console.log('[TERMS] Loading ligas...');
+        cargarMisLigas(user.uid).then(function() {
+          console.log('[TERMS] Ligas loaded, navigating to dashboard');
+          safeGo('s-dashboard');
+        });
+        
+        window._googleNewUser = null;
         
       } else if(window._signupEmail && window._signupPass) {
+        console.log('[TERMS] Creating email account...');
+        
         // Email/password sign-up
         var cred = await createUserWithEmailAndPassword(auth, window._signupEmail, window._signupPass);
+        
+        console.log('[TERMS] Account created:', cred.user.uid);
         
         // Save terms acceptance
         await setDoc(doc(db, 'usuarios', cred.user.uid), {
@@ -2330,20 +2344,29 @@ renderRanking();
         
         await updateProfile(cred.user, {displayName: window._signupEmail.split('@')[0]});
         
+        console.log('[TERMS] Terms saved, closing modal');
         closeModal('m-terms');
+        
+        // Set current user and navigate
+        window._currentUser = cred.user;
+        updateUI(cred.user);
+        
+        console.log('[TERMS] Loading ligas...');
+        cargarMisLigas(cred.user.uid).then(function() {
+          console.log('[TERMS] Ligas loaded, navigating to dashboard');
+          safeGo('s-dashboard');
+        });
+        
         window._signupEmail = null;
         window._signupPass = null;
         
-        // Force navigation
-        await cargarMisLigas(cred.user.uid);
-        safeGo('s-dashboard');
-        
       } else {
+        console.error('[TERMS] No signup data available');
         toast('Error: datos no disponibles');
       }
     } catch(e) {
-      console.error('Error accepting terms:', e);
-      toast(authErr(e));
+      console.error('[TERMS] Error accepting terms:', e);
+      toast('Error: ' + e.message);
       closeModal('m-terms');
     }
   };
