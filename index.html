@@ -891,6 +891,12 @@ function go(id){
   destroyFullscreenViewer();
   
   if(id!=='s-login') localStorage.setItem('fg_screen',id);
+  
+  // Push state to browser history for Android back button
+  if(window.history && window.history.pushState) {
+    window.history.pushState({screen: id}, '', '');
+  }
+  
   var c=document.getElementById(CUR),n=document.getElementById(id);
   if(!n)return;
   c.classList.remove('active');c.classList.add('prev');
@@ -990,38 +996,65 @@ function abrirAjustesLiga() {
 }
 
 function salirDeLiga() {
-  if(!window.currentLeagueSheet) return;
+  console.log('[SALIR] Iniciando salir de liga');
+  console.log('[SALIR] currentLeagueSheet:', window.currentLeagueSheet);
+  
+  if(!window.currentLeagueSheet) {
+    console.error('[SALIR] No hay liga seleccionada en sheet');
+    toast('Error: No hay liga seleccionada');
+    return;
+  }
+  
   var liga = window.currentLeagueSheet;
+  console.log('[SALIR] Liga a salir:', liga.name, liga.id);
   
   if(!confirm('¿Seguro que quieres salir de "' + liga.name + '"?\n\nPerderás acceso a todos los retos y ranking de esta liga.')) {
+    console.log('[SALIR] Usuario canceló');
     return;
   }
   
   closeSheet();
   
+  console.log('[SALIR] Llamando a fbSalirDeLiga...');
   if(window.fbSalirDeLiga) {
     window.fbSalirDeLiga(liga.id);
   } else {
+    console.error('[SALIR] fbSalirDeLiga no disponible');
     toast('Error: función no disponible');
   }
 }
 
 function confirmarEliminarLiga() {
-  if(!window.currentLeagueSheet) return;
+  console.log('[ELIMINAR] Iniciando eliminar liga');
+  console.log('[ELIMINAR] currentLeagueSheet:', window.currentLeagueSheet);
+  console.log('[ELIMINAR] currentUser:', window._currentUser);
+  
+  if(!window.currentLeagueSheet) {
+    console.error('[ELIMINAR] No hay liga seleccionada en sheet');
+    toast('Error: No hay liga seleccionada');
+    return;
+  }
+  
   var liga = window.currentLeagueSheet;
+  console.log('[ELIMINAR] Liga a eliminar:', liga.name, liga.id);
+  console.log('[ELIMINAR] Creador de liga:', liga.creador);
+  console.log('[ELIMINAR] Usuario actual:', window._currentUser?.uid);
   
   // Double check admin
   if(!window._currentUser || liga.creador !== window._currentUser.uid) {
+    console.warn('[ELIMINAR] Usuario no es admin');
     toast('Solo el admin puede eliminar la liga');
     closeSheet();
     return;
   }
   
   if(!confirm('⚠️ ELIMINAR LIGA\n\n¿Estás seguro de que quieres eliminar "' + liga.name + '" permanentemente?\n\nEsto eliminará:\n- Todos los retos\n- El ranking\n- Los equipos\n- El historial completo\n\nEsta acción NO se puede deshacer.')) {
+    console.log('[ELIMINAR] Usuario canceló primera confirmación');
     return;
   }
   
   if(!confirm('Última confirmación: ¿ELIMINAR "' + liga.name + '" para siempre?')) {
+    console.log('[ELIMINAR] Usuario canceló segunda confirmación');
     return;
   }
   
@@ -1033,11 +1066,15 @@ function confirmarEliminarLiga() {
     miembros: liga.data.miembros || [window._currentUser.uid]
   };
   
+  console.log('[ELIMINAR] currentLeague establecida:', window.currentLeague);
+  
   closeSheet();
   
+  console.log('[ELIMINAR] Llamando a doDelete...');
   if(window.doDelete) {
     window.doDelete();
   } else {
+    console.error('[ELIMINAR] doDelete no disponible');
     toast('Error: función no disponible');
   }
 }
@@ -2564,16 +2601,15 @@ renderRanking();
     
     console.log('[AUTH] User state changed:', user ? user.uid : 'NO USER');
     
-    // Hide loading screen with forced display:none
-    var loading = document.getElementById('s-loading');
-    if(loading) {
-      loading.classList.remove('active');
-      loading.style.display = 'none';
-      console.log('[AUTH] Loading screen hidden');
-    }
-    
     if(!user){ 
       console.log('[AUTH] No user, showing login screen');
+      
+      // Hide loading screen
+      var loading = document.getElementById('s-loading');
+      if(loading) {
+        loading.classList.remove('active');
+        loading.style.display = 'none';
+      }
       
       // Force show login screen
       var loginScreen = document.getElementById('s-login');
@@ -2592,40 +2628,39 @@ renderRanking();
     console.log('[AUTH] User authenticated, loading data...');
     updateUI(user);
     window._currentUser = user;
+    
+    // Keep splash visible while loading
     cargarMisLigas(user.uid).then(function(){
       if(window._pendingJoinId) {
         var inp=document.getElementById('join-id');
         if(inp) inp.value=window._pendingJoinId;
         safeGo('s-join');
       } else {
-        // Restore last liga if available
-        var savedLigaId = localStorage.getItem('fg_current_liga');
-        if(savedLigaId && window._ligasFS) {
-          var ligaIdx = window._ligasFS.findIndex(function(l) { return l.id === savedLigaId; });
-          if(ligaIdx !== -1) {
-            window.abrirLigaFS(ligaIdx);
-            
-            // Then restore screen
-            var saved = localStorage.getItem('fg_screen');
-            var safeScreens = ['s-home','s-ranking','s-goat','s-equipo','s-stats','s-settings'];
-            if(saved && safeScreens.indexOf(saved) !== -1) {
-              setTimeout(function() { safeGo(saved); }, 100);
-            }
-            return;
-          }
-        }
-        
-        // No saved liga, go to dashboard
-        var saved = localStorage.getItem('fg_screen');
-        var safeScreens = ['s-dashboard','s-home','s-ranking','s-goat','s-equipo','s-stats','s-settings'];
-        if(saved && safeScreens.indexOf(saved) !== -1) {
-          safeGo(saved);
-        } else {
-          safeGo('s-dashboard');
-        }
+        // ALWAYS go to dashboard when opening app
+        console.log('[AUTH] Navigating to dashboard');
+        safeGo('s-dashboard');
       }
+      
+      // Hide loading screen AFTER navigation
+      setTimeout(function() {
+        var loading = document.getElementById('s-loading');
+        if(loading) {
+          loading.classList.remove('active');
+          loading.style.display = 'none';
+          console.log('[AUTH] Loading screen hidden');
+        }
+      }, 300);
+      
     }).catch(function(e){
       console.error('cargarMisLigas error:', e);
+      
+      // Hide loading even on error
+      var loading = document.getElementById('s-loading');
+      if(loading) {
+        loading.classList.remove('active');
+        loading.style.display = 'none';
+      }
+      
       setTimeout(function(){ safeGo('s-dashboard'); }, 100);
     });
   });
@@ -3647,6 +3682,31 @@ renderRanking();
       toast('Error: ' + e.message);
     }
   };
+
+  // ── Android Back Button Handler ──────────────────────────
+  // Control del botón "Atrás" del móvil Android
+  window.addEventListener('popstate', function(event) {
+    console.log('[BACK] Android back button pressed. Current screen:', CUR);
+    
+    // Pantallas donde el botón "Atrás" SALE de la app
+    var exitScreens = ['s-dashboard', 's-home'];
+    
+    if(exitScreens.includes(CUR)) {
+      console.log('[BACK] Exit screen detected, allowing app exit');
+      // No hacer nada - deja que Android cierre la app
+      return;
+    }
+    
+    // En cualquier otra pantalla, volver al dashboard
+    console.log('[BACK] Navigating to dashboard');
+    event.preventDefault();
+    safeGo('s-dashboard');
+  });
+
+  // Push initial state for back button to work
+  if(window.history && window.history.pushState) {
+    window.history.pushState({page: 'app'}, '', '');
+  }
 
 </script>
 
