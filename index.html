@@ -122,8 +122,8 @@ textarea.inp{resize:vertical;min-height:80px}
 .fp-media-carousel img,.fp-media-carousel video{width:100%;height:100%;object-fit:cover}
 .carousel-slide{position:absolute;top:0;left:0;width:100%;height:100%;display:none;align-items:center;justify-content:center}
 .carousel-slide.active{display:flex}
-.fullscreen-media{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.95);z-index:99999;display:none;align-items:center;justify-content:center;pointer-events:none}
-.fullscreen-media.show{pointer-events:auto}
+.fullscreen-media{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.95);z-index:99999;display:none;align-items:center;justify-content:center;pointer-events:none;visibility:hidden}
+.fullscreen-media.show{pointer-events:auto;visibility:visible;display:flex}
 .fullscreen-media.show{display:flex}
 .fullscreen-media img,.fullscreen-media video{max-width:100%;max-height:100%;object-fit:contain}
 .fullscreen-close{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10001}
@@ -722,9 +722,9 @@ textarea.inp{resize:vertical;min-height:80px}
 </div>
 
 <!-- FULLSCREEN MEDIA VIEWER -->
-<div class="fullscreen-media" id="fullscreen-media" onclick="closeFullscreenMedia()">
-  <div class="fullscreen-close" onclick="closeFullscreenMedia()">✕</div>
-  <div id="fullscreen-content" onclick="event.stopPropagation()"></div>
+<div class="fullscreen-media" id="fullscreen-media">
+  <div class="fullscreen-close" id="fullscreen-close">✕</div>
+  <div id="fullscreen-content"></div>
 </div>
 
 <!-- MODAL DELETE COMPLETADO -->
@@ -1030,6 +1030,7 @@ function openMediaFullscreen(url, type) {
   
   var viewer = document.getElementById('fullscreen-media');
   var content = document.getElementById('fullscreen-content');
+  var closeBtn = document.getElementById('fullscreen-close');
   
   if(type === 'image') {
     content.innerHTML = '<img src="'+url+'" oncontextmenu="return false;" style="max-width:100%;max-height:100%;object-fit:contain">';
@@ -1040,6 +1041,25 @@ function openMediaFullscreen(url, type) {
   viewer.classList.add('show');
   viewer.style.display = 'flex';
   document.body.style.overflow = 'hidden';
+  
+  // Add event listeners ONLY when viewer is open
+  viewer._clickHandler = function(e) {
+    if(e.target === viewer) closeFullscreenMedia();
+  };
+  viewer.addEventListener('click', viewer._clickHandler);
+  
+  closeBtn._clickHandler = function(e) {
+    e.stopPropagation();
+    closeFullscreenMedia();
+  };
+  closeBtn.addEventListener('click', closeBtn._clickHandler);
+  
+  content._clickHandler = function(e) {
+    e.stopPropagation();
+  };
+  content.addEventListener('click', content._clickHandler);
+  
+  console.log('[FULLSCREEN] Opened with listeners');
 }
 
 function closeFullscreenMedia(e) {
@@ -1050,8 +1070,25 @@ function closeFullscreenMedia(e) {
   
   var viewer = document.getElementById('fullscreen-media');
   var content = document.getElementById('fullscreen-content');
+  var closeBtn = document.getElementById('fullscreen-close');
   
   if(!viewer) return;
+  
+  // Remove event listeners
+  if(viewer._clickHandler) {
+    viewer.removeEventListener('click', viewer._clickHandler);
+    delete viewer._clickHandler;
+  }
+  
+  if(closeBtn && closeBtn._clickHandler) {
+    closeBtn.removeEventListener('click', closeBtn._clickHandler);
+    delete closeBtn._clickHandler;
+  }
+  
+  if(content && content._clickHandler) {
+    content.removeEventListener('click', content._clickHandler);
+    delete content._clickHandler;
+  }
   
   // Immediate cleanup - no delays
   viewer.classList.remove('show');
@@ -1062,7 +1099,7 @@ function closeFullscreenMedia(e) {
     content.innerHTML = '';
   }
   
-  console.log('[FULLSCREEN] Closed and cleaned');
+  console.log('[FULLSCREEN] Closed and cleaned with listeners removed');
 }
 
 
@@ -1960,7 +1997,7 @@ renderRanking();
            GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile, deleteUser }
     from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove,
-           collection, addDoc, getDocs, query, orderBy, deleteDoc }
+           collection, addDoc, getDocs, query, where, orderBy, deleteDoc }
     from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL }
     from "https://www.gstatic.com/firebasejs/12.9.0/firebase-storage.js";
@@ -2353,15 +2390,32 @@ renderRanking();
   window.abrirLigaFS = function(idx) {
     console.log('[ABRIR LIGA] Starting with idx:', idx);
     
-    // FORCE CLOSE fullscreen viewer first
+    // FORCE CLOSE fullscreen viewer and remove ALL listeners
     var fullscreenViewer = document.getElementById('fullscreen-media');
+    var fullscreenContent = document.getElementById('fullscreen-content');
+    var fullscreenClose = document.getElementById('fullscreen-close');
+    
     if(fullscreenViewer) {
+      // Remove listeners
+      if(fullscreenViewer._clickHandler) {
+        fullscreenViewer.removeEventListener('click', fullscreenViewer._clickHandler);
+        delete fullscreenViewer._clickHandler;
+      }
+      if(fullscreenClose && fullscreenClose._clickHandler) {
+        fullscreenClose.removeEventListener('click', fullscreenClose._clickHandler);
+        delete fullscreenClose._clickHandler;
+      }
+      if(fullscreenContent && fullscreenContent._clickHandler) {
+        fullscreenContent.removeEventListener('click', fullscreenContent._clickHandler);
+        delete fullscreenContent._clickHandler;
+      }
+      
+      // Force hide
       fullscreenViewer.classList.remove('show');
       fullscreenViewer.style.display = 'none';
-      var content = document.getElementById('fullscreen-content');
-      if(content) content.innerHTML = '';
+      if(fullscreenContent) fullscreenContent.innerHTML = '';
       document.body.style.overflow = '';
-      console.log('[ABRIR LIGA] Forced fullscreen viewer closed');
+      console.log('[ABRIR LIGA] Forced fullscreen viewer closed and listeners removed');
     }
     
     var l=(window._ligasFS||[])[idx]; 
