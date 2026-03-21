@@ -2312,7 +2312,10 @@ renderRanking();
         window._googleNewUser = null;
         
         toast('¡Bienvenido ' + user.displayName + '!');
-        // Navigation handled by onAuthStateChanged
+        
+        // Force navigation since user is already authenticated
+        await cargarMisLigas(user.uid);
+        safeGo('s-dashboard');
         
       } else if(window._signupEmail && window._signupPass) {
         // Email/password sign-up
@@ -2330,6 +2333,10 @@ renderRanking();
         closeModal('m-terms');
         window._signupEmail = null;
         window._signupPass = null;
+        
+        // Force navigation
+        await cargarMisLigas(cred.user.uid);
+        safeGo('s-dashboard');
         
       } else {
         toast('Error: datos no disponibles');
