@@ -3390,14 +3390,22 @@ renderRanking();
     var l=(window._ligasFS||[])[idx]; if(!l) return;
     window.currentLeagueSheet = {name:l.nombre,idx:idx,id:l.id,creador:l.creador, data:l};
     
+    console.log('[SHEET] Opening sheet for liga:', l.nombre, l.id);
+    console.log('[SHEET] currentLeagueSheet set:', window.currentLeagueSheet);
+    
     document.getElementById('sheet-league-name').textContent=l.nombre;
     
     // Show delete button only for admin
     var isAdmin = window._currentUser && l.creador === window._currentUser.uid;
     var deleteBtn = document.getElementById('sheet-eliminar-btn');
-    if(deleteBtn) deleteBtn.style.display = isAdmin ? 'block' : 'none';
+    if(deleteBtn) {
+      deleteBtn.style.display = isAdmin ? 'block' : 'none';
+      console.log('[SHEET] Delete button visible:', isAdmin);
+    }
     
-    resetSheet();
+    // DON'T call resetSheet() - it overwrites the HTML with old code
+    // resetSheet();
+    
     document.getElementById('league-sheet').classList.add('show');
   };
 
