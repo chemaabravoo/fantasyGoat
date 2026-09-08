@@ -1,0 +1,64 @@
+/* ═══════════════════════════════════════════════════════════════════
+   marca-PLANTILLA-oscura.css · LA PIEL DEL TALLER · OSCURA
+   El material del taller en su versión oscura (cristal ahumado sobre carbón). Lo que cambia de una marca
+   a otra son las ranuras de marca: el nombre, el acento, las dos letras y
+   —desde el 8 sep 2026— el FONDO y el CIELO, que salen medidos de su web
+   (motor/marca-desde-web.mjs los escribe solos). Lo que no cambia es el
+   material: cristal, filete de un píxel, bisel por dentro y desenfoque de
+   lo que hay detrás. Eso es lo que hace que todas las piezas se vean de la
+   misma casa aunque cada marca traiga su color.
+   Contrastes medidos contra este fondo:
+     #f2f5f9 17,3:1 ✓ tinta · #98a3b3 7,4:1 ✓ tinta baja · el acento NO es texto
+   Si cambias el fondo a mano, vuelve a medirlos: validar.mjs se niega si
+   la tinta baja de 7:1 o la tinta-baja de 4,5:1.
+   ═══════════════════════════════════════════════════════════════════ */
+:root{
+  /* ── LAS RANURAS DE LA MARCA · las rellena marca-desde-web ── */
+  --marca:"SIN DEFINIR";        /* el nombre; con "SIN DEFINIR" la pieza avisa en rojo */
+  --acento:#0a84ff;             /* el color vivo de la marca: botones, barras, anillos. Nunca texto */
+  --titular:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;
+  --dato:"JetBrains Mono",ui-monospace,monospace;
+
+  /* ── el lienzo · medido de su web, no fijo ── */
+  --fondo:#0e1116;
+  --tinta:#f2f5f9;
+  --tinta-baja:#98a3b3;
+
+  /* ── el cielo · las cuatro manchas que respiran detrás de todo ──
+     Salen del acento de la marca. --manchas baja o sube su fuerza de golpe
+     (0.6 para una marca sobria; 1.3 si la web es de color saturado). */
+  --cielo-giro:168deg;
+  --cielo-a:#141a24;
+  --cielo-b:#0e1116;
+  --cielo-c:#171320;
+  --mancha-1:#6096ff;
+  --mancha-2:#b278ff;
+  --mancha-3:#48d6ff;
+  --mancha-4:#ff84be;
+  --manchas:.72;
+  --banda-color:#ffffff;      /* el barrido de luz que cruza el cielo */
+  --banda-fuerza:.42;
+  --bruma-color:rgba(0,0,0,.46);   /* la viñeta: cierra los bordes */
+  --grano-mezcla:overlay;
+  --grano-fuerza:.055;
+
+  /* ── el material · lo que NO se toca por marca ── */
+  --acento-2:color-mix(in srgb,var(--acento) 16%,transparent);
+  --cristal:rgba(255,255,255,.06);
+  --cristal-fuerte:rgba(255,255,255,.10);
+  --cristal-alto:rgba(255,255,255,.13);
+  --filete:rgba(255,255,255,.10);
+  --filete-fuerte:rgba(255,255,255,.18);
+  /* el bisel va a ×2 respecto a una interfaz normal: el lienzo es de 1080 y se
+     captura al doble; a 1px se pierde en el remuestreo y las tarjetas salen planas */
+  --bisel:inset 2px 2px 0 0 rgba(255,255,255,.22),
+          inset -2px -2px 0 0 rgba(0,0,0,.34),
+          inset 0 0 0 2px rgba(255,255,255,.05);
+  --flota:0 1px 2px rgba(0,0,0,.34),0 12px 28px -10px rgba(0,0,0,.66);
+  --flota-alta:0 2px 4px rgba(0,0,0,.40),0 22px 44px -14px rgba(0,0,0,.74);
+  --flota-dock:0 4px 8px rgba(0,0,0,.46),0 32px 64px -16px rgba(0,0,0,.82);
+  --desenfoque:blur(20px) saturate(150%);
+  --r2:9999px;                  /* lo interactivo va en píldora */
+  --r3:9999px;                  /* lo que la pieza puede volver rectángulo (14px) */
+  --personalidad:cara;          /* nerviosa · segura · cara · seca · ver movimiento.md */
+}

@@ -1,0 +1,60 @@
+/* ═══ lo común a los cinco vídeos · el lienzo, el cielo vivo, el grano, los rótulos ═══ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0b0c;font-family:var(--titular)}
+.reel{width:1080px;height:1920px;position:relative;overflow:hidden;
+  background:var(--fondo);color:var(--tinta);
+  font-feature-settings:"cv11","ss01";-webkit-font-smoothing:antialiased}
+/* El cielo NO lleva color propio: sale de los tokens de la marca (marca.css).
+   Los valores de aquí son sólo el respaldo de la piel clara, por si una marca
+   vieja no los trae. Quien decide el fondo es marca-desde-web, midiendo su web. */
+.cielo{position:absolute;inset:-24%;pointer-events:none;
+  background:linear-gradient(var(--cielo-giro,168deg),
+    var(--cielo-a,#dbe4f8) 0%,var(--cielo-b,#eef1f6) 46%,var(--cielo-c,#e6e2f4) 100%)}
+.b{position:absolute;display:block;border-radius:50%}
+.b1{width:1060px;height:920px;left:-80px;top:90px;filter:blur(52px);
+  background:radial-gradient(circle at 46% 44%,
+    color-mix(in srgb,var(--mancha-1,#6096ff) calc(92% * var(--manchas,1)),transparent) 0%,
+    color-mix(in srgb,var(--mancha-1,#6096ff) calc(52% * var(--manchas,1)),transparent) 44%,
+    transparent 72%)}
+.b2{width:940px;height:940px;left:660px;top:740px;filter:blur(58px);
+  background:radial-gradient(circle at 50% 50%,
+    color-mix(in srgb,var(--mancha-2,#b278ff) calc(86% * var(--manchas,1)),transparent) 0%,
+    color-mix(in srgb,var(--mancha-2,#b278ff) calc(46% * var(--manchas,1)),transparent) 46%,
+    transparent 73%)}
+.b3{width:820px;height:740px;left:80px;top:1300px;filter:blur(50px);
+  background:radial-gradient(circle at 50% 50%,
+    color-mix(in srgb,var(--mancha-3,#48d6ff) calc(80% * var(--manchas,1)),transparent) 0%,
+    color-mix(in srgb,var(--mancha-3,#48d6ff) calc(42% * var(--manchas,1)),transparent) 44%,
+    transparent 72%)}
+.b4{width:760px;height:700px;left:690px;top:-90px;filter:blur(54px);
+  background:radial-gradient(circle at 50% 50%,
+    color-mix(in srgb,var(--mancha-4,#ff84be) calc(78% * var(--manchas,1)),transparent) 0%,
+    color-mix(in srgb,var(--mancha-4,#ff84be) calc(40% * var(--manchas,1)),transparent) 44%,
+    transparent 72%)}
+.banda{position:absolute;left:-380px;top:-560px;width:560px;height:3600px;filter:blur(62px);
+  transform-origin:50% 50%;
+  background:linear-gradient(90deg,transparent 0%,
+    color-mix(in srgb,var(--banda-color,#fff) 95%,transparent) 40%,
+    color-mix(in srgb,var(--banda-color,#fff) 55%,transparent) 68%,transparent 100%);
+  opacity:var(--banda-fuerza,1)}
+.bruma{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(148% 100% at 50% 48%,transparent 44%,var(--bruma-color,rgba(24,30,50,.13)) 100%)}
+.grano{position:absolute;inset:0;opacity:var(--grano-fuerza,.032);pointer-events:none;mix-blend-mode:var(--grano-mezcla,multiply);z-index:60;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence baseFrequency='.85' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>")}
+.escena{position:absolute;inset:0;transform-origin:0 0}
+.rot{position:absolute;left:60px;width:960px;top:262px;text-align:center;z-index:20}
+.rot span{display:block;font-size:62px;font-weight:600;letter-spacing:-.024em;line-height:1.14;opacity:0}
+.rot em{font-style:normal;color:var(--tinta-baja)}
+/* el cuentakilómetros, para todas */
+.odo{font-family:var(--titular);display:inline-flex;overflow:hidden;font-variant-numeric:tabular-nums}
+.odo .col{position:relative;overflow:hidden;width:.62em;height:1.2em}
+.odo .col.s{width:.36em}.odo .col.e{width:.72em}
+.odo .col span{position:absolute;left:0;top:0;width:100%;text-align:center;line-height:1.2em}
+/* el cursor */
+.cur{position:absolute;left:0;top:0;width:0;height:0;opacity:0;z-index:40}
+.cur .p{position:absolute;left:-14px;top:-10px;width:40px;height:40px;border-radius:50%;
+  background:rgba(29,29,31,.86);box-shadow:0 6px 16px -6px rgba(15,23,42,.5)}
+.cur .g{position:absolute;left:-14px;top:-10px;width:40px;height:40px;border-radius:50%;
+  background:rgba(29,29,31,.5);opacity:0}
+.cur .an{position:absolute;left:-40px;top:-36px;width:92px;height:92px;border-radius:50%;
+  border:3px solid var(--acento);opacity:0}

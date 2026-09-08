@@ -1,0 +1,149 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>prueba</title>
+<!-- ═══════════════════════════════════════════════════════════════════
+     ESTO ES EL MOTOR, NO UNA PLANTILLA DE PIEZA.
+     Se hereda: el lienzo, la piel de cristal, el cielo, las curvas, el
+     rótulo y el cierre. La escena se inventa y se escribe cada vez
+     (animacion/forma.md). Si acabas rellenando huecos en el mismo orden,
+     es una plantilla otra vez y la pieza ya está perdida.
+     Las fuentes son las de la marca: cambia el <link> por las suyas y
+     déjalas cuadradas con --titular y --dato de marca.css.
+     ═══════════════════════════════════════════════════════════════════ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="marca.css">
+<link rel="stylesheet" href="../../motor/comun.css">
+<style>
+/* ── LA ESCENA DE ESTA PIEZA · se escribe entera cada vez ──────────
+   Una tarjeta de cristal: background var(--cristal-alto); border 1px var(--filete);
+   box-shadow var(--bisel),var(--flota-alta); backdrop-filter var(--desenfoque).
+   Lo interactivo en píldora (var(--r2)); el acento sólo rellena, nunca es texto. */
+.sinmarca{position:absolute;left:0;right:0;top:820px;padding:60px 70px;z-index:99;
+  background:#d40000;color:#fff;font-family:ui-monospace,monospace;font-size:38px;line-height:1.35;text-align:center;font-weight:700}
+.scrim{position:absolute;inset:0;background:var(--fondo);opacity:0;z-index:50}
+.cierre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;z-index:51}
+.cierre .frase{font-size:58px;font-weight:600;letter-spacing:-.022em;line-height:1.18;max-width:800px;text-wrap:balance}
+.cierre .marca{font-size:46px;font-weight:600;letter-spacing:-.012em;margin-top:76px}
+.cierre .marca i{font-style:normal;color:var(--acento)}
+.cierre .pie{font-family:var(--dato);font-size:24px;color:var(--tinta-baja);margin-top:30px}
+</style></head>
+<body>
+<section class="reel" id="reel">
+  <div class="escena" id="escena">
+    <div id="cabeza">
+      <div id="tj" style="position:absolute;left:170px;top:640px;width:740px;height:640px;border-radius:36px;background:var(--cristal-alto);border:1px solid var(--filete);box-shadow:var(--bisel),var(--flota-alta);-webkit-backdrop-filter:var(--desenfoque);backdrop-filter:var(--desenfoque);overflow:hidden">
+        <i id="luz" style="position:absolute;top:-40%;left:-40%;width:34%;height:180%;transform:skewX(-18deg);pointer-events:none;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--tinta) 18%,transparent),transparent)"></i>
+        <div style="position:absolute;left:42px;top:44px;font-family:var(--dato);font-size:22px;letter-spacing:.15em;text-transform:uppercase;color:var(--tinta-baja)">Tu marca · prueba</div>
+        <div style="position:absolute;left:42px;top:80px;font-size:84px;font-weight:600;letter-spacing:-.03em"><span class="odo" id="odo"></span></div>
+        <div id="barras" style="position:absolute;left:42px;top:230px;width:656px;height:220px"></div>
+        <span id="past" style="position:absolute;left:42px;top:490px;width:208px;height:88px;border-radius:var(--r2);background:var(--tinta);z-index:1"></span>
+        <span id="p0" style="position:absolute;left:42px;top:490px;width:208px;height:88px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:500;color:var(--fondo);box-shadow:inset 0 0 0 1px var(--filete);z-index:2">Free</span>
+        <span id="p1" style="position:absolute;left:266px;top:490px;width:208px;height:88px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:500;color:var(--tinta-baja);box-shadow:inset 0 0 0 1px var(--filete);z-index:2">Pro</span>
+        <span style="position:absolute;left:490px;top:490px;width:208px;height:88px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:500;color:var(--tinta-baja);box-shadow:inset 0 0 0 1px var(--filete);z-index:2">Team</span>
+      </div>
+    </div>
+  </div>
+  <div class="rot" id="rotA"><span id="a1">Tu marca</span><span id="a2"><em>ya se mueve.</em></span></div>
+  <div class="grano"></div>
+  <div class="scrim" id="scrim"></div>
+  <div class="cierre" id="cierre">
+    <p class="frase">La frase que se puede citar.</p>
+    <p class="marca">Marca<i>.</i></p>
+    <p class="pie">dominio.com</p>
+  </div>
+</section>
+<script src="../../motor/comun.js"></script>
+<script>
+document.getElementById('reel').insertAdjacentHTML('afterbegin',CIELO_HTML);
+
+/* ── las marcas de la voz · las imprime marcas.py; NUNCA a mano ── */
+const M={f1:0.10, fin:12.00};
+
+/* ── los compases · el primero casi siempre es negativo (guion/gancho.md) ── */
+const T=guion([
+  ['entra',  -0.06, 0.52],
+  ['barras',  0.90, 0.70],
+  ['cifra',   2.10, 0.60],
+  ['plan',    3.30, 0.44],
+  ['cierre',  5.40, 0.55],
+]);
+window.FPS=60;
+window.DURACION=+(T.cierre[0]+2.60).toFixed(2);
+
+const el={}; ['escena','cabeza','rotA','a1','a2','scrim','cierre','tj','odo','barras','past','p0','p1','luz'].forEach(k=>el[k]=$(k));
+/* la capa ambiente: dieciocho motas del color de la marca que no paran nunca */
+const MOTAS=[]; for(let i=0;i<18;i++){ const n=document.createElement('i');
+  const rr=4+hash(i*3.1)*8;
+  n.style.cssText=`position:absolute;left:0;top:0;width:${rr}px;height:${rr}px;border-radius:9999px;background:var(--acento);pointer-events:none`;
+  el.cabeza.appendChild(n); MOTAS.push(n); }
+const ALT=[96,120,106,154,186,234,272,300];
+el.barras.innerHTML=ALT.map((h,i)=>`<i style="position:absolute;left:${i*85}px;bottom:0;width:58px;border-radius:12px 12px 4px 4px;background:linear-gradient(180deg,var(--acento),color-mix(in srgb,var(--acento) 55%,#fff))"></i>`).join('');
+const BAR=[...el.barras.children];
+
+window.seek=function(t){
+  cieloSeek(t);                                    // el cielo no se apaga nunca
+
+  /* ambiente · no se para ni entre compases */
+  MOTAS.forEach((n,i)=>{
+    const x=((hash(i*2.3)*1180 + t*(16+hash(i)*26))%1240)-80;
+    const y=((hash(i*5.7)*2020 - t*(11+hash(i+40)*18))%2120+2120)%2120-100;
+    n.style.transform=`translate(${x}px,${y}px)`;
+    n.style.opacity=0.10+0.20*Math.abs(Math.sin(t*0.5+i));
+  });
+
+  const entra=spring(p(t,T.entra[0],T.entra[1]+0.30));
+  el.tj.style.opacity=Math.min(1,entra*1.5); el.tj.style.filter=`blur(${mix(14,0,entra)}px)`;
+  el.tj.style.transform=`translateY(${mix(120,0,entra)}px) rotate(${mix(-5,0,entra)}deg) scale(${mix(0.88,1,entra)})`;
+  /* el especular recorre la tarjeta en bucle */
+  el.luz.style.transform=`skewX(-18deg) translateX(${((t*0.32)%1)*300-40}%)`;
+  el.luz.style.opacity=entra*0.55;
+  /* las barras se pasan del marcador y luego siguen respirando */
+  BAR.forEach((b,i)=>{
+    const a=T.barras[0]+i*0.07, k=spring(p(t,a,a+0.80),0.35,11);
+    const vivo=1+0.14*Math.sin(t*(1.8+i*0.31)+i*1.7)*k;
+    b.style.height=(ALT[i]*k*vivo+8)+'px';
+    b.style.filter=`blur(${pulso(p(t,a,a+0.80))*3}px)`;
+  });
+  odoPasos(el.odo,[[0,'12.480 €'],[T.cifra[0],'18.940 €']],t,99,0.6);
+  const kP=spring(p(t,T.plan[0],T.plan[1]+0.24)); el.past.style.transform=`translateX(${mix(0,224,kP)}px) scaleX(${1+pulso(p(t,T.plan[0],T.plan[1]))*0.10})`;
+  el.p0.style.color=kP<0.5?'var(--fondo)':'var(--tinta-baja)'; el.p1.style.color=kP>=0.5?'var(--fondo)':'var(--tinta-baja)';
+
+  /* el rótulo, fuera de la cámara, palabra a palabra */
+  const sR=1-easeOut(p(t,T.cierre[0]-0.40,T.cierre[0]-0.06));
+  palabras([el.a1,el.a2],t,M.f1-0.10,0.42,0.44,sR); el.rotA.style.filter=`blur(${(1-sR)*12}px)`;
+
+  /* el cierre de marca */
+  const v=easeOut(p(t,T.cierre[0],T.cierre[1]));
+  el.scrim.style.opacity=v*0.78; el.escena.style.opacity=1-v;
+  const kz=easeOut(p(t,T.cierre[0]+0.16,T.cierre[0]+0.78));
+  el.cierre.style.opacity=kz; el.cierre.style.transform=`translateY(${mix(26,0,kz)}px)`; el.cierre.style.filter=`blur(${mix(14,0,kz)}px)`;
+
+  /* la cámara: respira, y golpea donde la pieza lo pida (shake) */
+  let cs=1+respira(t,0.005,0.021); cs*=mix(1,0.985,v);
+  const sy=960+shake(t,T.cierre[0],9);
+  el.escena.style.transform=camara(cs,540,960,540,sy);
+};
+
+/* ── lo que suena · [tipo, segundo, ganancia, tono?] con los mismos compases ── */
+const SFX=[
+  ['whoosh', T.entra[0]+0.06, 0.24],['subida',T.barras[1],0.22],['blip',T.cifra[0],0.24,1.1],['seleccionar',T.plan[0],0.26],
+  ['golpe',  T.cierre[0],     0.44, 0.7],
+];
+/* ── la música por tramos · [cama, desde, nivel?, transicion?] · ver sonido/voz.md §8 ── */
+const MUSICA=[
+  /* una de las once que vienen dentro (musica/pixabay): así la primera prueba
+     no tiene que esperar a que se sinteticen las 25 de musica/largos */
+  ['px-corporativo-inspiring-minimal', 0, 0.13],
+];
+window.MARCAS=Object.assign({},T,{SFX,MUSICA,fin:window.DURACION});
+arrancar();
+
+/* el guardián de marca: sin marca.css rellena no se renderiza a escondidas */
+(function(){ const m=getComputedStyle(document.documentElement).getPropertyValue('--marca').trim().replace(/^["']|["']$/g,'');
+  if(m && m!=='SIN DEFINIR') return;
+  const d=document.createElement('div'); d.className='sinmarca';
+  d.textContent='SIN MARCA DEFINIDA · pasa motor/marca-desde-web.mjs con su web, o copia marca-PLANTILLA.css y rellena las ranuras';
+  document.getElementById('reel').appendChild(d); throw new Error('marca.css sin rellenar'); })();
+</script>
+</body></html>
