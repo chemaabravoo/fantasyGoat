@@ -1,0 +1,108 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>pieza</title>
+<!-- ═══════════════════════════════════════════════════════════════════
+     ESTO ES EL MOTOR, NO UNA PLANTILLA DE PIEZA.
+     Se hereda: el lienzo, la piel de cristal, el cielo, las curvas, el
+     rótulo y el cierre. La escena se inventa y se escribe cada vez
+     (animacion/forma.md). Si acabas rellenando huecos en el mismo orden,
+     es una plantilla otra vez y la pieza ya está perdida.
+     Las fuentes son las de la marca: cambia el <link> por las suyas y
+     déjalas cuadradas con --titular y --dato de marca.css.
+     ═══════════════════════════════════════════════════════════════════ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="marca.css">
+<link rel="stylesheet" href="../../motor/comun.css">
+<style>
+/* ── LA ESCENA DE ESTA PIEZA · se escribe entera cada vez ──────────
+   Una tarjeta de cristal: background var(--cristal-alto); border 1px var(--filete);
+   box-shadow var(--bisel),var(--flota-alta); backdrop-filter var(--desenfoque).
+   Lo interactivo en píldora (var(--r2)); el acento sólo rellena, nunca es texto. */
+.sinmarca{position:absolute;left:0;right:0;top:820px;padding:60px 70px;z-index:99;
+  background:#d40000;color:#fff;font-family:ui-monospace,monospace;font-size:38px;line-height:1.35;text-align:center;font-weight:700}
+.scrim{position:absolute;inset:0;background:var(--fondo);opacity:0;z-index:50}
+.cierre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;z-index:51}
+.cierre .frase{font-size:58px;font-weight:600;letter-spacing:-.022em;line-height:1.18;max-width:800px;text-wrap:balance}
+.cierre .marca{font-size:46px;font-weight:600;letter-spacing:-.012em;margin-top:76px}
+.cierre .marca i{font-style:normal;color:var(--acento)}
+.cierre .pie{font-family:var(--dato);font-size:24px;color:var(--tinta-baja);margin-top:30px}
+</style></head>
+<body>
+<section class="reel" id="reel">
+  <div class="escena" id="escena">
+    <div id="cabeza">
+      <!-- ▼▼ LA ESCENA VA AQUÍ · en el fotograma 0 ya hay algo a medio moverse ▼▼ -->
+
+      <!-- ▲▲ -->
+    </div>
+  </div>
+  <div class="rot" id="rotA"><span id="a1">Titular</span><span id="a2"><em>segunda línea.</em></span></div>
+  <div class="grano"></div>
+  <div class="scrim" id="scrim"></div>
+  <div class="cierre" id="cierre">
+    <p class="frase">La frase que se puede citar.</p>
+    <p class="marca">Marca<i>.</i></p>
+    <p class="pie">dominio.com</p>
+  </div>
+</section>
+<script src="../../motor/comun.js"></script>
+<script>
+document.getElementById('reel').insertAdjacentHTML('afterbegin',CIELO_HTML);
+
+/* ── las marcas de la voz · las imprime marcas.py; NUNCA a mano ── */
+const M={f1:0.10, fin:12.00};
+
+/* ── los compases · el primero casi siempre es negativo (guion/gancho.md) ── */
+const T=guion([
+  ['entra',  -0.06, 0.52],
+  ['cierre', M.fin-0.20, 0.55],
+]);
+window.FPS=60;
+window.DURACION=+(T.cierre[0]+2.60).toFixed(2);
+
+const el={}; ['escena','cabeza','rotA','a1','a2','scrim','cierre'].forEach(k=>el[k]=$(k));
+
+window.seek=function(t){
+  cieloSeek(t);                                    // el cielo no se apaga nunca
+
+  // ── ▼ LA PIEZA · un bloque por elemento, todo desde t ▼ ──
+
+  // ── ▲ ──
+
+  /* el rótulo, fuera de la cámara, palabra a palabra */
+  const sR=1-easeOut(p(t,T.cierre[0]-0.40,T.cierre[0]-0.06));
+  palabras([el.a1,el.a2],t,M.f1-0.10,0.42,0.44,sR); el.rotA.style.filter=`blur(${(1-sR)*12}px)`;
+
+  /* el cierre de marca */
+  const v=easeOut(p(t,T.cierre[0],T.cierre[1]));
+  el.scrim.style.opacity=v*0.78; el.escena.style.opacity=1-v;
+  const kz=easeOut(p(t,T.cierre[0]+0.16,T.cierre[0]+0.78));
+  el.cierre.style.opacity=kz; el.cierre.style.transform=`translateY(${mix(26,0,kz)}px)`; el.cierre.style.filter=`blur(${mix(14,0,kz)}px)`;
+
+  /* la cámara: respira, y golpea donde la pieza lo pida (shake) */
+  let cs=1+respira(t,0.005,0.021); cs*=mix(1,0.985,v);
+  const sy=960+shake(t,T.cierre[0],9);
+  el.escena.style.transform=camara(cs,540,960,540,sy);
+};
+
+/* ── lo que suena · [tipo, segundo, ganancia, tono?] con los mismos compases ── */
+const SFX=[
+  ['whoosh', T.entra[0]+0.06, 0.24],
+  ['golpe',  T.cierre[0],     0.44, 0.7],
+];
+/* ── la música por tramos · [cama, desde, nivel?, transicion?] · ver sonido/voz.md §8 ── */
+const MUSICA=[
+  ['neutra-cristal', 0, 0.12],
+];
+window.MARCAS=Object.assign({},T,{SFX,MUSICA,fin:window.DURACION});
+arrancar();
+
+/* el guardián de marca: sin marca.css rellena no se renderiza a escondidas */
+(function(){ const m=getComputedStyle(document.documentElement).getPropertyValue('--marca').trim().replace(/^["']|["']$/g,'');
+  if(m && m!=='SIN DEFINIR') return;
+  const d=document.createElement('div'); d.className='sinmarca';
+  d.textContent='SIN MARCA DEFINIDA · pasa motor/marca-desde-web.mjs con su web, o copia marca-PLANTILLA.css y rellena las ranuras';
+  document.getElementById('reel').appendChild(d); throw new Error('marca.css sin rellenar'); })();
+</script>
+</body></html>

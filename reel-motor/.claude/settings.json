@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash requisitos.sh:*)",
+      "Bash(bash musica/generar.sh:*)",
+      "Bash(npm install:*)",
+      "Bash(node motor/:*)",
+      "Bash(node ../../motor/:*)",
+      "Bash(python3 motor/:*)",
+      "Bash(python3 ../../motor/:*)",
+      "Bash(ffprobe:*)",
+      "Bash(ffmpeg:*)",
+      "Bash(cp motor/:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)"
+    ]
+  }
+}
