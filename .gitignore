@@ -1,0 +1,9 @@
+node_modules/
+.instalado
+musica/wav/
+musica/largos/
+musica/__pycache__/
+motor/sonidos/_sintetizados/
+taller/*/salida/
+taller/*/audios/
+.DS_Store

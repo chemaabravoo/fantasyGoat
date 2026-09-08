@@ -1,0 +1,9 @@
+{
+  "name": "reel-motor-pack",
+  "private": true,
+  "type": "module",
+  "description": "Taller de reels 9:16 para Claude Code. Las piezas viven en taller/<marca>/ y comparten estos node_modules.",
+  "dependencies": {
+    "puppeteer-core": "^25.5.0"
+  }
+}
