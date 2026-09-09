@@ -1,0 +1,151 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel Motor · 04 · antes y después</title>
+<!-- EJEMPLO · va mudo: la voz se genera con toma.py desde su guion (v0N.txt) ·
+     VÍDEO 4 · gancho: ANTES / DESPUÉS. Con voz desde el 0: la misma landing partida por un divisor que barre; a la izquierda la captura muerta, a la derecha la viva. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../motor/cristal.css">
+<link rel="stylesheet" href="../motor/comun.css">
+<style>
+
+.land{position:absolute;left:170px;top:520px;width:740px;height:900px;border-radius:36px;overflow:hidden;
+  background:var(--cristal-alto);border:1px solid var(--filete);box-shadow:var(--bisel),var(--flota-alta);
+  -webkit-backdrop-filter:var(--desenfoque);backdrop-filter:var(--desenfoque)}
+.land.muerta{background:#e9ebef;box-shadow:0 0 0 1px rgba(15,23,42,.10);-webkit-backdrop-filter:none;backdrop-filter:none;filter:grayscale(1)}
+.llab{position:absolute;left:42px;top:44px;font-family:var(--dato);font-size:22px;letter-spacing:.15em;text-transform:uppercase;color:var(--tinta-baja)}
+.ltit{position:absolute;left:42px;top:84px;font-size:64px;font-weight:600;letter-spacing:-.03em;line-height:1.06}
+.ltxt{position:absolute;left:42px;top:246px;font-size:28px;line-height:1.4;color:var(--tinta-baja)}
+.lbtn{position:absolute;left:42px;top:350px;width:656px;height:90px;border-radius:9999px;background:var(--acento);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:600;overflow:hidden;
+  box-shadow:0 14px 28px -12px color-mix(in srgb,var(--acento) 70%,transparent)}
+.lbtn i{position:absolute;top:-40%;left:0;width:120px;height:180%;opacity:0;transform:skewX(-20deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.62),transparent)}
+.lstat{position:absolute;right:42px;top:478px;display:flex;align-items:baseline;gap:16px;flex-direction:row-reverse}
+.lstat .odo{font-size:72px;font-weight:600;letter-spacing:-.03em}
+.lstat u{text-decoration:none;font-size:24px;color:var(--tinta-baja)}
+.lgraf{position:absolute;left:42px;top:600px;width:656px;height:250px}
+.lbar{position:absolute;bottom:0;width:58px;border-radius:12px 12px 4px 4px;background:linear-gradient(180deg,var(--acento),color-mix(in srgb,var(--acento) 55%,#fff))}
+.lchip{position:absolute;right:42px;top:40px;height:60px;padding:0 22px;border-radius:9999px;display:flex;align-items:center;opacity:0;
+  font-size:26px;font-weight:600;color:#0f7a52;background:rgba(124,224,176,.30);box-shadow:inset 0 0 0 1px rgba(15,122,82,.16)}
+.fant{position:absolute;left:170px;top:520px;width:740px;height:900px;border-radius:36px;background:rgba(255,255,255,.80);
+  box-shadow:0 0 0 1.5px rgba(15,23,42,.09),0 18px 40px -18px rgba(15,23,42,.24);opacity:0}
+.divisor{position:absolute;top:500px;width:6px;height:940px;margin-left:-3px;background:#fff;opacity:0;z-index:8;
+  box-shadow:0 0 0 1px rgba(15,23,42,.12),0 0 30px rgba(15,23,42,.25)}
+.divisor u{position:absolute;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:#fff;
+  box-shadow:0 8px 20px -6px rgba(15,23,42,.45),inset 0 0 0 1px var(--filete);display:flex;align-items:center;justify-content:center;
+  font-size:30px;color:var(--tinta);text-decoration:none;letter-spacing:-.05em}
+.etq{position:absolute;top:1450px;height:56px;padding:0 24px;border-radius:9999px;display:flex;align-items:center;opacity:0;z-index:9;
+  font-family:var(--dato);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:#fff;background:var(--tinta)}
+#etqA{left:170px}#etqB{right:170px;background:var(--acento)}
+
+</style></head>
+<body>
+<section class="reel" id="reel">
+  <div class="escena" id="escena">
+    <div id="cabeza">
+      <div class="fant" id="fa1"></div><div class="fant" id="fa2"></div><div class="fant" id="fa3"></div>
+      <div class="land muerta" id="A">
+        <div class="llab">Tu producto</div>
+        <div class="ltit">Cobra sin<br>perseguir a nadie.</div>
+        <div class="ltxt">Facturas, recordatorios y cobros<br>en un solo sitio.</div>
+        <div class="lbtn" id="ABtn">Empezar gratis<i id="ABri"></i></div>
+        <div class="lstat"><span class="odo" id="AOdo"></span><u>cobrado este mes</u></div>
+        <div class="lgraf" id="AGraf"></div>
+        <div class="lchip" id="AChip">&#10003; Pagado · 1.240 €</div>
+      </div>
+      <div class="land viva" id="B">
+        <div class="llab">Tu producto</div>
+        <div class="ltit">Cobra sin<br>perseguir a nadie.</div>
+        <div class="ltxt">Facturas, recordatorios y cobros<br>en un solo sitio.</div>
+        <div class="lbtn" id="BBtn">Empezar gratis<i id="BBri"></i></div>
+        <div class="lstat"><span class="odo" id="BOdo"></span><u>cobrado este mes</u></div>
+        <div class="lgraf" id="BGraf"></div>
+        <div class="lchip" id="BChip">&#10003; Pagado · 1.240 €</div>
+      </div>
+      <div class="divisor" id="div"><u>&#8596;</u></div>
+      <div class="etq" id="etqA">antes</div>
+      <div class="etq" id="etqB">después</div>
+    </div>
+  </div>
+  <div class="rot" id="rotA"><span id="a1">La misma pantalla.</span><span id="a2"><em>Una se mueve.</em></span></div>
+  <div class="grano"></div>
+</section>
+<script src="../motor/comun.js"></script>
+<script src="_cierre.js"></script>
+<script>
+document.getElementById('reel').insertAdjacentHTML('afterbegin',CIELO_HTML);
+const M={f1:0.119, f2:2.98, f3:5.639, f4:9.84, f5:11.819, f6:14.599, f7:17.139, f8:19.42, f9:20.76, esto:9.84, carpeta:12.199, arrastras:12.799, claude:13.719, web:15.199, video:16.359, colores:17.619, tipo:18.239, devuelve:19.659, comenta:20.76, motion:21.26, mando:22.359, fin:22.988, producto:0.94, mundo:2.00, vende:4.18, pantalla:6.34, solo:7.58, mueve:8.60};
+window.FPS=60;
+const T=guion([
+  ['entra',  -0.06, 0.54], ['etqA', M.producto-0.06, 0.40],
+  ['fa1', 1.30, 0.34], ['fa2', 1.58, 0.34], ['fa3', 1.86, 0.34],
+  ['barre', M.f2-0.10, 1.30],            // el divisor entra y llega al 50 % en «vende»
+  ['fuera', M.f2+0.10, 0.40], ['etqB', M.vende-0.04, 0.40],
+  ['ida', M.f3-0.08, 0.70], ['vuelta', M.pantalla+0.16, 0.62],
+  ['mueve', M.solo-0.10, 1.40],
+]);
+const el={}; ['escena','fa1','fa2','fa3','A','B','div','etqA','etqB','AOdo','BOdo','AGraf','BGraf','ABri','BBri','AChip','BChip','rotA','a1','a2'].forEach(k=>el[k]=$(k));
+const ALT=[70,96,84,124,150,190,224,250];
+for(const g of [el.AGraf,el.BGraf]) g.innerHTML=ALT.map((h,i)=>`<i class="lbar" style="left:${i*85}px;height:${h}px"></i>`).join('');
+const AB=[...el.AGraf.children], BB=[...el.BGraf.children];
+const cola=COLA.montar({M,cabeza:'cabeza',dominio:'midominio.com',tema:'cómo funciona en 30 s'});
+window.DURACION=+(cola.fin).toFixed(2);
+window.seek=function(t){
+  cieloSeek(t);
+  const entra=easeOut(p(t,T.entra[0],T.entra[1]));
+  const trE=`translateY(${mix(110,0,entra)}px) scale(${mix(1.06,1,entra)})`;
+  el.A.style.transform=trE; el.A.style.opacity=entra; el.A.style.filter=`grayscale(1) blur(${mix(10,0,entra)}px)`;
+  el.B.style.transform=trE; el.B.style.opacity=entra;
+  /* el montón de capturas iguales, detrás */
+  [[el.fa1,T.fa1],[el.fa2,T.fa2],[el.fa3,T.fa3]].forEach(([n,c],i)=>{
+    const k=easeCae(p(t,c[0]-0.22,c[1])), out=easeOut(p(t,T.fuera[0]+i*0.07,T.fuera[1]+i*0.07));
+    n.style.opacity=k*(1-out)*(0.92-i*0.16); n.style.filter=`blur(${mix(20,0,k)+out*18}px)`;
+    n.style.transform=`translateY(${mix(-340,-60*(i+1),k)-out*230}px) scale(${mix(1.20,1-0.05*(i+1),k)})`;
+  });
+  /* el divisor: entra desde la izquierda, llega al 50 %, va casi al final y vuelve */
+  const kB=easeInOut(p(t,T.barre[0],T.barre[1])), kI=easeInOut(p(t,T.ida[0],T.ida[1])), kV=easeInOut(p(t,T.vuelta[0],T.vuelta[1]));
+  let X=mix(170,540,kB); X=mix(X,880,kI); X=mix(X,540,kV);
+  const pct=clamp((X-170)/740,0,1);
+  el.B.style.clipPath=`inset(0 0 0 ${pct*100}%)`;
+  el.div.style.left=X+'px'; el.div.style.opacity=t>=T.barre[0]?1:0;
+  el.div.style.transform=`scaleY(${easeOut(p(t,T.barre[0],T.barre[0]+0.30))})`;
+  const eA=easeOut(p(t,T.etqA[0],T.etqA[1])), eB=easeOut(p(t,T.etqB[0],T.etqB[1]));
+  el.etqA.style.opacity=eA; el.etqA.style.transform=`scale(${mix(0.8,1,eA)})`;
+  el.etqB.style.opacity=eB; el.etqB.style.transform=`scale(${mix(0.8,1,eB)})`;
+  /* la de la derecha vive; la de la izquierda no */
+  const viva=t>=T.barre[0]?1:0, kM=easeOut(p(t,T.mueve[0],T.mueve[1]));
+  odo(el.AOdo,'12.480 €','12.480 €',0,86);
+  odoPasos(el.BOdo,[[0,'12.480 €'],[T.barre[0]+0.4,'14.925 €'],[T.mueve[0]+0.1,'18.940 €']],t,86,0.6);
+  BB.forEach((n,i)=>{const k=easeOut(p(t,T.barre[0]+0.2+i*0.06,T.barre[0]+0.2+i*0.06+0.5));
+    n.style.height=(ALT[i]*mix(0.5,1,k)+(t>T.barre[1]?respira(t,7+kM*5,0.55+i*0.07,i):0))+'px';});
+  AB.forEach((n,i)=>{n.style.height=(ALT[i]*0.5)+'px';});
+  const kBr=Math.max(p(t,T.etqB[0]+0.2,T.etqB[0]+0.9),p(t,T.mueve[0]+0.2,T.mueve[0]+0.9)); el.BBri.style.opacity=(kBr>0&&kBr<1)?1:0; el.BBri.style.transform=`translateX(${mix(-140,700,kBr)}px) skewX(-20deg)`;
+  const kCh=easeOut(p(t,T.mueve[0]+0.6,T.mueve[0]+1.0)); el.BChip.style.opacity=kCh; el.BChip.style.transform=`translateY(${mix(16,0,kCh)}px) scale(${mix(0.86,1,kCh)})`;
+  /* el rótulo, en la tercera frase */
+  const sR=1-easeOut(p(t,M.esto-0.42,M.esto-0.06));
+  palabras([el.a1,el.a2],t,M.f3-0.08,0.42,0.44,sR); el.rotA.style.filter=`blur(${(1-sR)*12}px)`;
+  const v=cola.seek(t);
+  let cs=1+respira(t,0.005,0.021);
+  cs+=easeOut(p(t,T.barre[0],T.barre[0]+0.4))*0.04-easeInOut(p(t,T.barre[1],T.barre[1]+0.8))*0.04;
+  cs+=easeInOut(p(t,cola.T.movil[0],cola.T.movil[1]+0.2))*0.04-easeInOut(p(t,cola.T.cierre[0]-0.6,cola.T.cierre[0]))*0.04;
+  cs*=mix(1,0.985,v);
+  const sy=960+shake(t,T.fa1[0]+0.1,6)+shake(t,T.fa2[0]+0.1,6)+shake(t,T.fa3[0]+0.1,6)+shake(t,T.barre[0],8)+shake(t,cola.T.suelta[0],8)+shake(t,cola.T.cierre[0],9);
+  el.escena.style.transform=camara(cs,540,960,540,sy);
+};
+const SFX=[
+  ['whoosh',T.entra[0]+0.06,0.24],['papel',T.entra[1]-0.04,0.26],['pop',T.etqA[0],0.22],
+  ['golpe',T.fa1[0]+0.06,0.18,1.1],['golpe',T.fa2[0]+0.06,0.18,1.2],['golpe',T.fa3[0]+0.06,0.18,1.3],
+  ['swipe',T.barre[0],0.26],['brillo',T.barre[0]+0.3,0.22],['pop',T.etqB[0],0.22,1.2],
+  ['swipe',T.ida[0],0.18],['swipe',T.vuelta[0],0.18],['subida',T.mueve[1]-0.2,0.20],['acierto',T.mueve[0]+0.6,0.22],
+].concat(cola.SFX);
+const MUSICA=[
+  ['neutra-teclas',0,0.11],
+  ['energia-himno',T.barre[0],0.15,'corte'],
+  ['neutra-cristal',M.esto-0.20,0.11,'fundido'],
+  ['energia-eco',M.devuelve-0.20,0.16,'sube'],
+];
+window.MARCAS=Object.assign({},T,{SFX,MUSICA,fin:window.DURACION});
+arrancar();
+</script>
+</body></html>

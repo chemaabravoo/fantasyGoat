@@ -1,0 +1,196 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel Motor · 01 · el reproductor</title>
+<!-- EJEMPLO · va mudo: la voz se genera con toma.py desde su guion (v0N.txt) ·
+     VÍDEO 1 · gancho: EL REPRODUCTOR. Cabeza muda (0 → 14 s): un ▶ que se
+     despliega en píldora, en tarjeta, en anillo de ecualizador y se pliega.
+     La cola es cola.js, la misma en los cinco. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../motor/cristal.css">
+<link rel="stylesheet" href="../motor/comun.css">
+<style>
+#pl{position:absolute;left:460px;top:905px;width:160px;height:160px;border-radius:80px;
+  background:var(--cristal-alto);border:1px solid var(--filete);
+  box-shadow:var(--bisel),var(--flota-alta);
+  -webkit-backdrop-filter:var(--desenfoque);backdrop-filter:var(--desenfoque);overflow:hidden}
+#plSom{position:absolute;left:460px;top:905px;width:160px;height:160px;border-radius:80px;
+  box-shadow:var(--flota-dock);opacity:0}
+.tri{position:absolute;left:50%;top:50%;width:0;height:0;margin:-30px 0 0 -20px;
+  border-left:54px solid var(--tinta);border-top:33px solid transparent;border-bottom:33px solid transparent}
+.mini{position:absolute;left:26px;top:26px;right:26px;height:88px;display:flex;align-items:center;gap:22px;opacity:0}
+.mini .pt{width:88px;height:88px;border-radius:18px;flex:0 0 88px;
+  background:conic-gradient(from 200deg,#ff5f8f,#7a5bff 38%,#0a84ff 66%,#4ee8ff 88%,#ff5f8f);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+.mini b{font-size:34px;font-weight:600;letter-spacing:-.014em;white-space:nowrap}
+.mini em{font-style:normal;font-size:26px;color:var(--tinta-baja);display:block;margin-top:4px;font-weight:400}
+.full{position:absolute;inset:0;opacity:0}
+.disco{position:absolute;left:42px;top:42px;width:200px;height:200px;border-radius:28px;
+  background:conic-gradient(from 200deg,#ff5f8f,#7a5bff 38%,#0a84ff 66%,#4ee8ff 88%,#ff5f8f);
+  box-shadow:0 18px 36px -14px rgba(15,23,42,.45),inset 0 0 0 1px rgba(255,255,255,.32)}
+.disco i{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;
+  border-radius:50%;background:var(--fondo);box-shadow:inset 0 0 0 1px rgba(15,23,42,.12);opacity:0}
+.tit{position:absolute;left:274px;top:64px;font-size:44px;font-weight:600;letter-spacing:-.02em;white-space:nowrap}
+.art{position:absolute;left:274px;top:124px;font-size:30px;color:var(--tinta-baja);white-space:nowrap}
+.chipHz{position:absolute;left:274px;top:180px;height:46px;padding:0 20px;border-radius:9999px;
+  display:flex;align-items:center;font-family:var(--dato);font-size:20px;letter-spacing:.14em;
+  color:var(--tinta-baja);box-shadow:inset 0 0 0 1px var(--filete)}
+.ondaBox{position:absolute;left:42px;top:300px;width:656px;height:210px}
+.wv{position:absolute;left:50%;bottom:0;width:15px;margin-left:-7.5px;border-radius:8px;transform-origin:50% 100%;
+  background:linear-gradient(180deg,var(--acento),color-mix(in srgb,var(--acento) 45%,#fff))}
+.prog{position:absolute;left:42px;top:540px;width:656px;height:7px;border-radius:4px;background:rgba(29,29,31,.12)}
+.prog i{position:absolute;left:0;top:0;height:100%;width:100%;border-radius:4px;background:var(--tinta);
+  transform-origin:0 50%;transform:scaleX(0)}
+.prog u{position:absolute;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;
+  background:#fff;box-shadow:0 3px 10px -3px rgba(15,23,42,.5),inset 0 0 0 1px var(--filete)}
+.tm{position:absolute;top:566px;font-family:var(--dato);font-size:24px;color:var(--tinta-baja)}
+.tmA{left:42px}.tmB{right:42px}
+.tm .odo{font-family:var(--dato)}
+.ctrl{position:absolute;top:618px;left:42px;width:656px;height:110px}
+.bt{position:absolute;top:50%;border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0}
+.bt.sm{width:76px;height:76px;margin-top:-38px;color:var(--tinta);box-shadow:inset 0 0 0 1px var(--filete);background:rgba(255,255,255,.55)}
+.bt.big{width:110px;height:110px;margin-top:-55px;left:273px;background:var(--tinta);color:#fff}
+.bt svg{width:34px;height:34px;display:block}.bt.big svg{width:42px;height:42px}
+.cora{position:absolute;top:50%;right:0;width:76px;height:76px;margin-top:-38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;opacity:0;
+  box-shadow:inset 0 0 0 1px var(--filete);background:rgba(255,255,255,.55);color:#ff3b5c}
+.cora svg{width:36px;height:36px;display:block}
+.coraOnda{position:absolute;top:50%;right:0;width:76px;height:76px;margin-top:-38px;border-radius:50%;
+  box-shadow:0 0 0 3px #ff3b5c;opacity:0}
+.grande{position:absolute;left:340px;top:760px;width:400px;height:400px;border-radius:44px;opacity:0;
+  background:conic-gradient(from 200deg,#ff5f8f,#7a5bff 38%,#0a84ff 66%,#4ee8ff 88%,#ff5f8f);
+  box-shadow:0 40px 80px -30px rgba(15,23,42,.55),inset 0 0 0 1px rgba(255,255,255,.32);z-index:6}
+</style></head>
+<body>
+<section class="reel" id="reel">
+  <div class="escena" id="escena">
+    <div id="cabeza">
+      <div id="plSom"></div>
+      <div id="pl">
+        <span class="tri" id="tri"></span>
+        <div class="mini" id="mini"><span class="pt"></span><span><b>Modo Nocturno</b><em>Luna</em></span></div>
+        <div class="full" id="full">
+          <div class="disco" id="disco"><i id="discoI"></i></div>
+          <div class="tit" id="tit">Modo Nocturno</div>
+          <div class="art" id="art">Luna · Single</div>
+          <div class="chipHz" id="chipHz">44.1 kHz · LOSSLESS</div>
+          <div class="ondaBox" id="ondaBox"></div>
+          <div class="prog" id="prog"><i id="progI"></i><u id="progU"></u></div>
+          <div id="tmBox"><div class="tm tmA"><span class="odo" id="tmA"></span></div><div class="tm tmB">3:24</div></div>
+          <div class="ctrl" id="ctrl">
+            <span class="bt sm" id="btA" style="left:176px"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14l-11-7z"/></svg></span>
+            <span class="bt big" id="btB"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></span>
+            <span class="bt sm" id="btC" style="left:404px"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2v14h2zM4 5v14l11-7z"/></svg></span>
+            <span class="coraOnda" id="coraOnda"></span>
+            <span class="cora" id="cora"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path id="coraP" d="M12 20.5 4.2 13a5 5 0 1 1 7.8-6.2A5 5 0 1 1 19.8 13Z"/></svg></span>
+          </div>
+        </div>
+      </div>
+      <div class="grande" id="grande"></div>
+    </div>
+  </div>
+  <div class="rot" id="rotA"><span id="a1">¿Te gustaría</span><span id="a2"><em>tener vídeos así?</em></span></div>
+  <div class="grano"></div>
+</section>
+<script src="../motor/comun.js"></script>
+<script src="_cierre.js"></script>
+<script>
+document.getElementById('reel').insertAdjacentHTML('afterbegin',CIELO_HTML);
+const M={f1:11.099, f2:14.279, f3:16.539, f4:19.3, f5:21.96, f6:24.439, f7:25.96, esto:14.279, carpeta:16.9, arrastras:17.5, claude:18.419, web:19.96, video:20.979, colores:22.479, tipo:23.179, devuelve:24.719, comenta:25.96, motion:26.46, mando:27.579, fin:28.276};
+const T=guion([
+  ['entra',  -0.06, 0.52], ['pulsa', 0.56, 0.34], ['pill', 0.70, 0.58], ['card', 1.34, 0.74],
+  ['onda',    1.94, 0.60], ['gira',  2.24, 1.00], ['prog', 2.26, 5.90], ['ctrl', 3.02, 0.50],
+  ['cora',    3.64, 0.44], ['sale',  4.36, 0.84], ['vuelve',5.44, 0.70], ['cambia',6.00, 0.60],
+  ['anillo',  6.86, 1.04], ['abre',  8.26, 0.80], ['plega', 9.06, 0.72], ['crece',11.10, 0.86],
+]);
+window.FPS=60;
+const el={}; ['escena','cabeza','pl','plSom','tri','mini','full','disco','discoI','tit','art','chipHz','ondaBox',
+ 'prog','progI','progU','tmA','tmBox','ctrl','btA','btB','btC','cora','coraOnda','coraP','grande','rotA','a1','a2'].forEach(k=>el[k]=$(k));
+const N=28; el.ondaBox.innerHTML=Array.from({length:N},(_,i)=>`<i class="wv" id="wv${i}"></i>`).join('');
+const WV=Array.from({length:N},(_,i)=>$('wv'+i));
+const cola=COLA.montar({M,cabeza:'cabeza',dominio:'midominio.com',tema:'cómo funciona en 30 s'});
+window.DURACION=+(cola.fin).toFixed(2);
+const FORMAS=[[460,905,160,160,80],[300,915,480,140,70],[170,620,740,760,36]];
+
+window.seek=function(t){
+  cieloSeek(t);
+  /* el objeto: círculo · píldora · tarjeta */
+  const s=clamp(easeInOut(p(t,T.pill[0],T.pill[1]))+easeInOut(p(t,T.card[0],T.card[1]))
+     -easeInOut(p(t,T.plega[0],T.plega[1]))+easeInOut(p(t,T.crece[0],T.crece[1])),0,2);
+  const i0=Math.min(1,Math.floor(s)), f=s-i0, A=FORMAS[i0], B=FORMAS[i0+1];
+  const L=mix(A[0],B[0],f),TP=mix(A[1],B[1],f),W=mix(A[2],B[2],f),H=mix(A[3],B[3],f),R=mix(A[4],B[4],f);
+  const entra=easeOut(p(t,T.entra[0],T.entra[1]));
+  caja(el.pl,L,TP,W,H,R); caja(el.plSom,L,TP,W,H,R);
+  el.pl.style.transform=`translateY(${mix(70,0,entra)}px) scale(${mix(0.62,1,entra)}) rotate(${mix(-24,0,entra)}deg)`;
+  el.pl.style.opacity=entra; el.plSom.style.transform=el.pl.style.transform; el.plSom.style.opacity=clamp(s-1,0,1)*0.8;
+  el.tri.style.opacity=1-clamp((s-0.12)/0.34,0,1);
+  el.tri.style.transform=`scale(${1-pulso(p(t,T.pulsa[0],T.pulsa[1]))*0.16})`;
+  el.mini.style.opacity=Math.min(clamp((s-0.52)/0.34,0,1),1-clamp((s-1.14)/0.34,0,1));
+  const kF=clamp((s-1.22)/0.42,0,1); el.full.style.opacity=kF;
+  /* el disco gira desde que suena; y a los 6 s cambia la canción */
+  const kGi=easeInOut(p(t,T.gira[0],T.gira[1]));
+  const kCa=p(t,T.cambia[0],T.cambia[1]);
+  el.disco.style.borderRadius=mix(28,100,kGi)+'px';
+  el.disco.style.transform=`rotate(${(t>T.gira[0]?(t-T.gira[0])*46:0)*kGi}deg)`;
+  el.disco.style.filter=`hue-rotate(${easeInOut(kCa)*140}deg)`;
+  el.discoI.style.opacity=kGi;
+  const sw=pulso(kCa); el.tit.textContent=kCa>0.5?'Ciudad Vacía':'Modo Nocturno'; el.art.textContent=kCa>0.5?'Luna · Álbum':'Luna · Single';
+  el.tit.style.filter=el.art.style.filter=`blur(${sw*10}px)`; el.tit.style.transform=el.art.style.transform=`translateY(${sw*-10}px)`;
+  /* la onda: 28 barras que nunca paran y se cierran en anillo */
+  const vivo=easeOut(p(t,T.onda[0],T.onda[1]));
+  const kAn=easeInOut(p(t,T.anillo[0],T.anillo[1]))-easeInOut(p(t,T.abre[0],T.abre[1]));
+  const foco=1-kAn*0.78;
+  WV.forEach((n,i)=>{
+    const f1=1.9+((i*7)%11)*0.23, f2=3.1+((i*5)%7)*0.19;
+    const amp=0.42+0.58*Math.abs(Math.sin(t*f1+i*0.7))*Math.abs(Math.cos(t*f2*0.5+i*0.31));
+    const alto=(16+amp*mix(118,112,kAn))*vivo, x0=(i-(N-1)/2)*23.4, a=i*(360/N), rad=a*Math.PI/180, Rr=120;
+    n.style.height=alto+'px'; n.style.opacity=vivo;
+    n.style.transform=`translate(${mix(x0,Rr*Math.sin(rad),kAn)}px,${mix(0,-130-Rr*Math.cos(rad),kAn)}px) rotate(${mix(0,a,kAn)}deg)`;
+  });
+  for(const n of [el.disco,el.tit,el.art,el.chipHz,el.prog,el.tmBox]){ n.style.opacity=foco; if(n!==el.disco&&n!==el.tit&&n!==el.art) n.style.filter=`blur(${kAn*8}px)`; }
+  el.disco.style.filter+=` blur(${kAn*8}px)`;
+  /* barra y tiempo */
+  const kPr=p(t,T.prog[0],T.prog[1])*(1-easeInOut(kCa))+easeInOut(kCa)*p(t,T.cambia[1],T.cambia[1]+6)*0.5;
+  el.progI.style.transform=`scaleX(${kPr*0.62})`; el.progU.style.left=(656*kPr*0.62)+'px'; el.progU.style.opacity=kF;
+  odoPasos(el.tmA,[[0,'0:00'],[T.prog[0]+0.1,'0:04'],[2.9,'0:21'],[3.8,'0:47'],[4.9,'1:12'],[T.cambia[0]+0.3,'0:00'],[7.3,'0:12'],[8.6,'0:31'],[10.4,'0:58'],[12.4,'1:20']],t,29);
+  /* controles y corazón */
+  [el.btB,el.btA,el.btC].forEach((n,i)=>{ const k=easeOut(p(t,T.ctrl[0]+i*0.08,T.ctrl[0]+i*0.08+0.42));
+    n.style.opacity=k*foco; n.style.filter=`blur(${kAn*8}px)`; n.style.transform=`translateY(${mix(22,0,k)}px) scale(${mix(0.8,1,k)})`; });
+  const kCo=easeOut(p(t,T.cora[0],T.cora[1]));
+  el.cora.style.opacity=easeOut(p(t,T.ctrl[0]+0.24,T.ctrl[0]+0.66))*foco; el.cora.style.filter=`blur(${kAn*8}px)`;
+  el.cora.style.transform=`scale(${1+pulso(p(t,T.cora[0],T.cora[0]+0.44))*0.24})`;
+  el.coraP.setAttribute('fill',kCo>0.5?'#ff3b5c':'none');
+  const kCw=p(t,T.cora[0],T.cora[0]+0.6); el.coraOnda.style.opacity=pulso(kCw)*0.8; el.coraOnda.style.transform=`scale(${mix(1,1.9,easeOut(kCw))})`;
+  /* la portada sale, crece y vuelve */
+  const kSa=easeInOut(p(t,T.sale[0],T.sale[1]))-easeInOut(p(t,T.vuelve[0],T.vuelve[1]));
+  el.grande.style.opacity=kSa; el.grande.style.filter=`blur(${mix(18,0,kSa)}px)`;
+  el.grande.style.transform=`translateY(${mix(60,0,kSa)}px) scale(${mix(0.3,1,kSa)}) rotate(${mix(-14,0,kSa)}deg)`;
+  el.pl.style.filter=`blur(${mix(13,0,entra)+kSa*9}px)`;
+  /* el rótulo del puente */
+  const sR=1-easeOut(p(t,M.esto-0.42,M.esto-0.06));
+  palabras([el.a1,el.a2],t,M.f1-0.10,0.42,0.44,sR); el.rotA.style.filter=`blur(${(1-sR)*12}px)`;
+  /* la cola */
+  const v=cola.seek(t);
+  /* la cámara */
+  let cs=1+respira(t,0.005,0.021);
+  cs+=easeOut(p(t,T.card[0],T.card[0]+0.30))*0.05-easeInOut(p(t,T.card[1],T.card[1]+0.8))*0.05;
+  cs+=easeInOut(p(t,T.anillo[0],T.anillo[1]))*0.05-easeInOut(p(t,T.abre[0],T.abre[1]))*0.05;
+  cs+=easeInOut(p(t,cola.T.movil[0],cola.T.movil[1]+0.2))*0.04-easeInOut(p(t,cola.T.cierre[0]-0.6,cola.T.cierre[0]))*0.04;
+  cs*=mix(1,0.985,v);
+  const sy=960+shake(t,T.pulsa[0],9)+shake(t,T.card[0],12)+shake(t,T.cora[0],7)+shake(t,cola.T.suelta[0],8)+shake(t,cola.T.cierre[0],9);
+  el.escena.style.transform=camara(cs,540,960,540,sy);
+};
+const SFX=[
+  ['whoosh',T.entra[0]+0.06,0.24],['pop',T.pulsa[0],0.34],['swipe',T.pill[0],0.20],['brillo',T.card[0],0.26],
+  ['datos',T.onda[0],0.20],['clic',T.ctrl[0]+0.06,0.20],['pop',T.cora[0],0.26,1.2],['whoosh',T.sale[0],0.22],
+  ['swipe',T.cambia[0],0.18],['brillo',T.anillo[0],0.24],['swipe',T.plega[0],0.20],
+].concat(cola.SFX);
+const MUSICA=[
+  ['energia-himno',0,0.17],
+  ['neutra-cristal',M.f1-0.30,0.11,'fundido'],
+  ['energia-eco',M.devuelve-0.20,0.16,'sube'],
+];
+window.MARCAS=Object.assign({},T,{SFX,MUSICA,fin:window.DURACION});
+arrancar();
+</script>
+</body></html>

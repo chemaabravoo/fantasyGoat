@@ -1,0 +1,170 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel Motor · 02 · el mapa</title>
+<!-- EJEMPLO · va mudo: la voz se genera con toma.py desde su guion (v0N.txt) ·
+     VÍDEO 2 · gancho: EL MAPA. Cabeza muda: dos pines caen, la ruta se dibuja sola, el tiempo rueda, el mapa se inclina en 3D y un punto recorre la ruta. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../motor/cristal.css">
+<link rel="stylesheet" href="../motor/comun.css">
+<style>
+
+#mapa{position:absolute;left:170px;top:540px;width:740px;height:900px;border-radius:36px;overflow:hidden;
+  background:#e8edf5;border:1px solid var(--filete);box-shadow:var(--bisel),var(--flota-alta);
+  transform-origin:50% 60%}
+#mapaSom{position:absolute;left:170px;top:540px;width:740px;height:900px;border-radius:36px;box-shadow:var(--flota-dock);opacity:0}
+.tierra{position:absolute;inset:-30%;
+  background:
+    repeating-linear-gradient(12deg,transparent 0 92px,rgba(255,255,255,.9) 92px 104px),
+    repeating-linear-gradient(102deg,transparent 0 118px,rgba(255,255,255,.9) 118px 130px),
+    #e6ebf3}
+.avenida{position:absolute;height:34px;background:#fff;border-radius:17px;box-shadow:0 0 0 1px rgba(15,23,42,.05)}
+.parque{position:absolute;border-radius:50%;background:radial-gradient(circle,#bfe6c2 0%,#cdebcf 60%,rgba(205,235,207,0) 72%);filter:blur(2px)}
+.rio{position:absolute;left:-40px;top:0;width:820px;height:900px;overflow:visible}
+.rio path{fill:none;stroke:#bfe0ff;stroke-width:44px;stroke-linecap:round}
+.ruta{position:absolute;left:0;top:0;width:740px;height:900px;overflow:visible}
+.ruta .fondo{fill:none;stroke:rgba(255,255,255,.9);stroke-width:22px;stroke-linecap:round;stroke-linejoin:round}
+.ruta .linea{fill:none;stroke:var(--acento);stroke-width:12px;stroke-linecap:round;stroke-linejoin:round}
+.pin{position:absolute;width:44px;height:44px;margin:-44px 0 0 -22px;opacity:0;transform-origin:50% 100%}
+.pin b{position:absolute;left:0;top:0;width:44px;height:44px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+  background:var(--tinta);box-shadow:0 8px 16px -6px rgba(15,23,42,.5)}
+.pin b i{position:absolute;left:14px;top:14px;width:16px;height:16px;border-radius:50%;background:#fff}
+.pin.fin b{background:#ff3b5c}
+.pinOnda{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;box-shadow:0 0 0 3px var(--acento);opacity:0}
+.punto{position:absolute;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 4px var(--acento),0 6px 14px -4px rgba(15,23,42,.5);opacity:0;z-index:3}
+.estela{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--acento);opacity:0;z-index:2}
+.eta{position:absolute;left:30px;top:720px;width:680px;height:150px;border-radius:28px;overflow:hidden;
+  background:var(--cristal-alto);border:1px solid var(--filete);box-shadow:var(--bisel),var(--flota);
+  -webkit-backdrop-filter:var(--desenfoque);backdrop-filter:var(--desenfoque);opacity:0}
+.eta .min{position:absolute;left:34px;top:30px;font-size:64px;font-weight:600;letter-spacing:-.03em;display:flex;align-items:baseline;gap:14px}
+.eta .min u{text-decoration:none;font-size:30px;color:var(--tinta-baja);font-weight:400}
+.eta .km{position:absolute;left:36px;top:104px;font-family:var(--dato);font-size:22px;color:var(--tinta-baja);letter-spacing:.06em}
+.eta .ir{position:absolute;right:26px;top:31px;height:88px;padding:0 34px;border-radius:9999px;background:var(--acento);color:#fff;
+  display:flex;align-items:center;font-size:32px;font-weight:600;letter-spacing:-.01em;gap:12px}
+.eta .fila{position:absolute;left:34px;right:34px;height:60px;display:flex;align-items:center;justify-content:space-between;opacity:0;
+  font-size:28px;border-top:1px solid var(--filete)}
+.eta .fila em{font-style:normal;color:var(--tinta-baja);font-family:var(--dato);font-size:22px;letter-spacing:.08em;text-transform:uppercase}
+.eta .fila b{font-weight:600}
+.llega{position:absolute;left:250px;top:120px;height:64px;padding:0 24px;border-radius:9999px;opacity:0;
+  background:var(--tinta);color:#fff;display:flex;align-items:center;gap:12px;font-size:26px;font-weight:500;
+  box-shadow:0 12px 24px -10px rgba(15,23,42,.5)}
+.llega i{width:12px;height:12px;border-radius:50%;background:#7ce0b0}
+
+</style></head>
+<body>
+<section class="reel" id="reel">
+  <div class="escena" id="escena">
+    <div id="cabeza">
+      <div id="mapaSom"></div>
+      <div id="mapa">
+        <div class="tierra" id="tierra"></div>
+        <i class="parque" style="left:-40px;top:120px;width:300px;height:260px"></i>
+        <i class="parque" style="left:520px;top:560px;width:280px;height:240px"></i>
+        <svg class="rio" viewBox="0 0 820 900"><path d="M60 -20 C 120 200, 40 380, 180 520 S 420 760, 560 940"/></svg>
+        <i class="avenida" style="left:-60px;top:300px;width:900px;transform:rotate(12deg)"></i>
+        <i class="avenida" style="left:-60px;top:640px;width:900px;transform:rotate(12deg)"></i>
+        <i class="avenida" style="left:400px;top:-80px;width:34px;height:1100px;transform:rotate(12deg)"></i>
+        <svg class="ruta" viewBox="0 0 740 900">
+          <path class="fondo" id="rutaF" d="M130 720 C 200 620, 330 660, 380 540 C 430 420, 520 400, 590 330 C 640 280, 650 240, 620 200"/>
+          <path class="linea" id="rutaL" d="M130 720 C 200 620, 330 660, 380 540 C 430 420, 520 400, 590 330 C 640 280, 650 240, 620 200"/>
+        </svg>
+        <i class="pinOnda" id="ondaA" style="left:130px;top:720px"></i>
+        <i class="pinOnda" id="ondaB" style="left:620px;top:200px"></i>
+        <i class="estela" id="es3"></i><i class="estela" id="es2"></i><i class="estela" id="es1"></i>
+        <i class="punto" id="punto"></i>
+        <div class="pin" id="pinA" style="left:130px;top:720px"><b><i></i></b></div>
+        <div class="pin fin" id="pinB" style="left:620px;top:200px"><b><i></i></b></div>
+        <div class="llega" id="llega"><i></i>Llegas a las 18:42</div>
+        <div class="eta" id="eta">
+          <div class="min"><span class="odo" id="etaOdo"></span><u>min</u></div>
+          <div class="km" id="km">3,2 KM · SIN TRÁFICO</div>
+          <div class="ir" id="ir">Ir &#8594;</div>
+          <div class="fila" id="fi0" style="top:150px"><em>Salida</em><b>Casa</b></div>
+          <div class="fila" id="fi1" style="top:212px"><em>Llegada</em><b>Oficina</b></div>
+          <div class="fila" id="fi2" style="top:274px"><em>Tiempo</em><b>11 min</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="rot" id="rotA"><span id="a1">¿Y si tu app</span><span id="a2"><em>se enseñara así?</em></span></div>
+  <div class="grano"></div>
+</section>
+<script src="../motor/comun.js"></script>
+<script src="_cierre.js"></script>
+<script>
+document.getElementById('reel').insertAdjacentHTML('afterbegin',CIELO_HTML);
+const M={f1:11.099, f2:14.119, f3:16.179, f4:18.98, f5:22.039, f6:24.599, f7:26.439, esto:14.119, carpeta:16.5, arrastras:17.059, claude:18.039, web:19.659, video:20.899, colores:22.579, tipo:23.439, devuelve:24.88, comenta:26.439, motion:27.039, mando:28.319, fin:28.972};
+window.FPS=60;
+const T=guion([
+  ['entra',  -0.06, 0.54], ['pinA', 0.50, 0.42], ['pinB', 1.20, 0.42], ['ruta', 1.72, 1.90],
+  ['eta',     2.40, 0.56], ['tilt', 3.90, 0.90], ['punto',4.50, 5.40], ['llega',6.30, 0.44],
+  ['vuelve',  7.30, 0.90], ['resumen',8.20, 0.80], ['zoom', 9.40, 1.00],
+]);
+const el={}; ['escena','mapa','mapaSom','tierra','rutaF','rutaL','ondaA','ondaB','es1','es2','es3','punto','pinA','pinB',
+ 'llega','eta','etaOdo','km','ir','fi0','fi1','fi2','rotA','a1','a2'].forEach(k=>el[k]=$(k));
+const LARGO=el.rutaL.getTotalLength(); el.rutaL.style.strokeDasharray=el.rutaF.style.strokeDasharray=LARGO;
+const cola=COLA.montar({M,cabeza:'cabeza',dominio:'midominio.com',tema:'cómo funciona en 30 s'});
+window.DURACION=+(cola.fin).toFixed(2);
+window.seek=function(t){
+  cieloSeek(t);
+  const entra=easeOut(p(t,T.entra[0],T.entra[1]));
+  /* el mapa: entra, se inclina en 3D y vuelve */
+  const kTi=easeInOut(p(t,T.tilt[0],T.tilt[1]))-easeInOut(p(t,T.vuelve[0],T.vuelve[1]));
+  const kZ=easeInOut(p(t,T.zoom[0],T.zoom[1]));
+  const tr=`perspective(1600px) translateY(${mix(120,0,entra)}px) rotateX(${kTi*26}deg) scale(${mix(1.08,1,entra)*(1+kTi*0.06)*(1-kZ*0.03)})`;
+  el.mapa.style.transform=tr; el.mapa.style.opacity=entra; el.mapa.style.filter=`blur(${mix(7,0,entra)}px)`;
+  el.mapaSom.style.transform=tr; el.mapaSom.style.opacity=entra*0.8;
+  el.tierra.style.transform=`translate(${respira(t,10,0.05)}px,${respira(t,8,0.04,1)}px)`;
+  /* los dos pines caen y hacen onda */
+  [[el.pinA,el.ondaA,T.pinA],[el.pinB,el.ondaB,T.pinB]].forEach(([n,o,c])=>{
+    const k=easeCae(p(t,c[0],c[1])), q=p(t,c[1]-0.05,c[1]+0.30);
+    n.style.opacity=t>=c[0]?1:0;
+    n.style.transform=`translateY(${mix(-160,0,k)}px) scale(${1-pulso(q)*0.12},${1+pulso(q)*0.14})`;
+    n.style.filter=`blur(${(1-k)*6}px)`;
+    const w=p(t,c[1],c[1]+0.55); o.style.opacity=pulso(w)*0.8; o.style.transform=`scale(${mix(0.6,2.4,easeOut(w))})`;
+  });
+  /* la ruta se dibuja sola */
+  const kR=easeInOut(p(t,T.ruta[0],T.ruta[1]));
+  el.rutaL.style.strokeDashoffset=el.rutaF.style.strokeDashoffset=LARGO*(1-kR);
+  /* el punto recorre la ruta con estela */
+  const kP=easeInOut(p(t,T.punto[0],T.punto[1]));
+  const pos=k=>el.rutaL.getPointAtLength(LARGO*k);
+  const q0=pos(kP); el.punto.style.opacity=t>=T.punto[0]?1:0; el.punto.style.left=q0.x+'px'; el.punto.style.top=q0.y+'px';
+  [el.es1,el.es2,el.es3].forEach((n,i)=>{const q=pos(clamp(kP-0.012*(i+1),0,1)); n.style.left=q.x+'px'; n.style.top=q.y+'px';
+    n.style.opacity=(t>=T.punto[0]&&kP<1)?0.55-i*0.15:0; n.style.transform=`scale(${1-i*0.2})`;});
+  /* la tarjeta de tiempo: sube, el número rueda, y se abre en resumen */
+  const kE=easeOut(p(t,T.eta[0],T.eta[1])), kRe=easeInOut(p(t,T.resumen[0],T.resumen[1]));
+  el.eta.style.opacity=kE; el.eta.style.transform=`translateY(${mix(80,0,kE)}px)`; el.eta.style.filter=`blur(${mix(12,0,kE)}px)`;
+  el.eta.style.top=mix(720,530,kRe)+'px'; el.eta.style.height=mix(150,352,kRe)+'px';
+  odoPasos(el.etaOdo,[[0,'24'],[T.eta[1]+0.2,'18'],[T.ruta[1]-0.2,'11']],t,77,0.5);
+  [el.fi0,el.fi1,el.fi2].forEach((n,i)=>{const k=easeOut(p(t,T.resumen[0]+0.16+i*0.09,T.resumen[0]+0.16+i*0.09+0.4));
+    n.style.opacity=k; n.style.transform=`translateY(${mix(18,0,k)}px)`;});
+  el.ir.style.transform=`scale(${1+pulso(p(t,T.ruta[1],T.ruta[1]+0.4))*0.08})`;
+  const kLl=easeOut(p(t,T.llega[0],T.llega[1])); el.llega.style.opacity=kLl;
+  el.llega.style.transform=`translateY(${mix(20,0,kLl)}px) scale(${mix(0.86,1,kLl)})`; el.llega.style.filter=`blur(${mix(10,0,kLl)}px)`;
+  /* el rótulo del puente */
+  const sR=1-easeOut(p(t,M.esto-0.42,M.esto-0.06));
+  palabras([el.a1,el.a2],t,M.f1-0.10,0.42,0.44,sR); el.rotA.style.filter=`blur(${(1-sR)*12}px)`;
+  const v=cola.seek(t);
+  let cs=1+respira(t,0.005,0.021);
+  cs+=easeInOut(p(t,T.tilt[0],T.tilt[1]))*0.04-easeInOut(p(t,T.vuelve[0],T.vuelve[1]))*0.04;
+  cs+=easeInOut(p(t,cola.T.movil[0],cola.T.movil[1]+0.2))*0.04-easeInOut(p(t,cola.T.cierre[0]-0.6,cola.T.cierre[0]))*0.04;
+  cs*=mix(1,0.985,v);
+  const sy=960+shake(t,T.pinA[1],8)+shake(t,T.pinB[1],8)+shake(t,cola.T.suelta[0],8)+shake(t,cola.T.cierre[0],9);
+  el.escena.style.transform=camara(cs,540,960,540,sy);
+};
+const SFX=[
+  ['whoosh',T.entra[0]+0.06,0.24],['pop',T.pinA[1]-0.02,0.34],['pop',T.pinB[1]-0.02,0.34,1.15],
+  ['hilo',T.ruta[0],0.22],['swipe',T.eta[0],0.20],['blip',T.ruta[1]-0.2,0.24,1.1],['whoosh',T.tilt[0],0.20],
+  ['notificacion',T.llega[0],0.26],['brillo',T.resumen[0],0.22],
+].concat(cola.SFX);
+const MUSICA=[
+  ['neutra-pulso',0,0.16],
+  ['neutra-cristal',M.f1-0.30,0.11,'fundido'],
+  ['energia-eco',M.devuelve-0.20,0.16,'sube'],
+];
+window.MARCAS=Object.assign({},T,{SFX,MUSICA,fin:window.DURACION});
+arrancar();
+</script>
+</body></html>
