@@ -1,153 +1,129 @@
 ---
-name: marca-desde-web
+name: reel-motor
 description: >
-  Monta la marca de un cliente para el taller de reels, desde su web —mide
-  colores por área y por papel, tipografías, logotipo, contacto— o desde su
-  manual (PDF, capturas, colores sueltos). Deja taller/<marca>/marca.css con
-  los contrastes medidos, los activos en taller/<marca>/marca/ y la skill de
-  la marca en .claude/skills/<marca>/SKILL.md, con su voz de ElevenLabs.
-  Úsala en el paso 2 de CLAUDE.md, cuando el usuario dé una URL o un manual,
-  o cuando quiera añadir otra marca al taller.
+  El oficio de animar vídeos verticales 9:16 en el estilo motion UI de la casa —
+  todo entra de borroso a nítido, un objeto que muta, muelle, cámara con profundidad,
+  cifras que ruedan— sobre la piel de cristal. La pieza se escribe en HTML con una
+  seek(t) determinista y se captura a mp4 con voz, efectos y música, y con la portada
+  1080x1920 encuadrada al cuadrado central que se entrega con cada vídeo. Se usa siempre
+  junto a la skill de la marca del cliente (.claude/skills/<marca>), que pone sus
+  colores, sus datos y su tono. Úsala cuando alguien pida una animación, un reel, un
+  vídeo, un mp4 o una pieza para Instagram, TikTok o Shorts, y también para retocar el
+  ritmo, el encuadre o los tiempos de una ya hecha.
 ---
 
-# La marca, desde su web o su manual
+# El oficio de animar un reel
 
-Se hace **una vez por marca**. Si esto sale mal, se nota en todas las piezas.
-Las reglas de qué es cada token y cómo se decide están en
-`../reel-motor/marca.md`: esto es el procedimiento.
+**Una idea + la marca del cliente → un mp4 9:16 donde no hay un segundo quieto y los tres
+primeros deciden si alguien se queda.** Esta skill es el **cómo**. El **qué** —colores,
+tipografías, producto, datos, tono— lo pone la skill de la marca, en
+`.claude/skills/<marca>/SKILL.md`, que se monta con `marca-desde-web` la primera vez.
 
-## 1 · Recoger
+Si te ves escribiendo aquí un color, un dato o una frase de un negocio, va en su skill.
+Si una regla de animación sirve para dos marcas, va aquí.
 
-### Si hay web
+## Las cuatro partes
+
+| Parte | Qué resuelve | Archivos |
+|---|---|---|
+| **Guion** | Qué se cuenta, en qué orden y **con qué palabras**: el gancho, el armazón, el tono de la marca | [guion/gancho.md](guion/gancho.md) · [guion/estructura.md](guion/estructura.md) · [guion/tono.md](guion/tono.md) |
+| **Animación** | Cómo se mueve: el estilo motion UI, la piel de cristal, las curvas, la cámara, el encuadre | [animacion/motion-ui.md](animacion/motion-ui.md) · [cristal.md](animacion/cristal.md) · [movimiento.md](animacion/movimiento.md) · [motor.md](animacion/motor.md) · [forma.md](animacion/forma.md) · [encuadre.md](animacion/encuadre.md) |
+| **Sonido** | La voz en una toma con tiempos por palabra, los efectos, la música por tramos | [sonido/voz.md](sonido/voz.md) |
+| **Entrega** | Validar, mirar, el vistazo, el render, el archivo final | [entrega/render.md](entrega/render.md) · [entrega/trampas.md](entrega/trampas.md) (consulta, no lista) |
+
+## Cómo funciona por dentro
+
+Cada pieza es **una página web con una `seek(t)`**: dado un segundo, dibuja la pantalla en
+ese instante. Un script le pide 30 instantes por segundo, los fotografía y los pega en un
+mp4. Nada de `@keyframes`, `transition` ni `setTimeout`: el fotograma 137 sale igual
+siempre. Los ayudantes, las curvas y el cielo están en `motor/comun.js` y
+`motor/comun.css`; la piel en `motor/cristal.css`; el esqueleto de una pieza en
+`motor/base.html`, que es el motor y no una plantilla: la escena se escribe entera cada vez.
+
+## Las cuatro leyes
+
+1. **Los tres primeros segundos.** En el fotograma 0 ya hay algo a medio moverse, se lee
+   sin sonido en cinco palabras y se abre un bucle que no se cierra hasta el final.
+   [guion/gancho.md](guion/gancho.md).
+2. **Ni un segundo muerto.** Cada 1,2-2 s pasa algo, y por debajo siempre respira el cielo.
+   Se retiene **transformando, no cortando**. [animacion/movimiento.md](animacion/movimiento.md).
+3. **La marca se hereda, la película no.** Paleta, tipografías, encuadre y datos se
+   repiten siempre; el objeto con el que se cuenta y el plano se inventan cada vez.
+   [animacion/forma.md](animacion/forma.md).
+4. **Ninguna pieza se entrega muda.** Voz en una toma, efectos declarados en el HTML con
+   los mismos tiempos que mueven la imagen, música por tramos. [sonido/voz.md](sonido/voz.md).
+
+## El estilo: motion UI sobre cristal
+
+Todo entra de borroso a nítido, un objeto muta en vez de cortar, muelle en lo que
+aterriza, escalera, cámara con profundidad de campo, siempre una cifra rodando, y **los
+objetos son los de la marca** (su app, su web, su producto), nunca píldoras genéricas.
+Las siete leyes y el vocabulario: [animacion/motion-ui.md](animacion/motion-ui.md). La
+piel —el cielo vivo, el cristal, cómo entran los colores del cliente—:
+[animacion/cristal.md](animacion/cristal.md). **Los emojis, los iconos y los logotipos
+—que es la mitad de lo que hace que una pieza parezca profesional— en
+[animacion/simbolos.md](animacion/simbolos.md)**: en un Mac los emojis salen los de Apple
+sin hacer nada, los iconos van con Material Symbols y se tiñen con el acento, y los logos
+de terceros se bajan en vectorial con `motor/logo.mjs`. Seis piezas completas para copiar la
+técnica (no el plano): `ejemplos/`.
+
+## El flujo, en ocho pasos
 
 ```bash
-node motor/marca-desde-web.mjs https://su-web.com taller/<slug>
+# 1 · la marca · la monta marca-desde-web en taller/<marca>/marca.css y .claude/skills/<marca>/
+cd taller/<marca>
 ```
 
-Imprime un resumen y deja en `taller/<slug>/marca/`: `web.json` (todo lo
-medido), `captura.png`, `captura-entera.png`, `captura-movil.png` y el
-`logo.*` si lo encontró.
+2. **El guion.** Armazón, gancho y **tono de la marca** ([guion/](guion/): las palabras
+   son las suyas, no las del taller); una frase por línea en
+   `guiones/<pieza>.txt`. **La voz se pide ya** (`toma.py`), se le aprietan los silencios
+   (`secar.py`) y de ahí sale `M` (`marcas.py`): los compases cuelgan de las palabras,
+   nunca de segundos a mano.
+3. **La forma.** Tres formas de canteras distintas, se tira la primera
+   ([animacion/forma.md](animacion/forma.md)). **Di la pieza en una frase** antes de tocar
+   el HTML.
+4. **El HTML.** `cp ../../motor/base.html pieza-<nombre>.html`. Un bloque por elemento
+   dentro de `seek()`, con el vocabulario de motion-ui.md. `SFX` y `MUSICA` con los
+   mismos compases.
 
-**Mira las capturas** con Read, las tres. El estilo no está en los números:
-¿minimalista o cargada? ¿cálida o técnica? ¿fotos o ilustración? ¿qué vende,
-a quién, con qué tono? Eso va a la skill de la marca y decide la personalidad
-de movimiento.
+```bash
+# 5 · validar · se niega si algo medible falla
+node ../../motor/validar.mjs pieza-<nombre>.html
+# 6 · las hojas de contactos · se miran TODAS con Read
+node ../../motor/contactos.mjs pieza-<nombre>.html
+# 7 · el vistazo, con voz, y se le enseña · ~40 s · la MITAD de 60
+node ../../motor/shoot-par.mjs pieza-<nombre>.html salida/ver.mp4 10 0.5 30
+python3 ../../motor/sonar-generico.py salida/ver.mp4 audios/<pieza>/toma.mp3
+# 8 · sólo cuando ha dicho que sí · ~10 min · a 60, que es como se anima
+node ../../motor/shoot-par.mjs pieza-<nombre>.html salida/<pieza>.mp4 10 2 60
+python3 ../../motor/sonar-generico.py salida/<pieza>.mp4 audios/<pieza>/toma.mp3
+# 9 · la portada · SIEMPRE que hay render de calidad
+node ../../motor/portada.mjs salida/<pieza>-son.mp4 salida/<pieza>-portada.png \
+  --cifra "…" --frase "…" --pie "<marca>"
+```
 
-Si la web no carga (bloquea navegadores sin cabeza, o pide login), dilo y pasa
-al manual, o pide capturas.
+Se entrega el `-son.mp4`, **su portada**, el mapa de tiempos y **qué elegiste y por qué**.
+[entrega/render.md](entrega/render.md).
 
-### Si hay manual
+**Ningún render de calidad se entrega sin portada.** Es 1080 × 1920, pero lo legible va
+dentro del cuadrado central (`y 420`-`1500`), que es lo que se ve en la parrilla del perfil.
 
-Léelo entero (PDF con Read; capturas con Read). Saca los mismos tokens que
-saca el script: fondo, tinta, acento, tipografías, logotipo, nombre, web.
+## Antes de dar una pieza por buena
 
-### Si sólo hay Instagram
+1. **Fotograma 0**: ¿hay algo a medio moverse, o la pantalla arranca vacía?
+2. **Segundo 3**: ¿se entiende la promesa sin sonido? ¿Hay un bucle abierto?
+3. **El latido**: ¿algún hueco de más de 2 s sin evento? Las hojas de contactos lo delatan.
+4. **¿Es motion UI?** Blur de entrada y salida, muelle, cámara, una cifra que rueda.
+5. **¿Los objetos son los de la marca?** Una píldora que no existe en su web es genérica.
+6. **¿`validar.mjs` en verde y las hojas de contactos miradas?** Todas.
+7. **¿Suena?** Voz en una toma, efectos en cada golpe, música que cambia con la pieza.
+8. **¿Ha visto el vistazo?** El render de calidad no se hace antes.
+9. **¿Lo que se lee y lo que pasa está dentro de la zona segura** (x 100–910, y 250–1520)
+   a su tamaño y centrado en 540? Si una frase no cabe, se acorta; no se encoge.
 
-Instagram bloquea a los navegadores sin cabeza, así que el script no entra.
-Pídele **dos o tres capturas**: el perfil entero y un par de posts o de
-stories. Léelas con Read y saca de ahí lo mismo: los dos colores que repite,
-si el logo va sobre claro o sobre oscuro, qué tipografía usa en los textos de
-las piezas, y sobre todo **el tono**. Un feed dice más del tono que una web.
+Si algo se ve raro y no sabes por qué, busca en [entrega/trampas.md](entrega/trampas.md).
 
-### Si no hay ni web ni manual
+## Sobre el lote
 
-Cuatro respuestas cortas, una pregunta cada vez: **nombre**, **qué vende y a
-quién**, **dos colores** —y si dice «no sé, elige tú», propónle tres parejas
-con su carácter, no una lista de hex— y **cómo quiere sonar** (cercano, serio,
-gamberro, caro). **No inventes una marca**: una paleta inventada hay que
-rehacerla entera.
-
-## 2 · Decidir los tokens
-
-- **El fondo tampoco se decide a ojo: se mide.** El script saca el fondo
-  dominante de su web por área y escribe **las dos pieles enteras** —clara y
-  oscura— con su fondo, su tinta derivada y su cielo. Lo que NO cambia es el
-  material (cristal, filete, bisel, desenfoque): eso es lo que hace que sus
-  piezas se vean de la misma casa aunque cada marca traiga su color.
-  Hasta el 8 sep 2026 el fondo era una perla fija y todas las marcas salían
-  iguales; ya no. **Tú no eliges la piel: se le enseñan las dos en la prueba**
-  (paso 4 de `CLAUDE.md`) y elige él.
-- **El cielo** (`--cielo-*`, `--mancha-*`) sale de su acento: cuatro manchas de
-  la misma familia, con el tono girado poco. No lo toques a mano salvo que la
-  marca sea de un solo color muy sobrio: entonces baja `--manchas` a 0,6.
-- **`--acento`**: el color vivo que la web usa en botones. **Casi nunca vale
-  como texto**, y el script lo dice: el acento subraya, rellena, enmarca; el
-  texto va en `--tinta`.
-- **`--titular` y `--dato`**: el script las escribe solo y **mete la fuente
-  dentro del CSS**, en un `@import` de Google Fonts que comprueba con un fetch
-  antes de ponerlo. Para `--dato`, una mono: JetBrains Mono o IBM Plex Mono.
-
-- **Si sustituyes una tipografía a mano, toca DOS líneas.** Cuando el resumen
-  dice «sin @import de tipografías» —la web usa fuentes de sistema, o la suya no
-  está en Google (SF Pro, WhatsApp Sans, cualquier fuente propia)— eliges una
-  parecida y la pones en **las dos**:
-
-  ```css
-  @import url("https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&display=swap");
-  :root{ --titular:"Figtree",-apple-system,sans-serif; }
-  ```
-
-  **Cambiar sólo `--titular` es el fallo silencioso más caro que hay**: el token
-  nombra una fuente que nadie ha cargado, Chrome sustituye sin decir nada y el
-  vídeo sale entero, bien maquetado, con la letra equivocada. No se ve hasta que
-  lo miras al 100 %. Pasó el 8 sep 2026 con `reel-whatsapp`: `WhatsApp Sans Var`
-  no está en Google, se puso Figtree en el token y el `@import` se quedó sin
-  poner. Y hay que hacerlo **en las dos pieles**, clara y oscura.
-
-  Comprobar que la fuente existe antes de ponerla, no fiarse:
-
-  ```bash
-  curl -s -o /dev/null -w "%{http_code}\n" \
-    "https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&display=swap"
-  ```
-
-  200 es que sí; 400 es que ese nombre no está en Google Fonts.
-- **`--personalidad`** (`movimiento.md`): nerviosa (consumo, humor, joven),
-  segura (producto, servicio), cara (lujo, salud, financiero), seca (técnico,
-  dato). Por lo que vende y cómo lo dice, no por el color.
-- **Los colores del manual en papel** salen apagados en pantalla: súbeles la
-  saturación un 10-15 %.
-
-## 3 · Escribir
-
-- `taller/<slug>/marca-clara.css` y `marca-oscura.css`: **con web los escribe
-  el script**, enteros y medidos. Sin web, copia `motor/marca-PLANTILLA.css` y
-  `motor/marca-PLANTILLA-oscura.css` y rellena las dos. **Nunca desde la
-  marca.css de otra marca del taller.**
-- `taller/<slug>/marca.css`: una línea, `@import url("marca-<piel>.css")`.
-  Es lo que se cambia cuando elija en la prueba; no dupliques los tokens aquí.
-- **Comprueba las dos antes de enseñarlas**: `node motor/validar.mjs` sobre
-  cada prueba. Se niega si la tinta no llega a 7:1 sobre su fondo.
-- `.claude/skills/reel-<slug>/SKILL.md`: desde `plantilla-skill-marca.md`, que está
-  al lado de este archivo. Rellena todo lo que sepas; lo que no, **«por
-  confirmar»**, no inventado. La descripción del frontmatter tiene que
-  disparar cuando se nombre la marca.
-- **La voz.** Por defecto la que trae `motor/toma.py`, castellana. Si la marca
-  pide otra —otro género, otro acento, otro registro—, **no la elijas tú**:
-  dile que entre en ElevenLabs → Voices → Library, escuche y te pase el
-  **Voice ID**. Anótalo en la skill de la marca. Si todavía no tiene cuenta,
-  deja la de por defecto y sigue: se cambia cuando quiera.
-- Si hay logotipo, déjalo en `taller/<slug>/marca/logo.*` tal cual: **un
-  logotipo ajeno no se recolorea**.
-
-## 4 · Enseñar y confirmar
-
-En un mensaje corto: la paleta con los contrastes en números, las
-tipografías, la personalidad, la frase del cierre y la voz. Pide el visto
-bueno. Si dice que un color no es el suyo, corrígelo: él conoce su marca
-mejor que el script.
-
-**La piel no se pregunta aquí, se enseña.** Preguntar «¿la quieres clara u
-oscura?» sin nada delante no lo sabe contestar nadie. Va en la prueba (paso 4
-de `CLAUDE.md`), con los dos vídeos hechos y una recomendación: la que tiene
-su web.
-
-## Lo que no se hace
-
-- Recolorear un logotipo ajeno.
-- Copiar `marca.css` de otra marca «para tener algo».
-- Elegir tú la piel, o enseñar sólo una. Se hacen las dos y elige él.
-- Tocar el material (cristal, bisel, filete, sombras) para «adaptarlo» a la
-  marca. La marca entra por el fondo, el cielo, el acento y las letras.
-- Sacar la paleta a ojo de la captura cuando el script ha medido.
-- Inventar cifras, precios o testimonios para rellenar la skill.
+Las piezas van de una en una. Lo que hace buena una pieza son las tres o cuatro pasadas de
+corrección, y en lote no se dan.
