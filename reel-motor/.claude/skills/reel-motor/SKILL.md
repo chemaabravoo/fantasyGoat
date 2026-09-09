@@ -4,7 +4,8 @@ description: >
   El oficio de animar vídeos verticales 9:16 en el estilo motion UI de la casa —
   todo entra de borroso a nítido, un objeto que muta, muelle, cámara con profundidad,
   cifras que ruedan— sobre la piel de cristal. La pieza se escribe en HTML con una
-  seek(t) determinista y se captura a mp4 con voz, efectos y música. Se usa siempre
+  seek(t) determinista y se captura a mp4 con voz, efectos y música, y con la portada
+  1080x1920 encuadrada al cuadrado central que se entrega con cada vídeo. Se usa siempre
   junto a la skill de la marca del cliente (.claude/skills/<marca>), que pone sus
   colores, sus datos y su tono. Úsala cuando alguien pida una animación, un reel, un
   vídeo, un mp4 o una pieza para Instagram, TikTok o Shorts, y también para retocar el
@@ -90,16 +91,22 @@ cd taller/<marca>
 node ../../motor/validar.mjs pieza-<nombre>.html
 # 6 · las hojas de contactos · se miran TODAS con Read
 node ../../motor/contactos.mjs pieza-<nombre>.html
-# 7 · el vistazo, con voz, y se le enseña · ~20 s
-node ../../motor/shoot-par.mjs pieza-<nombre>.html salida/ver.mp4 10 0.5 15
+# 7 · el vistazo, con voz, y se le enseña · ~40 s · la MITAD de 60
+node ../../motor/shoot-par.mjs pieza-<nombre>.html salida/ver.mp4 10 0.5 30
 python3 ../../motor/sonar-generico.py salida/ver.mp4 audios/<pieza>/toma.mp3
-# 8 · sólo cuando ha dicho que sí · ~5 min
-node ../../motor/shoot-par.mjs pieza-<nombre>.html salida/<pieza>.mp4 10 2 30
+# 8 · sólo cuando ha dicho que sí · ~10 min · a 60, que es como se anima
+node ../../motor/shoot-par.mjs pieza-<nombre>.html salida/<pieza>.mp4 10 2 60
 python3 ../../motor/sonar-generico.py salida/<pieza>.mp4 audios/<pieza>/toma.mp3
+# 9 · la portada · SIEMPRE que hay render de calidad
+node ../../motor/portada.mjs salida/<pieza>-son.mp4 salida/<pieza>-portada.png \
+  --cifra "…" --frase "…" --pie "<marca>"
 ```
 
-Se entrega el `-son.mp4`, el mapa de tiempos y **qué elegiste y por qué**.
+Se entrega el `-son.mp4`, **su portada**, el mapa de tiempos y **qué elegiste y por qué**.
 [entrega/render.md](entrega/render.md).
+
+**Ningún render de calidad se entrega sin portada.** Es 1080 × 1920, pero lo legible va
+dentro del cuadrado central (`y 420`-`1500`), que es lo que se ve en la parrilla del perfil.
 
 ## Antes de dar una pieza por buena
 

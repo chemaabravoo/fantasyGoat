@@ -94,8 +94,34 @@ Cómo se pide la voz, cómo se sacan los tiempos y qué efectos hay: [../sonido/
 Con un audio ya publicado (voz y cama mezcladas) se pasa como voz, sin `MUSICA`, y los
 efectos van a 0,25-0,5. Muda **sólo** si él lo pide para esa pieza, y entonces `--muda`.
 
-## 4 · Entregar
+## 4 · La portada · va con TODO render de calidad
 
-El `-son.mp4` (nunca el mudo), el mudo por si lo quiere montar él, el mapa de tiempos y
+**Un vídeo renderizado no se entrega solo: se entrega con su portada.** Es lo que decide si
+alguien lo abre desde la parrilla del perfil, y es la única imagen fija de la pieza.
+
+```bash
+node ../../motor/portada.mjs salida.mp4 salida-portada.png \
+  --cifra "1.000.000" --sub "de reproducciones · un solo vídeo" \
+  --frase "Y no lo animé <i>yo.</i>" --chip "TikTok + Instagram" --pie "<marca>"
+```
+
+**El encuadre, que es lo que importa:** el archivo es **1080 × 1920**, porque es la portada de
+un reel, pero **Instagram enseña en la parrilla el cuadrado central** — de `y 420` a `y 1500`.
+Así que **todo lo que hay que leer vive dentro de ese cuadrado**, y el pie de marca cae fuera
+a propósito: se ve al abrir el reel y se pierde en la parrilla sin que falte nada. El script
+deja al lado un `-guia.png` con el cuadrado dibujado: **míralo antes de entregar**.
+
+- Los tres fotogramas de la tira salen **del propio vídeo** (15 %, 45 % y 75 % por defecto).
+  Elígelos a mano con `--fotogramas 0.8,23.0,29.5` — que sean **distintos entre sí**, o la
+  tira parece una sola imagen repetida. Con `--fuente otro.mp4` salen de otro vídeo.
+- La piel la pone `marca.css` de la carpeta, así que la portada sale con la marca sin tocar
+  nada. Si la pieza es de una marca y la portada tiene que vestirse de otra —un caso de
+  éxito, un cliente—, se fuerza con `--fondo`, `--tinta`, `--acento` y `--tinta-baja`.
+- El texto: una cifra o un gancho corto, y una frase de tres o cuatro palabras. `<i>…</i>`
+  pinta esa parte con el acento de la marca. Si no hay cifra, se deja `--cifra` fuera.
+
+## 5 · Entregar
+
+El `-son.mp4` (nunca el mudo), **su portada**, el mudo por si lo quiere montar él, el mapa de tiempos y
 **qué elegiste y por qué**: el armazón, el gancho, la forma. Sin eso no se puede corregir.
 Dónde se archiva y cómo entra en el panel de Instagram lo dice la skill de cada marca.

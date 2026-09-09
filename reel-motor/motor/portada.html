@@ -1,0 +1,52 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Portada</title>
+<link rel="stylesheet" href="marca.css">
+<style>
+/* La portada de un reel: el lienzo es 1080×1920, pero en la parrilla del perfil
+   Instagram recorta el CUADRADO CENTRAL (y 420 → 1500). Todo lo que hay que leer
+   vive dentro de ese cuadrado; el pie de marca cae fuera a propósito: se ve al
+   abrir el reel y se pierde en la parrilla sin que falte nada. */
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000}
+.reel{position:relative;width:1080px;height:1920px;overflow:hidden;
+  background:var(--fondo);
+  background-image:radial-gradient(62% 34% at 50% 46%,color-mix(in srgb,var(--acento) 16%,transparent),transparent 72%)}
+.brillo{position:absolute;left:-200px;top:520px;width:1480px;height:420px;border-radius:50%;filter:blur(40px);
+  background:radial-gradient(50% 50% at 50% 50%,color-mix(in srgb,var(--acento) 20%,transparent),transparent 70%)}
+.chip{position:absolute;left:0;right:0;top:470px;text-align:center}
+.chip span{display:inline-block;padding:14px 30px;border-radius:9999px;
+  border:1px solid color-mix(in srgb,var(--acento) 42%,transparent);
+  font-family:var(--dato);font-size:30px;color:var(--acento);letter-spacing:.04em}
+.num{position:absolute;left:0;right:0;top:566px;text-align:center;font-family:var(--titular);
+  font-weight:800;font-size:206px;line-height:.98;letter-spacing:-.055em;color:var(--tinta)}
+.sub{position:absolute;left:0;right:0;top:806px;text-align:center;font-family:var(--dato);
+  font-size:36px;color:var(--tinta-baja);letter-spacing:.02em}
+.frase{position:absolute;left:90px;right:90px;top:906px;text-align:center;font-family:var(--titular);
+  font-weight:800;font-size:104px;line-height:1.06;letter-spacing:-.04em;color:var(--tinta)}
+.frase i{font-style:normal;color:var(--acento)}
+.tira{position:absolute;left:0;right:0;top:1128px;height:320px}
+.tira img{position:absolute;width:250px;height:320px;object-fit:cover;border-radius:22px;
+  box-shadow:0 22px 44px -18px rgba(0,0,0,.8)}
+.pie{position:absolute;left:0;right:0;top:1600px;text-align:center}
+.pie u{display:inline-flex;align-items:center;gap:18px;text-decoration:none}
+.pie u b{width:64px;height:52px;border-radius:10px;background:var(--acento);display:block;position:relative}
+.pie u b::after{content:"";position:absolute;left:8px;top:-8px;width:26px;height:10px;
+  border-radius:5px 5px 0 0;background:var(--acento)}
+.pie u span{font-family:var(--titular);font-weight:800;font-size:46px;color:var(--tinta);letter-spacing:-.03em}
+.grano{position:absolute;inset:0;opacity:.03;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence baseFrequency='.9'/></filter><rect width='120' height='120' filter='url(%23n)'/></svg>")}
+.guia{position:absolute;left:0;right:0;top:420px;height:1080px;border:6px solid #00e5ff;display:none}
+</style></head>
+<body>
+<section class="reel" id="reel">
+  <i class="brillo"></i>
+  <div class="chip">{{CHIP}}</div>
+  <div class="num">{{CIFRA}}</div>
+  <div class="sub">{{SUB}}</div>
+  <div class="frase">{{FRASE}}</div>
+  <div class="tira">{{TIRA}}</div>
+  <div class="pie">{{PIE}}</div>
+  <i class="guia" id="guia"></i>
+  <div class="grano"></div>
+</section>
+</body></html>
