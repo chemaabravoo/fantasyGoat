@@ -1,0 +1,163 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel Motor · 05 · el checkout</title>
+<!-- EJEMPLO · va mudo: la voz se genera con toma.py desde su guion (v0N.txt) ·
+     VÍDEO 5 · gancho: EL CHECKOUT. Cabeza muda: la tarjeta gira, el número se teclea, se pulsa Pagar, el botón se vuelve rueda y ✓ con confeti, y la hoja se vuelve el panel de ventas. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../motor/cristal.css">
+<link rel="stylesheet" href="../motor/comun.css">
+<style>
+
+#hoja{position:absolute;left:170px;top:470px;width:740px;height:980px;border-radius:36px;overflow:hidden;
+  background:var(--cristal-alto);border:1px solid var(--filete);box-shadow:var(--bisel),var(--flota-alta);
+  -webkit-backdrop-filter:var(--desenfoque);backdrop-filter:var(--desenfoque)}
+.hlab{position:absolute;left:42px;top:40px;font-family:var(--dato);font-size:22px;letter-spacing:.15em;text-transform:uppercase;color:var(--tinta-baja)}
+.himp{position:absolute;left:42px;top:72px;font-size:84px;font-weight:600;letter-spacing:-.03em}
+.hsub{position:absolute;right:42px;top:104px;font-size:26px;color:var(--tinta-baja)}
+.tarj{position:absolute;left:42px;top:210px;width:656px;height:220px;border-radius:28px;opacity:0;transform-origin:50% 50%;
+  background:linear-gradient(135deg,#1f2330 0%,#2b3142 55%,#1a1d27 100%);color:#fff;
+  box-shadow:0 26px 52px -20px rgba(15,23,42,.6),inset 0 0 0 1px rgba(255,255,255,.12)}
+.tarj .chip{position:absolute;left:34px;top:34px;width:64px;height:46px;border-radius:10px;background:linear-gradient(135deg,#f3d27a,#c99a3a)}
+.tarj .marca{position:absolute;right:34px;top:30px;display:flex}
+.tarj .marca i{width:44px;height:44px;border-radius:50%;background:#ff5f3d;opacity:.95}
+.tarj .marca i+i{margin-left:-16px;background:#ffb43d;opacity:.9}
+.tarj .num{position:absolute;left:34px;top:112px;font-family:var(--dato);font-size:36px;letter-spacing:.14em;white-space:pre}
+.tarj .num i{display:inline-block;width:3px;height:36px;vertical-align:-6px;background:#fff;opacity:0;margin-left:4px}
+.tarj .pie{position:absolute;left:34px;right:34px;top:170px;display:flex;justify-content:space-between;
+  font-family:var(--dato);font-size:20px;letter-spacing:.1em;color:rgba(255,255,255,.72);opacity:0}
+#pagar{position:absolute;left:42px;top:470px;width:656px;height:96px;border-radius:9999px;background:var(--acento);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:600;letter-spacing:-.012em;opacity:0;
+  box-shadow:0 14px 28px -12px color-mix(in srgb,var(--acento) 70%,transparent);white-space:nowrap;overflow:hidden}
+#pagar .arc{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;
+  border:5px solid rgba(255,255,255,.35);border-top-color:#fff;opacity:0}
+#pagar .ok{position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px 0 0 -30px;opacity:0}
+#pagar .ok svg{width:60px;height:60px;display:block}
+.okOnda{position:absolute;left:322px;top:470px;width:96px;height:96px;border-radius:50%;box-shadow:0 0 0 4px #1fbf75;opacity:0}
+.conf{position:absolute;left:370px;top:518px;width:14px;height:14px;border-radius:4px;opacity:0}
+.recibo{position:absolute;left:42px;top:610px;width:656px;display:flex;justify-content:space-between;align-items:center;opacity:0;font-size:30px}
+.recibo em{font-style:normal;color:#0f7a52;font-weight:600}
+.hoy{position:absolute;left:42px;top:680px;display:flex;align-items:baseline;gap:14px;opacity:0}
+.hoy .odo{font-size:64px;font-weight:600;letter-spacing:-.03em}
+.hoy u{text-decoration:none;font-size:24px;color:var(--tinta-baja)}
+.fila{position:absolute;left:42px;width:656px;height:84px;display:flex;align-items:center;gap:20px;opacity:0;border-top:1px solid var(--filete)}
+.fila i{width:52px;height:52px;border-radius:50%;flex:0 0 52px}
+.fila b{font-size:28px;font-weight:500;flex:1}
+.fila em{font-style:normal;font-family:var(--dato);font-size:26px}
+.fila u{text-decoration:none;color:#0f7a52;font-size:26px}
+.vgraf{position:absolute;left:42px;top:790px;width:656px;height:150px;opacity:0}
+.vbar{position:absolute;bottom:0;width:36px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,var(--acento),color-mix(in srgb,var(--acento) 55%,#fff))}
+
+</style></head>
+<body>
+<section class="reel" id="reel">
+  <div class="escena" id="escena">
+    <div id="cabeza">
+      <div id="hoja">
+        <div class="hlab">Pago seguro</div>
+        <div class="himp" id="imp">49,00 €</div>
+        <div class="hsub">Plan Pro · mes</div>
+        <div class="tarj" id="tarj"><span class="chip"></span><span class="marca"><i></i><i></i></span>
+          <div class="num"><span id="num"></span><i id="car"></i></div>
+          <div class="pie" id="pie"><span>ANA MARTÍN</span><span>09 / 28</span></div></div>
+        <div id="pagar"><span id="pagTxt">Pagar 49,00 €</span><span class="arc" id="arc"></span>
+          <span class="ok" id="ok"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"/></svg></span></div>
+        <span class="okOnda" id="okOnda"></span>
+        <i class="conf" style="background:#0a84ff"></i><i class="conf" style="background:#6e5bff"></i><i class="conf" style="background:#1fbf75"></i>
+        <i class="conf" style="background:#ff5a3d"></i><i class="conf" style="background:#ffb43d"></i><i class="conf" style="background:#ff4fa3"></i>
+        <i class="conf" style="background:#4ee8ff"></i><i class="conf" style="background:#1d1d1f"></i><i class="conf" style="background:#0a84ff"></i>
+        <i class="conf" style="background:#1fbf75"></i><i class="conf" style="background:#ff5a3d"></i><i class="conf" style="background:#6e5bff"></i>
+        <div class="recibo" id="recibo"><span>Pago recibido</span><em>+ 49,00 €</em></div>
+        <div class="hoy" id="hoy"><span class="odo" id="hoyOdo"></span><u>hoy</u></div>
+        <div class="fila" id="f0" style="top:770px"><i style="background:#c9d6ff"></i><b>Ana Martín</b><em>49,00 €</em><u>&#10003;</u></div>
+        <div class="fila" id="f1" style="top:854px"><i style="background:#e3d3ff"></i><b>Lucas Ortega</b><em>19,00 €</em><u>&#10003;</u></div>
+        <div class="fila" id="f2" style="top:938px"><i style="background:#bfe6c2"></i><b>Studio Norte</b><em>149,00 €</em><u>&#10003;</u></div>
+        <div class="vgraf" id="vgraf"></div>
+      </div>
+    </div>
+  </div>
+  <div class="rot" id="rotA"><span id="a1">Tu producto</span><span id="a2"><em>podría verse así.</em></span></div>
+  <div class="grano"></div>
+</section>
+<script src="../motor/comun.js"></script>
+<script src="_cierre.js"></script>
+<script>
+document.getElementById('reel').insertAdjacentHTML('afterbegin',CIELO_HTML);
+const M={f1:11.119, f2:13.139, f3:15.079, f4:17.759, f5:20.3, f6:22.699, f7:24.079, esto:13.139, carpeta:15.42, arrastras:16.0, claude:17.0, web:18.44, video:19.5, colores:20.819, tipo:21.579, devuelve:22.96, comenta:24.079, motion:24.559, mando:25.719, fin:26.418};
+window.FPS=60;
+const T=guion([
+  ['entra',  -0.06, 0.54], ['tarj', 0.30, 0.56], ['num', 0.80, 1.30], ['pie', 2.36, 0.40],
+  ['boton',   2.40, 0.40], ['pulsa', 3.30, 0.30], ['spin', 3.50, 0.50], ['ok', 4.30, 0.50],
+  ['recibo',  4.90, 0.44], ['hoy', 5.30, 0.60], ['filas', 6.20, 0.60], ['graf', 7.60, 0.70], ['hoy2', 8.60, 0.60],
+]);
+const el={}; ['escena','hoja','imp','tarj','num','car','pie','pagar','pagTxt','arc','ok','okOnda','recibo','hoy','hoyOdo','f0','f1','f2','vgraf','rotA','a1','a2'].forEach(k=>el[k]=$(k));
+const CONF=[...document.querySelectorAll('.conf')];
+const VALT=[60,84,72,110,96,130,118,150];
+el.vgraf.innerHTML=VALT.map((h,i)=>`<i class="vbar" style="left:${i*88}px;height:${h}px"></i>`).join('');
+const VB=[...el.vgraf.children];
+document.getElementById('cabeza').insertAdjacentHTML('beforeend',CURSOR_HTML);
+const cur=$('cur'),cg0=$('cg0'),cg1=$('cg1'),cg2=$('cg2'),can=$('can');
+const cola=COLA.montar({M,cabeza:'cabeza',dominio:'midominio.com',tema:'cómo funciona en 30 s'});
+window.DURACION=+(cola.fin).toFixed(2);
+const NUM='4242 4242 4242 4242';
+window.seek=function(t){
+  cieloSeek(t);
+  const entra=easeOut(p(t,T.entra[0],T.entra[1]));
+  el.hoja.style.transform=`translateY(${mix(140,0,entra)}px) scale(${mix(1.04,1,entra)})`;
+  el.hoja.style.opacity=entra; el.hoja.style.filter=`blur(${mix(8,0,entra)}px)`;
+  el.hoja.style.height=mix(610,980,easeInOut(p(t,T.recibo[0]-0.30,T.recibo[0]+0.45)))+'px';
+  /* la tarjeta gira al entrar y el número se teclea */
+  const kT=easeOut(p(t,T.tarj[0],T.tarj[1]));
+  el.tarj.style.opacity=kT; el.tarj.style.transform=`perspective(1400px) rotateY(${mix(-80,0,kT)}deg) translateY(${mix(30,0,kT)}px)`;
+  const n=Math.floor(p(t,T.num[0],T.num[1])*NUM.length); el.num.textContent=NUM.slice(0,n);
+  el.car.style.opacity=(t>=T.num[0]-0.1&&t<T.pie[0])?(n<NUM.length?1:(frame(t)%40<21?1:0)):0;
+  const kPi=easeOut(p(t,T.pie[0],T.pie[1])); el.pie.style.opacity=kPi; el.pie.style.transform=`translateY(${mix(10,0,kPi)}px)`;
+  /* el botón: aparece, se pulsa, se vuelve círculo con rueda, y ✓ */
+  const kB=easeOut(p(t,T.boton[0],T.boton[1])), kS=easeInOut(p(t,T.spin[0],T.spin[1])), kO=spring(p(t,T.ok[0],T.ok[1]),0.4,12);
+  el.pagar.style.opacity=kB; el.pagar.style.left=mix(42,322,kS)+'px'; el.pagar.style.width=mix(656,96,kS)+'px';
+  el.pagar.style.background= t>=T.ok[0] ? lerpCol('#0a84ff','#1fbf75',easeOut(p(t,T.ok[0],T.ok[0]+0.3))) : 'var(--acento)';
+  el.pagar.style.transform=`translateY(${mix(20,0,kB)}px) scale(${1-pulso(p(t,T.pulsa[0],T.pulsa[1]))*0.06})`;
+  el.pagTxt.style.opacity=1-clamp(kS*2,0,1); el.arc.style.opacity=t>=T.spin[0]+0.2&&t<T.ok[0]?1:0; el.arc.style.transform=`rotate(${(t-T.spin[0])*720}deg)`;
+  el.ok.style.opacity=t>=T.ok[0]?1:0; el.ok.style.transform=`scale(${kO})`;
+  const kW=p(t,T.ok[0],T.ok[0]+0.7); el.okOnda.style.opacity=pulso(kW)*0.8; el.okOnda.style.transform=`scale(${mix(1,2.6,easeOut(kW))})`;
+  CONF.forEach((c,i)=>{const k=p(t,T.ok[0],T.ok[0]+1.1); const a=i*(Math.PI*2/12)+hash(i)*0.5, v=260+hash(i+9)*160;
+    c.style.opacity=(k>0&&k<1)?1-k*k:0;
+    c.style.transform=`translate(${Math.cos(a)*v*easeOut(k)}px,${Math.sin(a)*v*easeOut(k)*0.7+380*k*k}px) rotate(${k*540*(hash(i)-0.5)}deg)`;});
+  /* recibo, total del día, filas y gráfico */
+  const kR=easeOut(p(t,T.recibo[0],T.recibo[1])); el.recibo.style.opacity=kR; el.recibo.style.transform=`translateY(${mix(14,0,kR)}px)`;
+  const kH=easeOut(p(t,T.hoy[0],T.hoy[1])); el.hoy.style.opacity=kH; el.hoy.style.transform=`translateY(${mix(14,0,kH)}px)`;
+  odoPasos(el.hoyOdo,[[0,'1.240 €'],[T.hoy[0]+0.30,'1.289 €'],[T.hoy2[0],'1.457 €']],t,77,0.55);
+  [el.f0,el.f1,el.f2].forEach((f,i)=>{const k=easeOut(p(t,T.filas[0]+i*0.12,T.filas[0]+i*0.12+0.44)); f.style.opacity=k;
+    f.style.transform=`translateY(${mix(24,0,k)}px)`; f.style.filter=`blur(${mix(10,0,k)}px)`;});
+  const kG=easeOut(p(t,T.graf[0],T.graf[1]));
+  el.vgraf.style.opacity=kG; el.vgraf.style.top=mix(880,790,kG)+'px';
+  [el.f0,el.f1,el.f2].forEach((f,i)=>{ f.style.opacity=(+f.style.opacity)*(1-kG); });   // las filas dejan sitio al gráfico
+  VB.forEach((b,i)=>{const k=easeOut(p(t,T.graf[0]+0.1+i*0.05,T.graf[0]+0.1+i*0.05+0.4)); b.style.height=(VALT[i]*k+(t>T.graf[1]?respira(t,3,0.5+i*0.07,i):0))+'px';});
+  /* el cursor pulsa Pagar */
+  if(t>=T.pulsa[0]-0.5&&t<T.spin[0]+0.3) cursor(cur,cg0,cg1,cg2,can,t,T.pulsa[0]-0.5,T.pulsa[0],900,1300,600,990,T.pulsa[0],1-easeOut(p(t,T.spin[0],T.spin[0]+0.3)));
+  else cur.style.opacity=0;
+  /* el rótulo del puente */
+  const sR=1-easeOut(p(t,M.esto-0.42,M.esto-0.06));
+  palabras([el.a1,el.a2],t,M.f1-0.10,0.42,0.44,sR); el.rotA.style.filter=`blur(${(1-sR)*12}px)`;
+  const v=cola.seek(t);
+  let cs=1+respira(t,0.005,0.021);
+  cs+=easeOut(p(t,T.ok[0],T.ok[0]+0.3))*0.05-easeInOut(p(t,T.ok[1]+0.3,T.ok[1]+1.0))*0.05;
+  cs+=easeInOut(p(t,cola.T.movil[0],cola.T.movil[1]+0.2))*0.04-easeInOut(p(t,cola.T.cierre[0]-0.6,cola.T.cierre[0]))*0.04;
+  cs*=mix(1,0.985,v);
+  const sy=960+shake(t,T.tarj[1],6)+shake(t,T.ok[0],11)+shake(t,cola.T.suelta[0],8)+shake(t,cola.T.cierre[0],9);
+  el.escena.style.transform=camara(cs,540,960,540,sy);
+};
+const SFX=[
+  ['whoosh',T.entra[0]+0.06,0.24],['swipe',T.tarj[0],0.22],['teclado',T.num[0]+0.05,0.26],['teclado',T.num[0]+0.7,0.22],
+  ['pop',T.boton[0],0.22],['clic',T.pulsa[0],0.30],['engranaje',T.spin[0]+0.1,0.16],['acierto',T.ok[0],0.36],['dinero',T.ok[0]+0.15,0.24],
+  ['blip',T.hoy[0]+0.3,0.22,1.1],['swipe',T.filas[0],0.18],['datos',T.graf[0],0.20],['blip',T.hoy2[0],0.22,1.2],
+].concat(cola.SFX);
+const MUSICA=[
+  ['energia-palmas',0,0.16],
+  ['neutra-cristal',M.f1-0.30,0.11,'fundido'],
+  ['energia-eco',M.devuelve-0.20,0.16,'sube'],
+];
+window.MARCAS=Object.assign({},T,{SFX,MUSICA,fin:window.DURACION});
+arrancar();
+</script>
+</body></html>

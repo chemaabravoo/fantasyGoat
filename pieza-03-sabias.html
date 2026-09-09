@@ -1,0 +1,178 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel Motor · 03 · ¿sabías que…?</title>
+<!-- EJEMPLO · va mudo: la voz se genera con toma.py desde su guion (v0N.txt) ·
+     VÍDEO 3 · gancho: ¿SABÍAS QUE…? Con voz desde el 0: tres huecos, y un botón que demuestra cada cosa (desenfoque, muelle, cámara); luego una pantalla entera entra con las tres a la vez. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../motor/cristal.css">
+<link rel="stylesheet" href="../motor/comun.css">
+<style>
+
+.slot{position:absolute;top:480px;width:120px;height:120px;border-radius:50%;margin-left:-60px;opacity:0;
+  background:var(--cristal-alto);border:1px solid var(--filete);box-shadow:var(--bisel),var(--flota);
+  display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:600;color:var(--tinta-baja)}
+.slot.on{background:var(--acento);color:#fff;border-color:transparent;box-shadow:0 14px 28px -10px color-mix(in srgb,var(--acento) 70%,transparent)}
+.slot svg{width:54px;height:54px;display:none}
+.slot.ok svg{display:block}.slot.ok b{display:none}
+.slab{position:absolute;top:626px;width:300px;margin-left:-150px;text-align:center;font-size:30px;font-weight:500;opacity:0;color:var(--tinta)}
+#btn{position:absolute;left:240px;top:880px;width:600px;height:124px;border-radius:9999px;opacity:0;
+  background:var(--cristal-alto);border:1px solid var(--filete);box-shadow:var(--bisel),var(--flota-alta);
+  -webkit-backdrop-filter:var(--desenfoque);backdrop-filter:var(--desenfoque);
+  display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 48px;transform-origin:50% 100%}
+#btn b{font-size:42px;font-weight:600;letter-spacing:-.014em}
+#btn u{width:100px;height:100px;border-radius:50%;background:var(--tinta);color:#fff;display:flex;align-items:center;justify-content:center;
+  text-decoration:none;font-size:44px}
+.cap{position:absolute;left:60px;width:960px;top:1050px;text-align:center;font-family:var(--dato);font-size:26px;
+  letter-spacing:.12em;color:var(--tinta-baja);opacity:0}
+.sombraBtn{position:absolute;left:300px;top:1012px;width:480px;height:30px;border-radius:50%;background:rgba(15,23,42,.28);filter:blur(14px);opacity:0}
+/* la pantalla final: un panel vivo */
+#panel{position:absolute;left:170px;top:600px;width:740px;height:800px;border-radius:36px;opacity:0;overflow:hidden;
+  background:var(--cristal-alto);border:1px solid var(--filete);box-shadow:var(--bisel),var(--flota-dock);
+  -webkit-backdrop-filter:var(--desenfoque);backdrop-filter:var(--desenfoque);transform-origin:50% 60%}
+.plab{position:absolute;left:42px;top:40px;font-family:var(--dato);font-size:22px;letter-spacing:.15em;text-transform:uppercase;color:var(--tinta-baja)}
+.pcif{position:absolute;left:42px;top:74px;font-size:84px;font-weight:600;letter-spacing:-.03em}
+.pdelta{position:absolute;right:42px;top:96px;height:58px;padding:0 24px;border-radius:9999px;display:flex;align-items:center;font-size:30px;font-weight:600;
+  color:#0f7a52;background:rgba(124,224,176,.30);box-shadow:inset 0 0 0 1px rgba(15,122,82,.16);opacity:0}
+.pgraf{position:absolute;left:42px;top:200px;width:656px;height:320px}
+.pbar{position:absolute;bottom:0;width:58px;border-radius:12px 12px 4px 4px;
+  background:linear-gradient(180deg,var(--acento),color-mix(in srgb,var(--acento) 55%,#fff))}
+.ppl{position:absolute;top:596px;width:208px;height:88px;border-radius:9999px;display:flex;align-items:center;justify-content:center;
+  font-size:32px;font-weight:500;color:var(--tinta-baja);box-shadow:inset 0 0 0 1px var(--filete);z-index:2}
+.ppast{position:absolute;top:596px;left:42px;width:208px;height:88px;border-radius:9999px;background:var(--tinta);z-index:1}
+.ppl.on{color:#f5f5f7}
+.pbtn{position:absolute;left:42px;top:700px;width:656px;height:86px;border-radius:9999px;background:var(--acento);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:600}
+
+</style></head>
+<body>
+<section class="reel" id="reel">
+  <div class="escena" id="escena">
+    <div id="cabeza">
+      <div class="slot" id="s1" style="left:240px"><b>1</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"/></svg></div>
+      <div class="slot" id="s2" style="left:540px"><b>2</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"/></svg></div>
+      <div class="slot" id="s3" style="left:840px"><b>3</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"/></svg></div>
+      <div class="slab" id="l1" style="left:240px">desenfoque</div>
+      <div class="slab" id="l2" style="left:540px">muelle</div>
+      <div class="slab" id="l3" style="left:840px">cámara</div>
+      <div class="sombraBtn" id="sombraBtn"></div>
+      <div id="btn"><b>Empezar</b><u>&#8594;</u></div>
+      <div class="cap" id="cap"></div>
+      <div id="panel">
+        <div class="plab">Ingresos · 30 días</div>
+        <div class="pcif"><span class="odo" id="pOdo"></span></div>
+        <div class="pdelta" id="pDelta">+51,8 %</div>
+        <div class="pgraf" id="pGraf"></div>
+        <span class="ppast" id="pPast"></span>
+        <span class="ppl" id="pp0" style="left:42px">Free</span><span class="ppl" id="pp1" style="left:266px">Pro</span><span class="ppl" style="left:490px">Team</span>
+        <div class="pbtn">Empezar</div>
+      </div>
+    </div>
+  </div>
+  <div class="rot" id="rotA"><span id="a1">¿Por qué parece</span><span id="a2"><em>de Apple?</em></span></div>
+  <div class="grano"></div>
+</section>
+<script src="../motor/comun.js"></script>
+<script src="_cierre.js"></script>
+<script>
+document.getElementById('reel').insertAdjacentHTML('afterbegin',CIELO_HTML);
+const M={f1:0.159, f2:4.119, f3:7.039, f4:10.139, f5:13.46, f6:17.139, f7:19.119, f8:21.84, f9:24.42, f10:27.079, f11:28.779, esto:17.139, carpeta:19.539, arrastras:20.18, claude:21.1, web:22.459, video:23.579, colores:24.939, tipo:25.819, devuelve:27.399, comenta:28.779, motion:29.26, mando:30.359, fin:31.022, todo:4.92, entraW:5.26, desenf:5.58, aterriza:8.10, rebota:9.12, camara:11.30, acerca:11.80, importa:12.48, ya:13.46, con:14.50, pantalla:15.38, parece:16.28};
+window.FPS=60;
+const T=guion([
+  ['entra',  -0.06, 0.54],
+  ['tz1', 1.00, 0.62], ['tz2', 2.05, 0.62], ['tz3', 3.10, 0.62],   // el adelanto: entra tres veces, cada una distinta
+  ['uno',     M.f2-0.06, 0.40], ['fuera1', M.todo-0.30, 0.34], ['lento', M.entraW-0.10, 1.30],
+  ['dos',     M.f3-0.06, 0.40], ['cae',    M.aterriza-0.50, 0.50], ['muelle', M.aterriza, 1.40],
+  ['tres',    M.f4-0.06, 0.40], ['zoom',   M.acerca-0.30, 0.90],   ['desz',   M.importa+0.40, 0.60],
+  ['ok',      M.ya-0.06, 0.60], ['fueraTodo', M.con-0.20, 0.50],
+  ['pantalla',M.pantalla-0.16, 0.90], ['vive', M.parece-0.10, 0.70],
+]);
+const el={}; ['escena','s1','s2','s3','l1','l2','l3','btn','sombraBtn','cap','panel','pOdo','pDelta','pGraf','pPast','pp0','pp1','rotA','a1','a2'].forEach(k=>el[k]=$(k));
+const ALT=[96,120,106,154,186,234,272,300];
+el.pGraf.innerHTML=ALT.map((h,i)=>`<i class="pbar" id="pb${i}" style="left:${i*85}px;height:${h}px"></i>`).join('');
+const PB=ALT.map((h,i)=>$('pb'+i));
+const cola=COLA.montar({M,cabeza:'cabeza',dominio:'midominio.com',tema:'cómo funciona en 30 s'});
+window.DURACION=+(cola.fin).toFixed(2);
+window.seek=function(t){
+  cieloSeek(t);
+  const salida=1-easeOut(p(t,T.fueraTodo[0],T.fueraTodo[1]));
+  /* los tres huecos, en escalera, y se encienden al nombrarlos */
+  [[el.s1,el.l1,T.uno],[el.s2,el.l2,T.dos],[el.s3,el.l3,T.tres]].forEach(([s,l,c],i)=>{
+    const k=easeOut(p(t,T.entra[0]+i*0.10,T.entra[1]+i*0.10)), on=easeOut(p(t,c[0],c[1])), ok=easeOut(p(t,T.ok[0]+i*0.12,T.ok[0]+i*0.12+0.36));
+    s.style.opacity=k*salida; s.style.filter=`blur(${mix(14,0,k)+(1-salida)*14}px)`;
+    s.style.transform=`translateY(${mix(40,0,k)-(1-salida)*60}px) scale(${mix(0.9,1,k)+pulso(on)*0.18+pulso(ok)*0.14+(on<0.5?respira(t,0.03,0.6,i*2.1):0)})`;
+    s.className='slot'+(on>0.5?' on':'')+(ok>0.5?' ok':'');
+    l.style.opacity=on*salida; l.style.filter=`blur(${mix(12,0,on)}px)`; l.style.transform=`translateY(${mix(16,0,on)}px)`;
+  });
+  /* el botón de demostración: entra, sale, vuelve a cámara lenta, cae con muelle, y la cámara entra en él */
+  let bo=easeOut(p(t,T.entra[0]+0.30,T.entra[1]+0.30)), bb=0, by=0, bs=1, sombra=0, bx=0, br=0;
+  /* el adelanto: tres reentradas rápidas mientras dura la pregunta (desenfoque · muelle · giro) */
+  for(const [c,modo] of [[T.tz1,0],[T.tz2,1],[T.tz3,2]]){
+    const out=p(t,c[0]-0.18,c[0]), k=p(t,c[0],c[1]);
+    if(t>=c[0]-0.18&&t<c[1]){
+      if(out<1){ bo=1-out; bb=out*12; by=-out*40; }
+      else { const e=easeOut(k), sp=spring(k,0.32,10); bo=e;
+        if(modo===0){ bb=(1-e)*16; by=(1-e)*30; }
+        else if(modo===1){ by=(1-sp)*-120; bs=1; }
+        else { br=(1-e)*-14; bx=(1-e)*-160; bb=(1-e)*8; } }
+    }
+  }
+  const f1=easeOut(p(t,T.fuera1[0],T.fuera1[1]));            // se va deprisa
+  const l1=easeOut(p(t,T.lento[0],T.lento[1]));              // y vuelve a cámara lenta: blur 16 → 0
+  bo=bo*(1-f1)+l1; bb=(1-l1)*16*(f1>0?1:0)+f1*(1-l1)*10;
+  const c1=easeCae(p(t,T.cae[0],T.cae[1]));                  // cae
+  const m1=spring(p(t,T.muelle[0],T.muelle[1]),0.28,9);      // y aterriza con muelle (sobrepaso a la vista)
+  if(t>=T.cae[0]){ by=mix(-200,0,c1); if(t>=T.muelle[0]){ by=mix(-200,0,1); bs=1+ (1-m1)*0.0; by=(1-m1)*-60; } }
+  const squash=t>=T.muelle[0]?pulso(p(t,T.muelle[0],T.muelle[0]+0.30))*0.10:0;
+  sombra=t>=T.muelle[0]?1-Math.abs(by)/60:0;
+  el.btn.style.opacity=bo*salida; el.btn.style.filter=`blur(${bb+(1-salida)*14}px)`;
+  el.btn.style.transform=`translate(${bx}px,${by-(1-salida)*60}px) rotate(${br}deg) scale(${(1+squash)*bs},${1-squash})`;
+  el.sombraBtn.style.opacity=sombra*0.7*salida; el.sombraBtn.style.transform=`scale(${mix(0.7,1,sombra)})`;
+  /* la cámara entra en el botón: lo demás se va de foco */
+  const kZ=easeInOut(p(t,T.zoom[0],T.zoom[1]))-easeInOut(p(t,T.desz[0],T.desz[1]));
+  [el.s1,el.s2,el.s3,el.l1,el.l2,el.l3].forEach(n=>{ n.style.opacity=(+n.style.opacity)*(1-kZ*0.65); n.style.filter+=` blur(${kZ*7}px)`; });
+  /* el pie de cada demostración */
+  const capT=[[T.lento[0],'blur 16px → 0'],[T.muelle[0],'muelle · sobrepaso 12 %'],[T.zoom[0],'cámara · ×1,06 + desenfoque']];
+  let ci=-1; capT.forEach((c,i)=>{ if(t>=c[0]) ci=i; });
+  if(ci>=0){ el.cap.textContent=capT[ci][1]; const k=easeOut(p(t,capT[ci][0],capT[ci][0]+0.4)); el.cap.style.opacity=k*salida*(1-kZ*0.4); el.cap.style.transform=`translateY(${mix(12,0,k)}px)`; }
+  else el.cap.style.opacity=0;
+  /* la pantalla final: entra con las tres cosas a la vez */
+  const kPa=p(t,T.pantalla[0],T.pantalla[1]);
+  const pa=easeOut(kPa), pm=spring(kPa,0.34,10);
+  const kV=easeOut(p(t,T.vive[0],T.vive[1]));
+  el.panel.style.opacity=pa; el.panel.style.filter=`blur(${mix(16,0,pa)}px)`;
+  el.panel.style.transform=`translateY(${(1-pm)*120}px) scale(${mix(0.9,1,pm)})`;
+  PB.forEach((n,i)=>{const k=easeOut(p(t,T.vive[0]+i*0.05,T.vive[0]+i*0.05+0.44)); n.style.height=(ALT[i]*mix(0.35,1,k)+(t>T.vive[1]?respira(t,2.6,0.5+i*0.07,i):0))+'px';});
+  odoPasos(el.pOdo,[[0,'12.480 €'],[T.vive[0]+0.1,'18.940 €']],t,99,0.6);
+  const kD=easeOut(p(t,T.vive[0]+0.5,T.vive[0]+0.9)); el.pDelta.style.opacity=kD; el.pDelta.style.transform=`scale(${mix(0.86,1,kD)})`;
+  const kPl=easeInOut(p(t,T.vive[0]+0.3,T.vive[0]+0.7)); el.pPast.style.transform=`translateX(${mix(0,224,kPl)}px)`;
+  el.pp0.className='ppl'+(kPl<0.5?' on':''); el.pp1.className='ppl'+(kPl>=0.5?' on':'');
+  /* el rótulo */
+  const sR=1-easeOut(p(t,M.f2-0.40,M.f2-0.06));
+  palabras([el.a1,el.a2],t,M.f1-0.10,0.40,0.44,sR); el.rotA.style.filter=`blur(${(1-sR)*12}px)`;
+  const v=cola.seek(t);
+  let cs=1+respira(t,0.005,0.021);
+  cs+=kZ*0.06;
+  cs+=easeOut(p(t,T.pantalla[0],T.pantalla[0]+0.4))*0.05-easeInOut(p(t,T.pantalla[1]+0.2,T.pantalla[1]+1.0))*0.05;
+  cs+=easeInOut(p(t,cola.T.movil[0],cola.T.movil[1]+0.2))*0.04-easeInOut(p(t,cola.T.cierre[0]-0.6,cola.T.cierre[0]))*0.04;
+  cs*=mix(1,0.985,v);
+  const wy=mix(960,1010,kZ);
+  const sy=960+shake(t,T.muelle[0],10)+shake(t,T.pantalla[0]+0.3,10)+shake(t,cola.T.suelta[0],8)+shake(t,cola.T.cierre[0],9);
+  el.escena.style.transform=camara(cs,540,wy,540,sy);
+};
+const SFX=[
+  ['whoosh',T.entra[0]+0.06,0.24],['swipe',T.tz1[0],0.16],['muelle',T.tz2[0],0.18],['whoosh',T.tz3[0],0.16],['pop',T.uno[0],0.26],['swipe',T.fuera1[0],0.18],['brillo',T.lento[0],0.22],
+  ['pop',T.dos[0],0.26,1.1],['muelle',T.muelle[0],0.34],['pop',T.tres[0],0.26,1.2],['whoosh',T.zoom[0],0.20],
+  ['acierto',T.ok[0],0.22],['acierto',T.ok[0]+0.12,0.22,1.1],['acierto',T.ok[0]+0.24,0.22,1.2],
+  ['impacto',T.pantalla[0]+0.30,0.40],['subida',T.vive[1],0.20],
+].concat(cola.SFX);
+const MUSICA=[
+  ['emocion-piano',0,0.13],
+  ['energia-himno',T.pantalla[0],0.15,'corte'],
+  ['neutra-cristal',M.esto-0.20,0.11,'fundido'],
+  ['energia-eco',M.devuelve-0.20,0.16,'sube'],
+];
+window.MARCAS=Object.assign({},T,{SFX,MUSICA,fin:window.DURACION});
+arrancar();
+</script>
+</body></html>

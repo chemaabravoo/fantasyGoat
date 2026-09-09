@@ -1,0 +1,212 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel Motor · 06 · el único pack</title>
+<!-- EJEMPLO · va mudo: la voz se genera con toma.py desde su guion (v06.txt) ·
+     VÍDEO 6 · gancho: EL ÚNICO PACK. Con voz desde el 0: la carpeta cae y golpea, se abre, y de ella salen las cinco piezas del pack, cada una con su demo; vuelven a la carpeta y la cola sigue. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../motor/cristal.css">
+<link rel="stylesheet" href="../motor/comun.css">
+<style>
+
+/* la carpeta del pack, igual que la de la cola */
+#carp{position:absolute;left:420px;top:470px;width:240px;height:186px;border-radius:22px;
+  background:linear-gradient(178deg,#7cc6ff 0%,#4aa5f7 46%,#2f8ceb 100%);z-index:6;
+  box-shadow:0 1px 0 0 rgba(255,255,255,.45) inset,0 -1px 0 0 rgba(0,40,90,.18) inset,
+             0 26px 52px -18px rgba(20,70,140,.55),0 8px 18px -8px rgba(20,70,140,.35);transform-origin:50% 50%}
+#tab{position:absolute;left:420px;top:442px;width:112px;height:34px;border-radius:12px 12px 0 0;z-index:5;
+  background:linear-gradient(180deg,#a9dcff,#6fbcff);transform-origin:0 100%}
+#lab{position:absolute;left:420px;top:544px;width:240px;text-align:center;z-index:7;
+  font-family:var(--dato);font-size:26px;letter-spacing:.02em;color:#fff;text-shadow:0 1px 0 rgba(0,40,90,.25)}
+#glow{position:absolute;left:400px;top:450px;width:280px;height:226px;border-radius:30px;opacity:0;z-index:4;
+  background:radial-gradient(circle at 50% 30%,rgba(255,255,255,.9),rgba(255,255,255,0) 70%);filter:blur(18px)}
+#onda{position:absolute;left:400px;top:450px;width:280px;height:226px;border-radius:30px;opacity:0;z-index:4;box-shadow:0 0 0 4px var(--acento)}
+/* el estallido: cinco fichas que orbitan la carpeta, confeti, rayos y chispas */
+.tile{position:absolute;left:504px;top:527px;width:72px;height:72px;border-radius:20px;background:var(--acento);color:#fff;
+  display:flex;align-items:center;justify-content:center;z-index:9;opacity:0;
+  box-shadow:0 12px 24px -10px rgba(10,80,200,.55),inset 0 1px 0 rgba(255,255,255,.35)}
+.tile svg{width:36px;height:36px;display:block}
+.conf{position:absolute;left:534px;top:557px;width:12px;height:12px;border-radius:3px;opacity:0;z-index:3}
+.rayo{position:absolute;left:-260px;top:500px;width:1600px;height:110px;opacity:0;z-index:2;filter:blur(28px);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent);transform-origin:50% 50%}
+.chispa{position:absolute;width:8px;height:8px;border-radius:50%;background:#fff;opacity:0;z-index:3;box-shadow:0 0 14px 3px rgba(255,255,255,.85)}
+/* las cinco piezas del pack */
+.fila{position:absolute;left:170px;width:740px;height:112px;border-radius:26px;opacity:0;z-index:8;transform-origin:56px 50%;
+  background:var(--cristal-alto);border:1px solid var(--filete);box-shadow:var(--bisel),var(--flota);
+  -webkit-backdrop-filter:var(--desenfoque);backdrop-filter:var(--desenfoque);
+  display:flex;align-items:center;gap:22px;padding:0 26px 0 20px;transform-origin:50% 50%}
+.fila .ico{width:72px;height:72px;border-radius:20px;flex:0 0 72px;display:flex;align-items:center;justify-content:center;
+  background:var(--acento);color:#fff;font-size:30px;font-weight:700;box-shadow:0 10px 20px -10px color-mix(in srgb,var(--acento) 70%,transparent)}
+.fila .ico svg{width:36px;height:36px;display:block}
+.fila b{font-size:31px;font-weight:600;letter-spacing:-.018em;white-space:nowrap;flex:1}
+.fila .demo{display:flex;align-items:center;justify-content:flex-end;min-width:240px;height:72px}
+/* demo 1 · la skill */
+.chipCmd{font-family:var(--dato);font-size:24px;color:var(--acento);background:rgba(10,132,255,.10);padding:0 18px;height:52px;
+  border-radius:9999px;display:flex;align-items:center;gap:2px}
+.chipCmd i{display:inline-block;width:3px;height:26px;background:var(--acento);border-radius:2px;margin-left:6px}
+/* demo 2 · el estilo: una píldora que entra desenfocada y aterriza con muelle */
+.pil{height:56px;padding:0 26px;border-radius:9999px;background:var(--cristal-alto);border:1px solid var(--filete);
+  box-shadow:var(--bisel),var(--flota);display:flex;align-items:center;font-size:26px;font-weight:600;transform-origin:50% 100%}
+/* demo 3 · la música por tramos y el contador */
+.tramos{display:flex;align-items:flex-end;gap:5px;height:56px;margin-right:22px}
+.tramos i{width:10px;border-radius:4px;transform-origin:50% 100%}
+.setenta{font-size:40px;font-weight:600;letter-spacing:-.03em;display:flex;align-items:baseline;gap:8px}
+.setenta u{text-decoration:none;font-size:20px;color:var(--tinta-baja);font-weight:400}
+/* demo 4 · la voz */
+.vozb{display:flex;align-items:center;gap:4px;height:48px;margin-right:20px}
+.vozb i{width:6px;border-radius:3px;background:var(--acento);transform-origin:50% 50%}
+.subt{font-size:24px;font-weight:500;white-space:nowrap}
+.subt i{font-style:normal;opacity:.25}
+/* demo 5 · la zona segura */
+.miniM{position:relative;width:48px;height:86px;border-radius:10px;background:#0b0b0d;box-shadow:0 0 0 1px rgba(255,255,255,.2);overflow:hidden}
+.miniM .zona{position:absolute;left:9%;right:18%;top:13%;bottom:19%;border:1.5px dashed #c6f24e;border-radius:3px;opacity:0}
+.miniM .bot{position:absolute;right:3px;top:50%;width:6px;height:30px;border-radius:3px;opacity:0;
+  background:repeating-linear-gradient(to bottom,rgba(255,255,255,.5) 0 5px,transparent 5px 8px)}
+.miniM .txt{position:absolute;left:0;top:44%;width:100%;text-align:center;font-size:7px;font-weight:700;color:#fff}
+.miniLab{margin-left:18px;font-family:var(--dato);font-size:19px;letter-spacing:.12em;color:var(--tinta-baja);text-transform:uppercase}
+
+</style></head>
+<body>
+<section class="reel" id="reel">
+  <div class="escena" id="escena">
+    <div id="cabeza">
+      <i class="rayo" id="r1"></i><i class="rayo" id="r2"></i>
+      <i class="conf" style="background:#0a84ff"></i><i class="conf" style="background:#6e5bff"></i><i class="conf" style="background:#1fbf75"></i><i class="conf" style="background:#ff5a3d"></i><i class="conf" style="background:#ffb43d"></i><i class="conf" style="background:#ff4fa3"></i><i class="conf" style="background:#4ee8ff"></i><i class="conf" style="background:#1d1d1f"></i><i class="conf" style="background:#0a84ff"></i><i class="conf" style="background:#6e5bff"></i><i class="conf" style="background:#1fbf75"></i><i class="conf" style="background:#ff5a3d"></i><i class="conf" style="background:#ffb43d"></i><i class="conf" style="background:#ff4fa3"></i><i class="conf" style="background:#4ee8ff"></i><i class="conf" style="background:#1d1d1f"></i><i class="conf" style="background:#0a84ff"></i><i class="conf" style="background:#6e5bff"></i><i class="conf" style="background:#1fbf75"></i><i class="conf" style="background:#ff5a3d"></i><i class="conf" style="background:#ffb43d"></i><i class="conf" style="background:#ff4fa3"></i><i class="conf" style="background:#4ee8ff"></i><i class="conf" style="background:#1d1d1f"></i><i class="chispa"></i><i class="chispa"></i><i class="chispa"></i><i class="chispa"></i><i class="chispa"></i><i class="chispa"></i><i class="chispa"></i><i class="chispa"></i><i class="chispa"></i><i class="chispa"></i><i class="chispa"></i><i class="chispa"></i>
+      <div id="glow"></div><div id="onda"></div>
+      <span class="tile" id="t1"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="tile" id="t2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3l2.6 5.3 5.9.8-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 9.1l5.9-.8z"/></svg></span><span class="tile" id="t3"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V6l10-2v12M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm10-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg></span><span class="tile" id="t4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v12M8 7v4M16 7v4M4 9v1M20 9v1M12 15a4 4 0 0 0 4-4M12 15a4 4 0 0 1-4-4M12 15v6"/></svg></span><span class="tile" id="t5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 18h4"/></svg></span>
+      <span id="tab"></span><div id="carp"></div><div id="lab">reel-motor</div>
+      <div class="fila" id="f1"><span class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><b>La skill que anima</b><span class="demo"><span class="chipCmd" id="cmd">/reel-motor<i id="car"></i></span></span></div>
+      <div class="fila" id="f2"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3l2.6 5.3 5.9.8-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 9.1l5.9-.8z"/></svg></span><b>Estilo Apple</b><span class="demo"><span class="pil" id="pil">Empezar</span></span></div>
+      <div class="fila" id="f3"><span class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V6l10-2v12M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm10-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg></span><b>Música premium</b><span class="demo"><span class="tramos" id="tramos"></span><span class="setenta"><span class="odo" id="odo70"></span><u>efectos</u></span></span></div>
+      <div class="fila" id="f4"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v12M8 7v4M16 7v4M4 9v1M20 9v1M12 15a4 4 0 0 0 4-4M12 15a4 4 0 0 1-4-4M12 15v6"/></svg></span><b>La voz</b><span class="demo"><span class="vozb" id="vozb"></span><span class="subt" id="subt"><i>palabra</i> <i>a</i> <i>palabra</i></span></span></div>
+      <div class="fila" id="f5"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 18h4"/></svg></span><b>Zona segura</b><span class="demo"><span class="miniM" id="miniM"><i class="zona" id="zona"></i><i class="bot" id="bot"></i><b class="txt" id="mtxt">Tu producto</b></span><span class="miniLab">Reels · TikTok</span></span></div>
+    </div>
+  </div>
+  <div class="rot" id="rotA"><span id="a1">El único pack</span><span id="a2"><em>para animar como Apple.</em></span></div>
+  <div class="grano"></div>
+</section>
+<script src="../motor/comun.js"></script>
+<script src="_cierre.js"></script>
+<script>
+document.getElementById('reel').insertAdjacentHTML('afterbegin',CIELO_HTML);
+const M={f1:0.079, f2:4.159, f3:6.279, f4:11.899, f5:15.319, f6:18.1, f7:20.659, f8:23.699, f9:26.359, f10:29.279, f11:31.279, esto:20.659, carpeta:21.24, arrastras:21.78, claude:22.7, web:24.34, video:25.36, colores:27.06, tipo:28.02, devuelve:29.52, comenta:31.28, motion:31.76, mando:32.48, fin:33.11, pack:1.00, apple:2.94, skill:4.60, estilo:6.40, apple2:6.76, cristal:8.22, desenfoque:9.14, muelle:10.64, musica:11.90, tramos:13.04, setenta:13.60, voz:15.44, pal1:16.68, pal2:17.20, zona:18.34, reels:19.18, tiktok:19.58};
+window.FPS=60;
+const T=guion([
+  ['entra',  -0.30, 0.56],                 // la carpeta CAE: en t=0 va por el 39 %
+  ['golpea',  0.26, 0.40],
+  ['abre',    M.f2-0.20, 0.50],            // «Lleva…» la pestaña se levanta
+  ['v1', M.f2-0.06, 0.62], ['v2', M.estilo-0.10, 0.62], ['v3', M.musica-0.10, 0.62],
+  ['v4', M.voz-0.14, 0.62], ['v5', M.zona-0.12, 0.62],
+  ['pilFuera', M.desenfoque-0.34, 0.20], ['pilLento', M.desenfoque-0.10, 0.90], ['pilMuelle', M.muelle-0.06, 1.10],
+  ['tramos', M.tramos-0.08, 0.60], ['setenta', M.setenta-0.06, 0.70],
+  ['zona', M.reels-0.08, 0.40], ['bot', M.tiktok-0.06, 0.34], ['txt', M.tiktok+0.20, 0.50],
+  ['vuelve', M.esto-0.78, 0.56],           // las cinco vuelven a la carpeta
+  ['baja', M.esto-0.62, 0.62],             // y la carpeta baja al sitio de la cola
+]);
+const el={}; ['escena','carp','tab','lab','glow','onda','r1','r2','t1','t2','t3','t4','t5','f1','f2','f3','f4','f5','cmd','car','pil','tramos','odo70','vozb','subt','miniM','zona','bot','mtxt','rotA','a1','a2'].forEach(k=>el[k]=$(k));
+const TR=[[46,'#7c8cff'],[30,'#7c8cff'],[52,'#7c8cff'],[36,'#7c8cff'],[54,'#ff8aa8'],[32,'#ff8aa8'],[50,'#ff8aa8'],[40,'#ff8aa8'],[56,'#c6f24e'],[34,'#c6f24e'],[52,'#c6f24e'],[44,'#c6f24e']];
+el.tramos.innerHTML=TR.map(([h,c])=>`<i style="height:${h}px;background:${c}"></i>`).join(''); const TRB=[...el.tramos.children];
+el.vozb.innerHTML=Array.from({length:9},()=>'<i style="height:40px"></i>').join(''); const VB=[...el.vozb.children];
+const PAL=[...el.subt.querySelectorAll('i')];
+const cola=COLA.montar({M,cabeza:'cabeza',dominio:'midominio.com',tema:'cómo funciona en 30 s'});
+window.DURACION=+(cola.fin).toFixed(2);
+const FILAS=[el.f1,el.f2,el.f3,el.f4,el.f5], TOPS=[770,898,1026,1154,1282];
+const TILES=[el.t1,el.t2,el.t3,el.t4,el.t5], CONF=[...document.querySelectorAll('.conf')], CHIS=[...document.querySelectorAll('.chispa')];
+window.seek=function(t){
+  cieloSeek(t);
+  /* la carpeta cae y golpea; luego baja al sitio de la cola */
+  const entra=Math.pow(p(t,T.entra[0],T.entra[1]),1.5);
+  const kBaja=easeInOut(p(t,T.baja[0],T.baja[1]));
+  const cy=mix(0,194,kBaja);
+  const trC=`translate(0,${mix(-420,0,entra)+cy}px) scale(${mix(1.7,1,entra)}) rotate(${mix(-9,0,entra)}deg)`;
+  el.carp.style.transform=trC; el.carp.style.filter=`blur(${mix(7,0,entra)}px)`; el.carp.style.opacity=t>=T.entra[0]?1:0;
+  const kAb=easeOut(p(t,T.abre[0],T.abre[1]))-easeOut(p(t,T.vuelve[1]-0.2,T.vuelve[1]+0.2));
+  el.tab.style.transform=`translate(0,${mix(-420,0,entra)+cy}px) scale(${mix(1.7,1,entra)}) rotate(${mix(-9,0,entra)-kAb*22}deg)`;
+  el.tab.style.filter=el.carp.style.filter; el.tab.style.opacity=el.carp.style.opacity;
+  el.lab.style.transform=`translate(0,${mix(-420,0,entra)+cy}px) scale(${mix(1.7,1,entra)})`; el.lab.style.opacity=t>=T.entra[0]?entra:0;
+  el.lab.style.transformOrigin='50% -74px';
+  el.glow.style.opacity=kAb*0.9+pulso(p(t,T.golpea[0],T.golpea[0]+0.5))*0.6; el.glow.style.transform=`translate(0,${cy}px)`;
+  const kO=p(t,T.golpea[0],T.golpea[0]+0.6); el.onda.style.opacity=pulso(kO)*0.6; el.onda.style.transform=`scale(${mix(0.96,1.3,easeOut(kO))})`;
+  /* el estallido: al golpear, las cinco fichas salen disparadas y se quedan orbitando la carpeta */
+  const kB=easeOut(p(t,T.golpea[0],T.golpea[0]+0.55));
+  const orb=(i,tt)=>{const a=(i*72+tt*38-90)*Math.PI/180, R=mix(0,215,kB); return [540+R*Math.cos(a)-36, 563+R*Math.sin(a)*0.78-36];};
+  TILES.forEach((n,i)=>{
+    const c=T['v'+(i+1)], kv=easeInOut(p(t,c[0],c[1]));
+    const [ox,oy]=orb(i, Math.min(t,c[0]));            // la órbita se congela al salir
+    const tx=190, ty=TOPS[i]+20;                        // el hueco del icono en su fila
+    const x=mix(ox,tx,kv)+arco(kv,-60), y=mix(oy,ty,kv);
+    n.style.opacity=(t>=T.golpea[0]?1:0)*(1-easeOut(p(t,c[1]-0.06,c[1]+0.06)));
+    n.style.transform=`translate(${x-504}px,${y-527}px) rotate(${(1-kB)*540+pulso(kv)*-18}deg) scale(${mix(0.2,1,kB)+respira(t,0.05,0.7,i)})`;
+    n.style.filter=`blur(${(1-kB)*10+pulso(kv)*3}px)`;
+  });
+  /* las filas nacen del icono que aterriza, y al final vuelven a la carpeta */
+  FILAS.forEach((f,i)=>{
+    const c=T['v'+(i+1)], k=easeOut(p(t,c[1]-0.10,c[1]+0.46));
+    const r=easeInOut(p(t,T.vuelve[0]+i*0.06,T.vuelve[1]+i*0.06));
+    const y0=563-(TOPS[i]+56);
+    f.style.top=TOPS[i]+'px';
+    f.style.opacity=k*(1-r);
+    f.style.transform=r>0?`translate(0,${mix(0,y0,r)}px) scale(${mix(1,0.22,r)})`:`scaleX(${mix(0.12,1,k)}) scaleY(${mix(0.7,1,k)})`;
+    f.style.filter=`blur(${(1-k)*12+r*14}px)`;
+  });
+  /* confeti con gravedad en el golpe, y chispas que caen siempre */
+  CONF.forEach((c,i)=>{const k=p(t,T.golpea[0],T.golpea[0]+1.3); const a=i*(Math.PI*2/24)+hash(i)*0.6, v=300+hash(i+9)*260;
+    c.style.opacity=(k>0&&k<1)?1-k*k:0;
+    c.style.transform=`translate(${Math.cos(a)*v*easeOut(k)}px,${Math.sin(a)*v*easeOut(k)*0.8+520*k*k}px) rotate(${k*720*(hash(i)-0.5)}deg) scale(${mix(1.3,0.6,k)})`;});
+  CHIS.forEach((c,i)=>{const per=3.2+hash(i)*2.4, k=((t+hash(i+3)*per)%per)/per; const x=120+hash(i+7)*840, y=mix(380,1500,k);
+    c.style.left=x+'px'; c.style.top=y+'px'; c.style.opacity=(t>T.golpea[0]?1:0)*pulso(k)*0.9*mix(0.4,1,hash(i+11));
+    c.style.transform=`translateX(${respira(t,14,0.3+hash(i)*0.3,i)}px) scale(${mix(0.5,1.2,hash(i+5))})`;});
+  /* dos rayos de luz cruzan en el primer segundo */
+  [[el.r1,-24,-1],[el.r2,22,1]].forEach(([n,ang,dir])=>{const k=p(t,T.golpea[0]-0.05,T.golpea[0]+0.9);
+    n.style.opacity=pulso(k)*0.9; n.style.transform=`translateX(${dir*mix(-500,500,easeInOut(k))}px) rotate(${ang}deg)`;});
+  /* demo 1 · el cursor de la skill parpadea */
+  el.car.style.opacity=frame(t)%40<21?1:0;
+  /* demo 2 · la píldora: cristal → sale y entra desenfocada → aterriza con muelle */
+  const kF=easeOut(p(t,T.pilFuera[0],T.pilFuera[1])), kL=easeOut(p(t,T.pilLento[0],T.pilLento[1])), kM=spring(p(t,T.pilMuelle[0],T.pilMuelle[1]),0.28,9);
+  let po=1-kF+kL, pb=kF*10*(1-kL)+(t>=T.pilLento[0]?(1-kL)*16:0), py=0;
+  if(t>=T.pilMuelle[0]){ py=(1-kM)*-70; }
+  const sq=pulso(p(t,T.pilMuelle[0],T.pilMuelle[0]+0.28))*0.12;
+  el.pil.style.opacity=clamp(po,0,1); el.pil.style.filter=`blur(${pb}px)`;
+  el.pil.style.transform=`translateY(${py}px) scale(${1+sq},${1-sq})`;
+  el.pil.style.background=t>=M.cristal-0.05?'var(--cristal-alto)':'#fff';
+  /* demo 3 · los tramos se encienden por familias y el contador rueda a 70 */
+  TRB.forEach((b,i)=>{const fam=Math.floor(i/4); const k=easeOut(p(t,T.tramos[0]+fam*0.18,T.tramos[0]+fam*0.18+0.36));
+    b.style.transform=`scaleY(${mix(0.18,1,k)*(1+respira(t,0.14,0.6+i*0.05,i))})`; b.style.opacity=mix(0.25,1,k);});
+  odoPasos(el.odo70,[[0,'0'],[T.setenta[0],'70']],t,48,0.6);
+  /* demo 4 · la voz habla y las palabras se encienden */
+  VB.forEach((b,i)=>{b.style.transform=`scaleY(${0.2+0.8*Math.abs(Math.sin(t*(2.4+i*0.37)+i))})`;});
+  PAL.forEach((w,i)=>{const a=[M.pal1,M.pal1+0.28,M.pal2][i]; w.style.opacity=t>=a-0.05?1:0.25;});
+  /* demo 5 · la zona segura y el rótulo que entra en ella */
+  el.zona.style.opacity=easeOut(p(t,T.zona[0],T.zona[1])); el.bot.style.opacity=easeOut(p(t,T.bot[0],T.bot[1]));
+  const kT=easeOut(p(t,T.txt[0],T.txt[1])); el.mtxt.style.transform=`translateX(${mix(36,-6,kT)}%)`; el.mtxt.style.color=kT>0.6?'#fff':'#ff5a6e';
+  /* el rótulo */
+  const sR=1-easeOut(p(t,M.esto-0.50,M.esto-0.14));
+  [[el.a1,M.pack-0.62],[el.a2,M.apple-1.16]].forEach(([n,a])=>{const k=easeOut(p(t,a,a+0.36));
+    n.style.transformOrigin='50% 0'; n.style.opacity=k*sR; n.style.filter=`blur(${mix(22,0,k)}px)`;
+    n.style.transform=`scale(${mix(1.45,1,k)}) translateY(${mix(22,0,k)}px)`;});
+  el.rotA.style.filter=`blur(${(1-sR)*12}px)`;
+  const v=cola.seek(t);
+  let cs=1+respira(t,0.005,0.021);
+  cs+=easeOut(p(t,T.golpea[0],T.golpea[0]+0.16))*0.05-easeInOut(p(t,T.golpea[0]+0.4,T.golpea[0]+1.2))*0.05;
+  cs+=easeInOut(p(t,cola.T.movil[0],cola.T.movil[1]+0.2))*0.04-easeInOut(p(t,cola.T.cierre[0]-0.6,cola.T.cierre[0]))*0.04;
+  cs*=mix(1,0.985,v);
+  const sy=960+shake(t,T.golpea[0],16)+shake(t,M.pack-0.12,5)+shake(t,M.apple-0.56,5)+shake(t,T.pilMuelle[0],5)+shake(t,cola.T.suelta[0],8)+shake(t,cola.T.cierre[0],9);
+  el.escena.style.transform=camara(cs,540,960,540,sy);
+};
+const SFX=[
+  ['whoosh',T.entra[0]+0.10,0.24],['estampido',T.golpea[0],0.54,0.9],['brillo',T.golpea[0]+0.08,0.26],['fiesta',T.golpea[0]+0.04,0.22],['golpe',M.pack-0.12,0.22,1.1],['golpe',M.apple-0.56,0.22,1.2],['abrir',T.abre[0],0.24],
+  ['whoosh',T.v1[0],0.18],['pop',T.v1[1]-0.04,0.26],['whoosh',T.v2[0],0.18],['pop',T.v2[1]-0.04,0.26,1.1],
+  ['swipe',T.pilFuera[0],0.14],['brillo',T.pilLento[0],0.18],['muelle',T.pilMuelle[0],0.26],
+  ['whoosh',T.v3[0],0.18],['pop',T.v3[1]-0.04,0.26,1.2],['datos',T.tramos[0],0.18],['blip',T.setenta[0],0.22,1.1],
+  ['whoosh',T.v4[0],0.18],['pop',T.v4[1]-0.04,0.26,1.3],['whoosh',T.v5[0],0.18],['pop',T.v5[1]-0.04,0.26,1.4],
+  ['acierto',T.txt[0]+0.2,0.22],['swipe',T.vuelve[0],0.22],
+].concat(cola.SFX);
+const MUSICA=[
+  ['epica-coro',0,0.15],
+  ['neutra-cristal',M.esto-0.20,0.11,'fundido'],
+  ['energia-eco',M.devuelve-0.20,0.16,'sube'],
+];
+window.MARCAS=Object.assign({},T,{SFX,MUSICA,fin:window.DURACION});
+arrancar();
+</script>
+</body></html>
